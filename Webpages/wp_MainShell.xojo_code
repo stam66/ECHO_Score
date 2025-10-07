@@ -32,6 +32,7 @@ Begin WebPage wp_MainShell
    _ImplicitInstance=   False
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle Rectangle1
       BorderColor     =   &c000000FF
@@ -50,7 +51,7 @@ Begin WebPage wp_MainShell
       LayoutType      =   "LayoutTypes.Fixed"
       Left            =   0
       LockBottom      =   True
-      LockedInPosition=   True
+      LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
       LockRight       =   True
@@ -90,6 +91,7 @@ Begin WebPage wp_MainShell
          Scope           =   0
          ScrollDirection =   0
          TabIndex        =   0
+         TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
          Top             =   118
@@ -163,36 +165,6 @@ Begin WebPage wp_MainShell
       Width           =   73
       _mPanelIndex    =   -1
       _ProtectImage   =   False
-   End
-   Begin WebButton bSignOut
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Sign out"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   1010
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   3
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   29
-      Visible         =   True
-      Width           =   100
-      _mPanelIndex    =   -1
    End
 End
 #tag EndWebPage

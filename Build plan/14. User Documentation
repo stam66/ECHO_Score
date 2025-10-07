@@ -1,0 +1,42 @@
+## For Students (Regular Users)
+### Getting Started:
+- Navigate to https://your-domain.com
+- Login with your provided credentials
+- Select a case from your dashboard
+- Review all video views using Previous/Next buttons
+- Complete the assessment form
+- Click "Save Draft" to save progress
+- Click "Submit" when finished to see correct answers and your score
+
+### Tips:
+- You can return to incomplete cases anytime
+- Videos loop automatically for continuous review
+- Take your time - there's no time limit
+- Review all views before making decisions. 
+ 
+ ---
+
+## For Administrators
+### Managing Users:
+- Login as admin
+- Navigate to Admin Dashboard → Manage Users
+- Click "Add User" to create new accounts
+- Select user from list to edit details
+- Update password only when needed (leave blank to keep existing)
+
+### Managing Cases:
+- Navigate to Admin Dasvhboard → Manage Cases
+- Click "Add Case" to create a new case
+- Fill in case details and correct answers
+- Add videos one at a time with descriptive view names
+- Videos appear in the order specified
+- Click videos in the list to preview them
+
+### Common View Descriptions:
+- PLAX (Parasternal Long Axis)
+- PSAX (Parasternal Short Axis)
+- A4C (Apical 4-Chamber)
+- A2C (Apical 2-Chamber)
+- Subcostal
+- Suprasternal
+- IVC (Inferior Vena Cava)

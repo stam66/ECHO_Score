@@ -2,64 +2,23 @@
 Protected Class wc_base
 Inherits webcontainer
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Super.Constructor
-		  
-		  Title = "Untitled"
-		  Icon = ""
-		  RoleRequired = ""
-		  Position = PositionEnum.Center
-		  ContainerID = ""    
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub EmbedInto(target As WebView)
-		  // Only embed if not already embedded
-		  If Self.Parent = Nil Then
-		    Self.EmbedWithin(target, 0, 0, Self.Width, Self.Height)
-		  End If
+		  // This only handles positioning and locking, NOT the actual embedding
+		  // Don't embed - assume already embedded by NavigationManager
 		  
-		  // Then position it
 		  Select Case Position
-		  Case PositionEnum.Center
-		    Self.Left = (target.Width - Self.Width) / 2
-		    Self.Top = (target.Height - Self.Height) / 2
-		    
 		  Case PositionEnum.TopLeft
-		    // Let the container stretch with its parent
 		    Self.LockLeft = True
 		    Self.LockTop = True
 		    Self.LockRight = True
 		    Self.LockBottom = True
 		    
-		    Self.Left = 0
-		    Self.Top = 0
+		  Case PositionEnum.Center
+		    Var targetW As Integer = target.Width
+		    Var targetH As Integer = target.Height
+		    Self.Left = (targetW - Self.Width) / 2
+		    Self.Top = (targetH - Self.Height) / 2
 		  End Select
-		  
-		  Self.Width = Min(Self.Width, target.Width)
-		  Self.Height = Min(Self.Height, target.Height)
-		  
-		  
-		  ' Select Case Position
-		  ' Case PositionEnum.Center
-		  ' Self.Left = (target.Width - Self.Width) / 2
-		  ' Self.Top = (target.Height - Self.Height) / 2
-		  ' 
-		  ' Case PositionEnum.TopLeft
-		  ' // Let the container stretch with its parent
-		  ' Self.LockLeft = True
-		  ' Self.LockTop = True
-		  ' Self.LockRight = True
-		  ' Self.LockBottom = True
-		  ' 
-		  ' Self.Left = 0
-		  ' Self.Top = 0
-		  ' End Select
-		  ' 
-		  ' Self.Width = Min(Self.Width, target.Width)
-		  ' Self.Height = Min(Self.Height, target.Height)
 		End Sub
 	#tag EndMethod
 
@@ -69,19 +28,7 @@ Inherits webcontainer
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Icon As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		Position As PositionEnum
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		RoleRequired As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		Title As String
 	#tag EndProperty
 
 
@@ -227,42 +174,6 @@ Inherits webcontainer
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Title"
-			Visible=true
-			Group="Subclassed Props"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Icon"
-			Visible=true
-			Group="Subclassed Props"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RoleRequired"
-			Visible=true
-			Group="Subclassed Props"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Position"
-			Visible=true
-			Group="Subclassed Props"
-			InitialValue="TopLeft"
-			Type="PositionEnum"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - TopLeft"
-				"1 - Center"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabIndex"
 			Visible=true
 			Group="Visual Controls"
@@ -379,6 +290,18 @@ Inherits webcontainer
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Position"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="PositionEnum"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - TopLeft"
+				"1 - Center"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

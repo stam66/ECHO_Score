@@ -1,5 +1,5 @@
 #tag WebContainerControl
-Begin wc_base wc_Login
+Begin wc_base wc_EnterOTP
    Compatibility   =   ""
    ControlCount    =   0
    ControlID       =   ""
@@ -35,7 +35,7 @@ Begin wc_base wc_Login
       FontSize        =   24.0
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   ""
+      Indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -50,7 +50,7 @@ Begin wc_base wc_Login
       Scope           =   0
       TabIndex        =   0
       TabStop         =   True
-      Text            =   "Log into ECHOscore"
+      Text            =   "Enter Verification Code"
       TextAlignment   =   2
       TextColor       =   &c000000FF
       Tooltip         =   ""
@@ -69,7 +69,7 @@ Begin wc_base wc_Login
       FontSize        =   14.0
       Height          =   28
       Index           =   -2147483648
-      Indicator       =   ""
+      Indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -84,51 +84,17 @@ Begin wc_base wc_Login
       Scope           =   0
       TabIndex        =   1
       TabStop         =   True
-      Text            =   "Username"
+      Text            =   "One-time password: "
       TextAlignment   =   1
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   129
+      Top             =   162
       Underline       =   False
       Visible         =   True
-      Width           =   406
+      Width           =   146
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label3
-      Bold            =   True
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   "arial"
-      FontSize        =   14.0
-      Height          =   28
-      Index           =   -2147483648
-      Indicator       =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   2
-      TabStop         =   True
-      Text            =   "Password"
-      TextAlignment   =   1
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   239
-      Underline       =   False
-      Visible         =   True
-      Width           =   406
-      _mPanelIndex    =   -1
-   End
-   Begin WebTextField txtUsername
+   Begin WebTextField txtOTP
       AllowAutoComplete=   False
       AllowSpellChecking=   False
       Caption         =   ""
@@ -139,8 +105,8 @@ Begin wc_base wc_Login
       Height          =   38
       Hint            =   ""
       Index           =   -2147483648
-      Indicator       =   ""
-      Left            =   20
+      Indicator       =   0
+      Left            =   174
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -157,43 +123,9 @@ Begin wc_base wc_Login
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   165
+      Top             =   159
       Visible         =   True
-      Width           =   406
-      _mPanelIndex    =   -1
-   End
-   Begin WebTextField txtPassword
-      AllowAutoComplete=   False
-      AllowSpellChecking=   False
-      Caption         =   ""
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FieldType       =   1
-      Height          =   38
-      Hint            =   ""
-      Index           =   -2147483648
-      Indicator       =   ""
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      MaximumCharactersAllowed=   0
-      PanelIndex      =   0
-      ReadOnly        =   False
-      Scope           =   0
-      TabIndex        =   4
-      TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   0
-      Tooltip         =   ""
-      Top             =   275
-      Visible         =   True
-      Width           =   406
+      Width           =   198
       _mPanelIndex    =   -1
    End
    Begin WebButton btnCancel
@@ -207,7 +139,7 @@ Begin wc_base wc_Login
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   218
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -223,13 +155,13 @@ Begin wc_base wc_Login
       Tooltip         =   ""
       Top             =   448
       Visible         =   True
-      Width           =   100
+      Width           =   99
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnLogin
+   Begin WebButton btnVerify
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Log in"
+      Caption         =   "Verify"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   True
@@ -237,7 +169,7 @@ Begin wc_base wc_Login
       Height          =   38
       Index           =   -2147483648
       Indicator       =   1
-      Left            =   326
+      Left            =   319
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -253,10 +185,10 @@ Begin wc_base wc_Login
       Tooltip         =   ""
       Top             =   448
       Visible         =   True
-      Width           =   100
+      Width           =   107
       _mPanelIndex    =   -1
    End
-   Begin WebLabel lblError
+   Begin WebLabel lblMessage
       Bold            =   False
       ControlID       =   ""
       CSSClasses      =   ""
@@ -265,7 +197,7 @@ Begin wc_base wc_Login
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   ""
+      Indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -282,26 +214,26 @@ Begin wc_base wc_Login
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
-      TextColor       =   &cFF260000
+      TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   355
+      Top             =   234
       Underline       =   False
       Visible         =   True
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel lblForgotPassword
+   Begin WebLabel lblInstructions
       Bold            =   False
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       FontName        =   ""
       FontSize        =   0.0
-      Height          =   38
+      Height          =   55
       Index           =   -2147483648
-      Indicator       =   ""
+      Indicator       =   0
       Italic          =   False
-      Left            =   300
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -309,19 +241,49 @@ Begin wc_base wc_Login
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Multiline       =   False
+      Multiline       =   True
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   10
       TabStop         =   True
-      Text            =   "Reset password"
-      TextAlignment   =   3
+      Text            =   "Enter your email address to receive a password reset code"
+      TextAlignment   =   2
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   309
+      Top             =   66
       Underline       =   False
       Visible         =   True
-      Width           =   126
+      Width           =   446
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnResend
+      AllowAutoDisable=   False
+      Cancel          =   True
+      Caption         =   "Re-send"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   174
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   11
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   448
+      Visible         =   True
+      Width           =   99
       _mPanelIndex    =   -1
    End
 End
@@ -330,14 +292,41 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  lblError.Text = ""
-		  lblError.Visible = False
-		  
-		  // Style forgot password as link
-		  lblForgotPassword.TextColor = & c3498db
-		  lblForgotPassword.Underline = True
+		  lblInstructions.Text = "Please enter the 6-digit code sent to " + UserEmail
+		  lblMessage.Text = ""
+		  lblMessage.Visible = False
+		  txtOTP.SetFocus
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub NavigateToOTPEntry(t as Timer)
+		  Var otpEntry As New wc_EnterOTP
+		  otpEntry.ContainerID = "EnterOTP"
+		  otpEntry.Position = wc_Base.PositionEnum.Center
+		  otpEntry.UserEmail = txtEmail.Text.Trim
+		  Session.Navigation.NavigateTo(otpEntry)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowMessage(msg As String, isSuccess As Boolean)
+		  lblMessage.Text = msg
+		  lblMessage.TextColor = If(isSuccess, &c27ae60, &ce74c3c)
+		  lblMessage.Visible = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidateEmail(email As String) As Boolean
+		  // Basic email validation
+		  If email.IndexOf("@") < 1 Then Return False
+		  If email.IndexOf(".") < 3 Then Return False
+		  If email.Length < 5 Then Return False
+		  Return True
+		End Function
+	#tag EndMethod
 
 
 #tag EndWindowCode
@@ -345,75 +334,83 @@ End
 #tag Events btnCancel
 	#tag Event
 		Sub Pressed()
-		  session.Navigation.NavigateBack
+		  // Navigate back to login
+		  Var login As New wc_Login
+		  login.ContainerID = "Login"
+		  login.Position = wc_Base.PositionEnum.Center
+		  Session.Navigation.NavigateTo(login)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnLogin
+#tag Events btnVerify
 	#tag Event
 		Sub Pressed()
-		  If txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
-		    lblError.Text = "Please enter username and password"
-		    lblError.Visible = True
+		  If txtOTP.Text.Trim.Length <> 6 Then
+		    ShowMessage("Please enter a 6-digit code", False)
 		    Return
 		  End If
 		  
-		  Var sql As String = "SELECT user_id, full_name, email, is_admin FROM users WHERE username = ? AND password_hash = SHA2(?, 256)"
+		  // Verify OTP
+		  Var result As Dictionary = PasswordResetHelper.VerifyOTP(UserEmail, txtOTP.Text.Trim)
+		  
+		  If result.Value("success") Then
+		    UserID = result.Value("userID")
+		    TokenID = result.Value("tokenID")
+		    
+		    // Navigate to new password page
+		    Var newPassword As New wc_NewPassword
+		    newPassword.ContainerID = "NewPassword"
+		    newPassword.Position = wc_Base.PositionEnum.Center
+		    newPassword.UserID = UserID
+		    newPassword.TokenID = TokenID
+		    Session.Navigation.NavigateTo(newPassword)
+		    
+		  Else
+		    ShowMessage(result.Value("error"), False)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnResend
+	#tag Event
+		Sub Pressed()
+		  // Find user ID first
+		  Var sql As String = "SELECT user_id, full_name FROM users WHERE email = ?"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    
-		    ps.Bind(0, txtUsername.Text.Trim)
-		    ps.Bind(1, txtPassword.Text.Trim)
+		    ps.Bind(0, UserEmail)
 		    
 		    Var rs As RowSet = ps.SQLSelect
 		    
 		    If rs <> Nil And Not rs.AfterLastRow Then
-		      Session.CurrentUserID = rs.Column("user_id").IntegerValue
-		      Session.CurrentUserName = rs.Column("full_name").StringValue
-		      Session.CurrentUserEmail = rs.Column("email").StringValue
-		      Session.IsAdmin = rs.Column("is_admin").BooleanValue
+		      Var userID As Integer = rs.Column("user_id").IntegerValue
+		      Var userName As String = rs.Column("full_name").StringValue
 		      
-		      / / Update last login
-		      Var updateSQL As String = "UPDATE users SET last_login = NOW() WHERE user_id = ?"
-		      Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
-		      updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		      updatePS.Bind(0, Session.CurrentUserID)
-		      updatePS.SQLExecute
+		      // Create new token
+		      Var tokenResult As Dictionary = PasswordResetHelper.CreatePasswordResetToken(userID, "unknown")
 		      
-		      / / Navigate To appropriate page
-		      If Session.IsAdmin Then
-		        Var adminHome As New wc_AdminHome
-		        adminHome.ContainerID = "AdminHome"
-		        adminHome.Position = wc_Base.PositionEnum.TopLeft
-		        Session.Navigation.NavigateTo(adminHome)
+		      If tokenResult.Value("success") Then
+		        Var otp As String = tokenResult.Value("otp")
+		        Var token As String = tokenResult.Value("token")
+		        
+		        // Send email
+		        If EmailHelper.SendPasswordResetEmail(UserEmail, userName, otp, "") Then
+		          ShowMessage("A new code has been sent to your email.", True)
+		          txtOTP.Text = ""
+		          txtOTP.SetFocus
+		        Else
+		          ShowMessage("Failed to send email. Please try again.", False)
+		        End If
 		      Else
-		        Var userHome As New wc_UserHome
-		        userHome.ContainerID = "UserHome"
-		        userHome.Position = wc_Base.PositionEnum.TopLeft
-		        Session.Navigation.NavigateTo(userHome)
+		        ShowMessage("Failed to generate new code.", False)
 		      End If
-		      
-		    Else
-		      lblError.Text = "Invalid username or password"
-		      lblError.Visible = True
 		    End If
+		    
 		  Catch e As DatabaseException
-		    lblError.Text = "Database error: " + e.Message
-		    lblError.Visible = True
+		    ShowMessage("An error occurred: " + e.Message, False)
 		  End Try
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events lblForgotPassword
-	#tag Event
-		Sub Pressed()
-		  Var forgotPassword As New wc_ForgotPassword
-		  forgotPassword.ContainerID = "ForgotPassword"
-		  forgotPassword.Position = wc_Base.PositionEnum.Center
-		  Session.Navigation.NavigateTo(forgotPassword)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

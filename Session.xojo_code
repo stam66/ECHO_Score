@@ -11,18 +11,58 @@ Inherits WebSession
 #tag EndSession
 	#tag Event
 		Sub Opening()
+		  DB = New MySQLCommunityServer
+		  DB.Host = "127.0.0.1"
+		  DB.Port = 3306
+		  DB.DatabaseName = "echoscore"
+		  DB.UserName = "root"  // MySQL server username
+		  DB.Password = "your_mysql_root_password"  // MySQL server password
+		  
+		  Try
+		    If Not DB.Connect Then
+		      MessageBox("Database connection failed: " + DB.ErrorMessage)
+		      Return
+		    End If
+		  Catch e As RuntimeException
+		    MessageBox("Database error: " + e.Message)
+		    Return
+		  End Try
+		  
 		  MainShell = New wp_MainShell
 		  MainShell.Show
-		  
 		  Navigation = New WebNavigationManager(MainShell)
-		  var w as new wc_Landing
-		  Navigation.NavigateTo(w) // Initial container
+		  
+		  // Navigate to login page
+		  Var w As New wc_Login
+		  w.ContainerID = "Login"
+		  w.Position = wc_Base.PositionEnum.Center
+		  Navigation.NavigateTo(w)
+		  
+		  
+		  ' MainShell = New wp_MainShell
+		  ' MainShell.Show
+		  ' 
+		  ' Navigation = New WebNavigationManager(MainShell)
+		  ' var w as new wc_Landing
+		  ' Navigation.NavigateTo(w) // Initial container
 		End Sub
 	#tag EndEvent
 
 
 	#tag Property, Flags = &h0
-		db As MySQLCommunityServer
+		CurrentUserID As Integer = 0
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		CurrentUserName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		DB As MySQLCommunityServer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		IsAdmin As Boolean = false
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -257,7 +297,7 @@ Inherits WebSession
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="db"
+			Name="DB"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -270,6 +310,30 @@ Inherits WebSession
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LoginAsAdmin"
+			Visible=false
+			Group="Behavior"
+			InitialValue="false"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CurrentUserID"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CurrentUserName"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

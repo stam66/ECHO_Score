@@ -1,0 +1,124 @@
+Insert → WebContainer
+Name: wc_EnterOTP
+Super: wc_Base
+
+' *******************************************************************************
+' Properties
+' *******************************************************************************
+Public UserEmail As String = ""
+Private TokenID As Integer = 0
+Private UserID As Integer = 0
+
+
+' *******************************************************************************
+' Controls
+' *******************************************************************************
+' Label: lblTitle (text: "Enter Verification Code", Bold)
+' Label: lblInstructions
+' Label: lblOTP (text: "6-Digit Code:")
+' TextField: txtOTP (MaxLength = 6)
+' PushButton: btnVerify (text: "Verify Code")
+' PushButton: btnResend (text: "Resend Code")
+' PushButton: btnCancel (text: "Cancel")
+' Label: lblMessage (text: "", Visible = False)
+
+
+' *******************************************************************************
+' wc_EnterOTP.Opening event
+' *******************************************************************************
+Sub Opening()
+  lblInstructions.Text = "Please enter the 6-digit code sent to " + UserEmail
+  lblMessage.Text = ""
+  lblMessage.Visible = False
+  txtOTP.SetFocus
+End Sub
+
+
+' *******************************************************************************
+' Methods
+' *******************************************************************************
+Sub ShowMessage(msg As String, isSuccess As Boolean)
+  lblMessage.Text = msg
+  lblMessage.TextColor = If(isSuccess, &c27ae60, &ce74c3c)
+  lblMessage.Visible = True
+End Sub
+
+
+' *******************************************************************************
+' btnVerify.Pressed Event
+' *******************************************************************************
+Sub Pressed()
+  If txtOTP.Text.Trim.Length <> 6 Then
+    ShowMessage("Please enter a 6-digit code", False)
+    Return
+  End If
+  
+  Var result As Dictionary = PasswordResetHelper.VerifyOTP(UserEmail, txtOTP.Text.Trim)
+  
+  If result.Value("success") Then
+    UserID = result.Value("userID")
+    TokenID = result.Value("tokenID")
+    
+    Var newPassword As New wc_NewPassword
+    newPassword.ContainerID = "NewPassword"
+    newPassword.Position = wc_Base.PositionEnum.Center
+    newPassword.UserID = UserID
+    newPassword.TokenID = TokenID
+    Session.Navigation.NavigateTo(newPassword)
+    
+  Else
+    ShowMessage(result.Value("error"), False)
+  End If
+End Sub
+
+
+' *******************************************************************************
+' btnResend.Pressed Event
+' *******************************************************************************
+Sub Pressed()
+  Var sql As String = "SELECT user_id, full_name FROM users WHERE email = ?"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+    ps.Bind(0, UserEmail)
+    
+    Var rs As RowSet = ps.SQLSelect
+    
+    If rs <> Nil And Not rs.AfterLastRow Then
+      Var userID As Integer = rs.Column("user_id").IntegerValue
+      Var userName As String = rs.Column("full_name").StringValue
+      
+      Var tokenResult As Dictionary = PasswordResetHelper.CreatePasswordResetToken(userID, "unknown")
+      
+      If tokenResult.Value("success") Then
+        Var otp As String = tokenResult.Value("otp")
+        Var token As String = tokenResult.Value("token")
+        
+        If EmailHelper.SendPasswordResetEmail(UserEmail, userName, otp, "") Then
+          ShowMessage("A new code has been sent to your email.", True)
+          txtOTP.Text = ""
+          txtOTP.SetFocus
+        Else
+          ShowMessage("Failed to send email. Please try again.", False)
+        End If
+      Else
+        ShowMessage("Failed to generate new code.", False)
+      End If
+    End If
+    
+  Catch e As DatabaseException
+    ShowMessage("An error occurred: " + e.Message, False)
+  End Try
+End Sub
+
+
+' *******************************************************************************
+' btnCancel.Pressed Event
+' *******************************************************************************
+Sub Pressed()
+  Var login As New wc_Login
+  login.ContainerID = "Login"
+  login.Position = wc_Base.PositionEnum.Center
+  Session.Navigation.NavigateTo(login)
+End Sub

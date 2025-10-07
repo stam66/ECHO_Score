@@ -1,0 +1,45 @@
+## Daily Tasks
+1. Check Application Status:
+bashsudo systemctl status echoscore
+2. Review Logs:
+bashjournalctl -u echoscore -f
+3. Monitor Database Size:
+```
+SELECT table_schema AS "Database", 
+ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS "Size (MB)" 
+FROM information_schema.TABLES 
+WHERE table_schema = "echoscore";
+```
+
+## Weekly Tasks
+1. Backup Database:
+Bash: `mysqldump -u root -p echoscore > echoscore_backup_$(date +%Y%m%d).sql`
+1. Clean Expired Password Reset Tokens:
+SQL `DELETE FROM password_reset_tokens WHERE expires_at < NOW() AND is_used = FALSE;`
+1. Review User Activity:
+SQL `SELECT full_name, last_login FROM users ORDER BY last_login DESC;`
+
+Phase 13 (continued): Maintenance - Part 3
+Monthly Tasks
+1. Review Case Completion Rates:  
+SQL:  
+```
+SELECT 
+    c.case_label,
+    COUNT(DISTINCT ur.user_id) as attempted_users,
+    SUM(CASE WHEN ur.is_completed THEN 1 ELSE 0 END) as completed_count
+FROM cases c
+LEFT JOIN user_responses ur ON c.case_id = ur.case_id
+GROUP BY c.case_id, c.case_label
+ORDER BY attempted_users DESC;
+```
+2. Update Email Configuration if SMTP credentials expire
+3. Archive Old Data if needed:
+SQL
+```
+-- Archive completed responses older than 1 year
+CREATE TABLE user_responses_archive LIKE user_responses;
+INSERT INTO user_responses_archive 
+SELECT * FROM user_responses 
+WHERE is_completed = TRUE AND completed_at < DATE_SUB(NOW(), INTERVAL 1 YEAR);
+```

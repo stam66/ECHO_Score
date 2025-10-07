@@ -1,0 +1,93 @@
+## Step 12.1: Pre-Deployment Checklist
+
+☐ All features tested in development
+☐ Database backed up
+☐ Video files prepared and named correctly
+☐ SMTP credentials configured
+☐ Admin password changed from default
+☐ SSL certificate installed (for HTTPS)
+
+
+## Step 12.2: Build for Deployment
+
+In XOJO: Project → Build Settings
+Select "Linux" (or your target platform)
+Set Application Name: ECHOScore
+Click Build
+XOJO creates standalone binary
+
+
+## Step 12.3: Deploy to XOJOWeb Server
+Upload built application to server
+Set execute permissions:
+`bashchmod +x echoscore`
+
+Create systemd service file: /etc/systemd/system/echoscore.service
+```
+ini[Unit]
+Description=ECHOScore Web Application
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/echoscore
+ExecStart=/var/www/echoscore/echoscore
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## Phase 12 (continued): Deploy to Server - Part 2
+Enable and start service:
+bash:
+```
+sudo systemctl enable echoscore
+sudo systemctl start echoscore
+sudo systemctl status echoscore
+```
+You should see "active (running)" status.
+
+
+## Step 12.4: Configure nginx
+Create nginx configuration: /etc/nginx/sites-available/echoscore
+```
+nginxserver {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /Documents/CaseVideos/ {
+        alias /var/www/echoscore/Documents/CaseVideos/;
+        add_header Cache-Control "public, max-age=3600";
+    }
+}
+```
+## Configure Reverse Proxy - Part 2
+Enable site:
+bash:
+```
+sudo ln -s /etc/nginx/sites-available/echoscore /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+## Step 12.5: Install SSL Certificate (Let's Encrypt)
+bash
+```
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d your-domain.com
+```
+Follow prompts to configure HTTPS. Certbot will automatically update your nginx configuration.

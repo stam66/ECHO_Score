@@ -1,0 +1,43 @@
+# Key Features:
+✅ Secure authentication with SHA2-256 hashing
+✅ Password reset via email OTP
+✅ Sequential video review (one at a time)
+✅ Case labels hidden during testing
+✅ Color-coded feedback (green/red)
+✅ Automatic score calculation
+✅ Draft saving capability
+✅ Admin tools for user and case management
+✅ Video preview in admin interface
+✅ Responsive landscape layout
+
+## Default Login:
+- Username: admin
+- Password: reject66
+
+## Database Tables: 6
+- users - User accounts (admin and regular)
+- cases - Echo cases with correct answers
+- case_videos - Videos for each case
+- user_responses - Student answers
+- password_reset_tokens - OTP tokens
+- email_config - SMTP settings
+
+## XOJO Classes: 3
+- wc_Base - Base class for all containers
+- WebNavigationManager - Navigation system
+- Session - Session state and database
+
+## XOJO Modules: 2
+- EmailHelper - Email sending functions
+- PasswordResetHelper - Password reset logic
+
+## WebContainers: 10
+- wc_Login - User login
+- wc_ForgotPassword - Request password reset
+- wc_NewPassword - Set new password
+- wc_UserHome - Student dashboard
+- wc_CaseReview - Case testing interface
+- wc_AdminHome - Admin dashboard
+- wc_UserAdmin - User management
+- wc_CaseAdmin - Case management
+- wc_EmailConfig - Email configuration

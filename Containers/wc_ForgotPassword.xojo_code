@@ -1,11 +1,11 @@
 #tag WebContainerControl
-Begin wc_base wc_Landing
+Begin wc_base wc_ForgotPassword
    Compatibility   =   ""
    ControlCount    =   0
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   119
+   Height          =   506
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,78 +21,53 @@ Begin wc_base wc_Landing
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   503
+   Width           =   446
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
-   Begin WebButton Button1
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Log in"
+   Begin WebLabel lblTitle
+      Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
-      Default         =   False
       Enabled         =   True
+      FontName        =   "arial"
+      FontSize        =   24.0
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   1
+      Indicator       =   0
+      Italic          =   False
       Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   0
       TabStop         =   True
+      Text            =   "Forgot password"
+      TextAlignment   =   2
+      TextColor       =   &c000000FF
       Tooltip         =   ""
       Top             =   20
+      Underline       =   False
       Visible         =   True
-      Width           =   195
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton Button2
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Admin log in"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   1
-      Left            =   288
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   1
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   20
-      Visible         =   True
-      Width           =   195
+      Width           =   406
       _mPanelIndex    =   -1
    End
    Begin WebLabel Label2
-      Bold            =   False
+      Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      FontName        =   "Verdana"
+      FontName        =   "arial"
       FontSize        =   14.0
-      Height          =   33
+      Height          =   28
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
@@ -107,98 +82,299 @@ Begin wc_base wc_Landing
       Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   2
+      TabIndex        =   1
       TabStop         =   True
-      Text            =   "Test yourself"
-      TextAlignment   =   2
+      Text            =   "Email"
+      TextAlignment   =   1
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   66
+      Top             =   162
       Underline       =   False
       Visible         =   True
-      Width           =   195
+      Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label3
-      Bold            =   False
+   Begin WebTextField txtEmail
+      AllowAutoComplete=   False
+      AllowSpellChecking=   False
+      Caption         =   ""
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      FontName        =   "Verdana"
-      FontSize        =   14.0
-      Height          =   33
+      FieldType       =   0
+      Height          =   38
+      Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Italic          =   False
-      Left            =   288
+      Left            =   20
       LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      MaximumCharactersAllowed=   0
+      PanelIndex      =   0
+      ReadOnly        =   False
+      Scope           =   0
+      TabIndex        =   3
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      Tooltip         =   ""
+      Top             =   198
+      Visible         =   True
+      Width           =   406
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnBackToLogin
+      AllowAutoDisable=   False
+      Cancel          =   True
+      Caption         =   "Back to login"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   126
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   False
       LockRight       =   True
+      LockTop         =   False
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   5
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   448
+      Visible         =   True
+      Width           =   146
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnSendCode
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Send code"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   True
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   1
+      Left            =   280
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   6
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   448
+      Visible         =   True
+      Width           =   146
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblMessage
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   0.0
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   3
+      TabIndex        =   9
       TabStop         =   True
-      Text            =   "Manage the app"
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   276
+      Underline       =   False
+      Visible         =   True
+      Width           =   406
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblInstructions
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   0.0
+      Height          =   55
+      Index           =   -2147483648
+      Indicator       =   0
+      Italic          =   False
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Multiline       =   True
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   10
+      TabStop         =   True
+      Text            =   "Enter your email address to receive a password reset code"
       TextAlignment   =   2
       TextColor       =   &c000000FF
       Tooltip         =   ""
       Top             =   66
       Underline       =   False
       Visible         =   True
-      Width           =   195
+      Width           =   446
       _mPanelIndex    =   -1
    End
 End
 #tag EndWebContainerControl
 
 #tag WindowCode
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  // Calling the overridden superclass constructor.
-		  // Note that this may need modifications if there are multiple constructor choices.
-		  // Possible constructor calls:
-		  // Constructor() -- From wc_base
-		  // Constructor() -- From WebView
-		  // Constructor() -- From WebUIControl
-		  // Constructor() -- From WebControl
-		  Super.Constructor
-		  
-		  Title = "Welcome"
-		  Icon = "home"
-		  RoleRequired = ""
-		  Position = PositionEnum.Center
-		  ContainerID = "wc_Landing"   
-		  
-		   
-		  
-		  
-		  
+	#tag Event
+		Sub Opening()
+		  lblMessage.Text = ""
+		  lblMessage.Visible = False
 		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub NavigateToOTPEntry(t as Timer)
+		  Var otpEntry As New wc_EnterOTP
+		  otpEntry.ContainerID = "EnterOTP"
+		  otpEntry.Position = wc_Base.PositionEnum.Center
+		  otpEntry.UserEmail = txtEmail.Text.Trim
+		  Session.Navigation.NavigateTo(otpEntry)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowMessage(msg As String, isSuccess As Boolean)
+		  lblMessage.Text = msg
+		  lblMessage.TextColor = If(isSuccess, &c27ae60, &ce74c3c) // Green or Red
+		  lblMessage.Visible = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidateEmail(email As String) As Boolean
+		  // Basic email validation
+		  If email.IndexOf("@") < 1 Then Return False
+		  If email.IndexOf(".") < 3 Then Return False
+		  If email.Length < 5 Then Return False
+		  Return True
+		End Function
 	#tag EndMethod
 
 
 #tag EndWindowCode
 
-#tag Events Button1
+#tag Events btnBackToLogin
 	#tag Event
 		Sub Pressed()
-		  session.LoginAsAdmin = false
-		  var w as new wc_login
-		  session.Navigation.NavigateTo(w)
+		  Session.Navigation.NavigateBack
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Button2
+#tag Events btnSendCode
 	#tag Event
 		Sub Pressed()
-		  session.LoginAsAdmin = true
-		  var w as new wc_login
-		  session.Navigation.NavigateTo(w)
+		  If txtEmail.Text.Trim = "" Then
+		    ShowMessage("Please enter your email address", False)
+		    Return
+		  End If
+		  
+		  // Validate email format
+		  If Not ValidateEmail(txtEmail.Text.Trim) Then
+		    ShowMessage("Please enter a valid email address", False)
+		    Return
+		  End If
+		  
+		  // Check if user exists
+		  Var sql As String = "SELECT user_id, full_name, email FROM users WHERE email = ?"
+		  
+		  Try
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.Bind(0, txtEmail.Text.Trim)
+		    
+		    Var rs As RowSet = ps.SQLSelect
+		    
+		    If rs = Nil Or rs.AfterLastRow Then
+		      // Don't reveal if email exists or not for security
+		      ShowMessage("If this email is registered, you will receive a password reset code shortly.", True)
+		      Return
+		    End If
+		    
+		    Var userID As Integer = rs.Column("user_id").IntegerValue
+		    Var userName As String = rs.Column("full_name").StringValue
+		    Var userEmail As String = rs.Column("email").StringValue
+		    
+		    // Get IP address (if available in XOJO Web)
+		    Var ipAddress As String = "unknown"
+		    
+		    // Create password reset token
+		    Var tokenResult As Dictionary = PasswordResetHelper.CreatePasswordResetToken(userID, ipAddress)
+		    
+		    If Not tokenResult.Value("success") Then
+		      ShowMessage("An error occurred. Please try again later.", False)
+		      Return
+		    End If
+		    
+		    Var otp As String = tokenResult.Value("otp")
+		    Var token As String = tokenResult.Value("token")
+		    
+		    // Send email
+		    Var resetLink As String = "https://your-domain.com/reset/" + token
+		    
+		    If EmailHelper.SendPasswordResetEmail(userEmail, userName, otp, resetLink) Then
+		      ShowMessage("A password reset code has been sent to your email.", True)
+		      
+		      // Navigate to OTP entry page after 2 seconds
+		      Var t As New Timer
+		      t.Period = 2000
+		      t.Mode = Timer.ModeOff
+		      AddHandler t.Action, AddressOf NavigateToOTPEntry
+		      t.RunMode = Timer.RunModes.Single
+		      t.Enabled = True
+		      
+		    Else
+		      ShowMessage("Failed to send email. Please try again later.", False)
+		    End If
+		    
+		  Catch e As DatabaseException
+		    ShowMessage("An error occurred: " + e.Message, False)
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -320,30 +496,6 @@ End
 			"2 - Vertical"
 			"3 - Both"
 		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Subclassed Props"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Icon"
-		Visible=true
-		Group="Subclassed Props"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="RoleRequired"
-		Visible=true
-		Group="Subclassed Props"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Position"
