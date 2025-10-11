@@ -15,7 +15,7 @@ Private IsReviewMode As Boolean = False
 ' Video Section Controls
 ' *******************************************************************************
 ' Label: lblCaseTitle (Bold, Large)
-' HTMLViewer: htmlVideoPlayer (Large area - at least 800px wide)
+' HTMLVideos: htmlVideoPlayer (Large area - at least 800px wide)
 ' Label: lblVideoCounter (text: "")
 ' PushButton: btnPreviousVideo (text: "← Previous")
 ' PushButton: btnNextVideo (text: "Next →")
@@ -83,7 +83,7 @@ Sub LoadCase()
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps.Bind(0, CaseID)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
       Var serialNumber As String = rs.Column("serial_number").StringValue
@@ -96,7 +96,7 @@ Sub LoadCase()
       checkPS.Bind(0, Session.CurrentUserID)
       checkPS.Bind(1, CaseID)
       
-      Var checkRS As RowSet = checkPS.SQLSelect
+      Var checkRS As RowSet = checkPS.SelectSQL
       If checkRS <> Nil And Not checkRS.AfterLastRow Then
         IsReviewMode = checkRS.Column("is_completed").BooleanValue
       End If
@@ -117,7 +117,7 @@ End Sub
 ' LoadExistingResponse Method
 ' *******************************************************************************
 Sub LoadExistingResponse()
-  Var sql As String = "SELECT * FROM user_responses WHERE user_id = ? AND case_id = ?"
+   Var sql As String = "SELECT * FROM user_responses WHERE user_id = ? AND case_id = ?"
   
   Try
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -126,7 +126,7 @@ Sub LoadExistingResponse()
     ps.Bind(0, Session.CurrentUserID)
     ps.Bind(1, CaseID)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
       chkLVSizeDilated.Value = rs.Column("lv_size_dilated").BooleanValue
@@ -167,7 +167,7 @@ Sub LoadVideos()
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps.Bind(0, CaseID)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     Redim VideoFilenames(-1)
     
@@ -212,7 +212,7 @@ Sub DisplayCurrentVideo()
   html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});</script>"
   html = html + "</body></html>"
   
-  htmlVideoPlayer.LoadPage(html, Nil)
+  htmlVideoPlayer.LoadHTML(html)
   UpdateVideoNavigation
 End Sub
 
@@ -273,7 +273,7 @@ Sub SaveResponse(isCompleted As Boolean)
     checkPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     checkPS.Bind(0, Session.CurrentUserID)
     checkPS.Bind(1, CaseID)
-    Var checkRS As RowSet = checkPS.SQLSelect
+    Var checkRS As RowSet = checkPS.SelectSQL
     responseExists = (checkRS <> Nil And Not checkRS.AfterLastRow)
     
     If responseExists Then
@@ -351,7 +351,7 @@ Sub SaveResponse(isCompleted As Boolean)
       ps.Bind(p, CaseID)
     End If
 
-    ps.SQLExecute
+    ps.ExecuteSQL
     
     If isCompleted Then
       MessageBox("Test submitted successfully!")
@@ -374,13 +374,13 @@ End Sub
 ' *******************************************************************************
 Sub ShowCorrectAnswers()
   Var sql As String = "SELECT * FROM cases WHERE case_id = ?"
-  
+
   Try
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps.Bind(0, CaseID)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
       chkLVSizeDilated.Enabled = False
@@ -398,48 +398,51 @@ Sub ShowCorrectAnswers()
       chkRequiresFullEcho.Enabled = False
       txtConclusions.ReadOnly = True
       
-      Var correctColor As Color = &c27ae60
-      Var incorrectColor As Color = &ce74c3c
-
+      Var correctColorStyle as new WebStyle
+      Var incorrectColorStyle as new WebStyle
+      correctColorStyle.ForegroundColor = &c27ae60
+      incorrectColorStyle.ForegroundColor = &ce74c3c
+      
       Var correctLVSize As Boolean = rs.Column("lv_size_dilated").BooleanValue
-      chkLVSizeDilated.TextColor = If(chkLVSizeDilated.Value = correctLVSize, correctColor, incorrectColor)
+      
+      chkLVSizeDilated.Style = If(chkLVSizeDilated.Value = correctLVSize, correctColorStyle, incorrectColorStyle)
       
       Var correctLVFunction As Boolean = rs.Column("lv_function_impaired").BooleanValue
-      chkLVFunctionImpaired.TextColor = If(chkLVFunctionImpaired.Value = correctLVFunction, correctColor, incorrectColor)
+      chkLVFunctionImpaired.Style = If(chkLVFunctionImpaired.Value = correctLVFunction, correctColorStyle, incorrectColorStyle)
       
       Var correctRVSize As Boolean = rs.Column("rv_size_dilated").BooleanValue
-      chkRVSizeDilated.TextColor = If(chkRVSizeDilated.Value = correctRVSize, correctColor, incorrectColor)
+      chkRVSizeDilated.Style = If(chkRVSizeDilated.Value = correctRVSize, correctColorStyle, incorrectColorStyle)
       
       Var correctRVFunction As Boolean = rs.Column("rv_function_impaired").BooleanValue
-      chkRVFunctionImpaired.TextColor = If(chkRVFunctionImpaired.Value = correctRVFunction, correctColor, incorrectColor)
+      chkRVFunctionImpaired.Style = If(chkRVFunctionImpaired.Value = correctRVFunction, correctColorStyle, incorrectColorStyle)
       
       Var correctAorticStenosis As Boolean = rs.Column("aortic_stenosis_significant").BooleanValue
-      chkAorticStenosis.TextColor = If(chkAorticStenosis.Value = correctAorticStenosis, correctColor, incorrectColor)
+      chkAorticStenosis.Style = If(chkAorticStenosis.Value = correctAorticStenosis, correctColorStyle, incorrectColorStyle)
       
       Var correctAorticRegurg As Boolean = rs.Column("aortic_regurgitation_significant").BooleanValue
-      chkAorticRegurgitation.TextColor = If(chkAorticRegurgitation.Value = correctAorticRegurg, correctColor, incorrectColor)
+      chkAorticRegurgitation.Style = If(chkAorticRegurgitation.Value = correctAorticRegurg, correctColorStyle, incorrectColorStyle)
       
       Var correctMitralStenosis As Boolean = rs.Column("mitral_stenosis_significant").BooleanValue
-      chkMitralStenosis.TextColor = If(chkMitralStenosis.Value = correctMitralStenosis, correctColor, incorrectColor)
+      chkMitralStenosis.Style = If(chkMitralStenosis.Value = correctMitralStenosis, correctColorStyle, incorrectColorStyle)
       
       Var correctMitralRegurg As Boolean = rs.Column("mitral_regurgitation_significant").BooleanValue
-      chkMitralRegurgitation.TextColor = If(chkMitralRegurgitation.Value = correctMitralRegurg, correctColor, incorrectColor)
+      chkMitralRegurgitation.Style = If(chkMitralRegurgitation.Value = correctMitralRegurg, correctColorStyle, incorrectColorStyle)
       
       Var correctTricuspidStenosis As Boolean = rs.Column("tricuspid_stenosis_significant").BooleanValue
-      chkTricuspidStenosis.TextColor = If(chkTricuspidStenosis.Value = correctTricuspidStenosis, correctColor, incorrectColor)
+      chkTricuspidStenosis.Style = If(chkTricuspidStenosis.Value = correctTricuspidStenosis, correctColorStyle, incorrectColorStyle)
       
       Var correctTricuspidRegurg As Boolean = rs.Column("tricuspid_regurgitation_significant").BooleanValue
-      chkTricuspidRegurgitation.TextColor = If(chkTricuspidRegurgitation.Value = correctTricuspidRegurg, correctColor, incorrectColor)
+      chkTricuspidRegurgitation.Style = If(chkTricuspidRegurgitation.Value = correctTricuspidRegurg, correctColorStyle, incorrectColorStyle)
       
       Var correctPericardial As Boolean = rs.Column("pericardial_effusion_significant").BooleanValue
-      chkPericardialEffusion.TextColor = If(chkPericardialEffusion.Value = correctPericardial, correctColor, incorrectColor)
+      chkPericardialEffusion.Style = If(chkPericardialEffusion.Value = correctPericardial, correctColorStyle, incorrectColorStyle)
       
       Var correctIVC As Boolean = rs.Column("ivc_high_ra_pressure").BooleanValue
-      chkIVCHighPressure.TextColor = If(chkIVCHighPressure.Value = correctIVC, correctColor, incorrectColor)
+      chkIVCHighPressure.Style = If(chkIVCHighPressure.Value = correctIVC, correctColorStyle, incorrectColorStyle)
       
       Var correctFullEcho As Boolean = rs.Column("requires_full_echo").BooleanValue
-      chkRequiresFullEcho.TextColor = If(chkRequiresFullEcho.Value = correctFullEcho, correctColor, incorrectColor)
-
+      chkRequiresFullEcho.Style = If(chkRequiresFullEcho.Value = correctFullEcho, correctColorStyle, incorrectColorStyle)
+      
       lblCorrectConclusionsTitle.Text = "Expert Conclusions:"
       lblCorrectConclusionsTitle.Visible = True
       lblCorrectConclusions.Text = rs.Column("correct_conclusions").StringValue

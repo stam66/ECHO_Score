@@ -61,7 +61,7 @@ Sub LoadCases()
   Var sql As String = "SELECT case_id, serial_number, case_label FROM cases ORDER BY serial_number"
   
   Try
-    Var rs As RowSet = Session.DB.SQLSelect(sql)
+    Var rs As RowSet = Session.DB.SelectSQL(sql)
     
     While Not rs.AfterLastRow
       lstCases.AddRow(rs.Column("serial_number").StringValue)
@@ -88,7 +88,7 @@ Sub LoadCaseDetails(caseID As Integer)
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps.Bind(0, caseID)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
       txtSerialNumber.Text = rs.Column("serial_number").StringValue
@@ -128,7 +128,7 @@ Sub LoadCaseVideos(caseID As Integer)
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps.Bind(0, caseID)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     While Not rs.AfterLastRow
       lstVideos.AddRow(rs.Column("video_filename").StringValue)
@@ -184,7 +184,7 @@ End Sub
 ' *******************************************************************************
 Sub SelectionChanged()
   If Me.SelectedRowIndex < 0 Then
-    htmlVideoPreview.LoadPage("", Nil)
+    htmlVideoPreview.LoadHTML("")
     Return
   End If
   
@@ -203,7 +203,7 @@ Sub SelectionChanged()
   html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});</script>"
   html = html + "</body></html>"
   
-  htmlVideoPreview.LoadPage(html, Nil)
+  htmlVideoPreview.LoadHTML(html)
 End Sub
 
 
@@ -223,53 +223,38 @@ Sub Pressed()
     
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(0, txtSerialNumber.Text.Trim)
-    
     ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(1, txtCaseLabel.Text.Trim)
-    
     ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(2, chkLVSizeDilated.Value)
-    
     ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(3, chkLVFunctionImpaired.Value)
-    
     ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(4, chkRVSizeDilated.Value)
-    
     ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(5, chkRVFunctionImpaired.Value)
-    
     ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(6, chkAorticStenosis.Value)
-    
     ps.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(7, chkAorticRegurgitation.Value)
-    
     ps.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(8, chkMitralStenosis.Value)
-    
     ps.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(9, chkMitralRegurgitation.Value)
-    
     ps.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(10, chkTricuspidStenosis.Value)
-    
     ps.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(11, chkTricuspidRegurgitation.Value)
-    
     ps.BindType(12, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(12, chkPericardialEffusion.Value)
-    
     ps.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(13, chkIVCHighPressure.Value)
-    
     ps.BindType(14, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(14, txtCorrectConclusions.Text)
-    
     ps.BindType(15, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(15, chkRequiresFullEcho.Value)
     
-    ps.SQLExecute
+    ps.ExecuteSQL
     
     MessageBox("Case added successfully!")
     ClearCaseFields
@@ -357,11 +342,24 @@ Sub Pressed()
     Return
   End If
   
-  Var result As MessageDialogButton = MessageBox("Are you sure you want to delete this case? This will also delete all associated videos and user responses.", MessageBox.ActionCancel)
+  Var d As New WebMessageDialog
+  d.Title = "Confirm Delete"
+  d.Message = "Are you sure you want to delete this case? This will also delete all associated videos and user responses. This action cannot be undone."
+  d.ActionButton.Caption = "Delete"
+  d.CancelButton.Caption = "Cancel"
+  d.CancelButton.Visible = True
   
-  If result = MessageDialogButton.Action Then
+  AddHandler d.ButtonPressed, AddressOf HandleDeleteCaseConfirm
+  d.Show
+End Sub
+
+'********************************************************************************
+'HandleDeleteCaseConfirm Method - delegate for delete confirmation dialog
+'********************************************************************************
+Private Sub HandleDeleteCaseConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
+  Select Case button
+  Case dialog.ActionButton
     Var caseID As Integer = lstCases.RowTagAt(lstCases.SelectedRowIndex)
-    
     Var sql As String = "DELETE FROM cases WHERE case_id = ?"
     
     Try
@@ -369,18 +367,18 @@ Sub Pressed()
       ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
       ps.Bind(0, caseID)
       
-      ps.SQLExecute
+      ps.ExecuteSQL
       
       MessageBox("Case deleted successfully!")
       ClearCaseFields
       LoadCases
       lstVideos.RemoveAllRows
-      htmlVideoPreview.LoadPage("", Nil)
+      htmlVideoPreview.LoadHTML("")
       
     Catch e As DatabaseException
       MessageBox("Error deleting case: " + e.Message)
     End Try
-  End If
+  End Select
 End Sub
 
 
@@ -409,7 +407,7 @@ Sub Pressed()
       orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
       orderPS.Bind(0, caseID)
       
-      Var orderRS As RowSet = orderPS.SQLSelect
+      Var orderRS As RowSet = orderPS.SelectSQL
       If orderRS <> Nil And Not orderRS.AfterLastRow Then
         videoOrder = orderRS.Column("next_order").IntegerValue
       Else
@@ -437,7 +435,7 @@ Sub Pressed()
     ps.Bind(2, txtViewDescription.Text.Trim)
     ps.Bind(3, videoOrder)
     
-    ps.SQLExecute
+    ps.ExecuteSQL
     
     MessageBox("Video added successfully!")
     txtVideoFilename.Text = ""
@@ -460,11 +458,24 @@ Sub Pressed()
     Return
   End If
   
-  Var result As MessageDialogButton = MessageBox("Are you sure you want to delete this video?", MessageBox.ActionCancel)
+  Var d As New WebMessageDialog
+  d.Title = "Confirm Delete"
+  d.Message = "Are you sure you want to delete this video? This action cannot be undone."
+  d.ActionButton.Caption = "Delete"
+  d.CancelButton.Caption = "Cancel"
+  d.CancelButton.Visible = True
   
-  If result = MessageDialogButton.Action Then
+  AddHandler d.ButtonPressed, AddressOf HandleDeleteVideoConfirm
+  d.Show
+End Sub
+
+'********************************************************************************
+'HandleDeleteVideoConfirm Method - delegate for delete confirmation dialog
+'********************************************************************************
+Private Sub HandleDeleteVideoConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
+  Select Case button
+  Case dialog.ActionButton
     Var videoID As Integer = lstVideos.RowTagAt(lstVideos.SelectedRowIndex)
-    
     Var sql As String = "DELETE FROM case_videos WHERE video_id = ?"
     
     Try
@@ -472,7 +483,7 @@ Sub Pressed()
       ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
       ps.Bind(0, videoID)
       
-      ps.SQLExecute
+      ps.ExecuteSQL
       
       MessageBox("Video deleted successfully!")
       
@@ -481,12 +492,12 @@ Sub Pressed()
         LoadCaseVideos(caseID)
       End If
       
-      htmlVideoPreview.LoadPage("", Nil)
+      htmlVideoPreview.LoadHTML("")
       
     Catch e As DatabaseException
       MessageBox("Error deleting video: " + e.Message)
     End Try
-  End If
+  End Select
 End Sub
 
 

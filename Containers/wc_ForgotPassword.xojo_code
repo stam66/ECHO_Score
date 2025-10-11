@@ -24,7 +24,6 @@ Begin wc_base wc_ForgotPassword
    Width           =   446
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblTitle
       Bold            =   True
@@ -60,7 +59,7 @@ Begin wc_base wc_ForgotPassword
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label2
+   Begin WebLabel lblEmail
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
@@ -262,6 +261,9 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  ' *******************************************************************************
+		  ' wc_ForgotPassword.Opening event
+		  ' *******************************************************************************
 		  lblMessage.Text = ""
 		  lblMessage.Visible = False
 		End Sub
@@ -270,6 +272,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NavigateToOTPEntry(t as Timer)
+		  #Pragma Unused t
+		  
 		  Var otpEntry As New wc_EnterOTP
 		  otpEntry.ContainerID = "EnterOTP"
 		  otpEntry.Position = wc_Base.PositionEnum.Center
@@ -281,7 +285,7 @@ End
 	#tag Method, Flags = &h0
 		Sub ShowMessage(msg As String, isSuccess As Boolean)
 		  lblMessage.Text = msg
-		  lblMessage.TextColor = If(isSuccess, &c27ae60, &ce74c3c) // Green or Red
+		  lblMessage.TextColor = If(isSuccess, &c27ae60, &ce74c3c)
 		  lblMessage.Visible = True
 		End Sub
 	#tag EndMethod
@@ -309,18 +313,19 @@ End
 #tag Events btnSendCode
 	#tag Event
 		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnSendCode.Pressed Event
+		  ' *******************************************************************************   
 		  If txtEmail.Text.Trim = "" Then
 		    ShowMessage("Please enter your email address", False)
 		    Return
 		  End If
 		  
-		  // Validate email format
 		  If Not ValidateEmail(txtEmail.Text.Trim) Then
 		    ShowMessage("Please enter a valid email address", False)
 		    Return
 		  End If
 		  
-		  // Check if user exists
 		  Var sql As String = "SELECT user_id, full_name, email FROM users WHERE email = ?"
 		  
 		  Try
@@ -328,10 +333,9 @@ End
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.Bind(0, txtEmail.Text.Trim)
 		    
-		    Var rs As RowSet = ps.SQLSelect
+		    Var rs As RowSet = ps.SelectSQL
 		    
 		    If rs = Nil Or rs.AfterLastRow Then
-		      // Don't reveal if email exists or not for security
 		      ShowMessage("If this email is registered, you will receive a password reset code shortly.", True)
 		      Return
 		    End If
@@ -340,10 +344,8 @@ End
 		    Var userName As String = rs.Column("full_name").StringValue
 		    Var userEmail As String = rs.Column("email").StringValue
 		    
-		    // Get IP address (if available in XOJO Web)
 		    Var ipAddress As String = "unknown"
 		    
-		    // Create password reset token
 		    Var tokenResult As Dictionary = PasswordResetHelper.CreatePasswordResetToken(userID, ipAddress)
 		    
 		    If Not tokenResult.Value("success") Then
@@ -354,13 +356,11 @@ End
 		    Var otp As String = tokenResult.Value("otp")
 		    Var token As String = tokenResult.Value("token")
 		    
-		    // Send email
 		    Var resetLink As String = "https://your-domain.com/reset/" + token
 		    
 		    If EmailHelper.SendPasswordResetEmail(userEmail, userName, otp, resetLink) Then
 		      ShowMessage("A password reset code has been sent to your email.", True)
 		      
-		      // Navigate to OTP entry page after 2 seconds
 		      Var t As New Timer
 		      t.Period = 2000
 		      t.Mode = Timer.ModeOff
@@ -505,8 +505,8 @@ End
 		Type="PositionEnum"
 		EditorType="Enum"
 		#tag EnumValues
-			"0 - TopLeft"
-			"1 - Center"
+			"0 - Center"
+			"1 - TopLeft"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

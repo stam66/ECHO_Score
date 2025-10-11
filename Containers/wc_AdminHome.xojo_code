@@ -1,11 +1,11 @@
 #tag WebContainerControl
-Begin wc_base wc_UserHome
+Begin wc_base wc_AdminHome
    Compatibility   =   ""
    ControlCount    =   0
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   628
+   Height          =   500
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,12 +21,13 @@ Begin wc_base wc_UserHome
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   1002
+   Width           =   382
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblWelcome
-      Bold            =   False
+      Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
@@ -34,14 +35,14 @@ Begin wc_base wc_UserHome
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   ""
+      indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
@@ -49,65 +50,20 @@ Begin wc_base wc_UserHome
       Scope           =   0
       TabIndex        =   0
       TabStop         =   True
-      Text            =   ""
+      Text            =   "Welcome"
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
       Top             =   20
       Underline       =   False
       Visible         =   True
-      Width           =   807
+      Width           =   342
       _mPanelIndex    =   -1
    End
-   Begin WebListBox lstCases
-      AllowRowReordering=   False
-      ColumnCount     =   4
-      ColumnWidths    =   ""
-      ControlID       =   ""
-      CSSClasses      =   ""
-      DefaultRowHeight=   49
-      Enabled         =   True
-      GridLineStyle   =   3
-      HasBorder       =   True
-      HasHeader       =   True
-      HeaderHeight    =   0
-      Height          =   447
-      HighlightSortedColumn=   True
-      Index           =   -2147483648
-      Indicator       =   0
-      InitialValue    =   "Case	Serial	Status	Score"
-      LastAddedRowIndex=   0
-      LastColumnIndex =   0
-      LastRowIndex    =   0
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      NoRowsMessage   =   ""
-      PanelIndex      =   0
-      ProcessingMessage=   ""
-      RowCount        =   0
-      RowSelectionType=   1
-      Scope           =   0
-      SearchCriteria  =   ""
-      SelectedRowColor=   &c0d6efd
-      SelectedRowIndex=   0
-      TabIndex        =   1
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   154
-      Visible         =   True
-      Width           =   962
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnStartCase
+   Begin WebButton btnManageUsers
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Start/Continue Case"
+      Caption         =   "Manage Users"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -115,7 +71,67 @@ Begin wc_base wc_UserHome
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
+      Left            =   93
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   1
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   147
+      Visible         =   True
+      Width           =   195
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnManageCases
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Manage Cases"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   93
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   2
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   221
+      Visible         =   True
+      Width           =   195
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnEmailConfig
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Email configuration"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   93
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -129,9 +145,9 @@ Begin wc_base wc_UserHome
       TabIndex        =   3
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   98
+      Top             =   294
       Visible         =   True
-      Width           =   217
+      Width           =   195
       _mPanelIndex    =   -1
    End
    Begin WebButton btnLogout
@@ -145,12 +161,12 @@ Begin wc_base wc_UserHome
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   882
+      Left            =   93
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -159,9 +175,9 @@ Begin wc_base wc_UserHome
       TabIndex        =   4
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   98
+      Top             =   367
       Visible         =   True
-      Width           =   100
+      Width           =   195
       _mPanelIndex    =   -1
    End
 End
@@ -170,78 +186,50 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  ' *******************************************************************************
-		  ' wc_UserHome.Opening event
-		  ' *******************************************************************************
-		  lblWelcome.Text = "Welcome, " + Session.CurrentUserName
-		  LoadCases
+		   lblWelcome.Text = "Admin Dashboard - Welcome, " + Session.CurrentUserName
 		End Sub
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0
-		Sub LoadCases()
-		  lstCases.RemoveAllRows
-		  
-		  Var sql As String = _
-		  "SELECT c.case_id, c.serial_number, c.case_label, ur.is_completed, ur.response_id " + _
-		  "FROM cases c " + _
-		  "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
-		  "ORDER BY c.serial_number"
-		  
-		  Try
-		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		    ps.Bind(0, Session.CurrentUserID)
-		    
-		    Var rs As RowSet = ps.SelectSQL
-		    
-		    While Not rs.AfterLastRow
-		      lstCases.AddRow(rs.Column("case_label").StringValue)
-		      lstCases.CellTextAt(lstCases.LastAddedRowIndex, 1) = rs.Column("serial_number").StringValue
-		      
-		      If rs.Column("response_id").IntegerValue > 0 Then
-		        If rs.Column("is_completed").BooleanValue Then
-		          lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = "Completed"
-		        Else
-		          lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = "In Progress"
-		        End If
-		      Else
-		        lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = "Not Started"
-		      End If
-		      
-		      lstCases.RowTagAt(lstCases.LastAddedRowIndex) = rs.Column("case_id").IntegerValue
-		      
-		      rs.MoveToNextRow
-		    Wend
-		    
-		  Catch e As DatabaseException
-		    MessageBox("Error loading cases: " + e.Message)
-		  End Try
-		End Sub
-	#tag EndMethod
-
-
 #tag EndWindowCode
 
-#tag Events btnStartCase
+#tag Events btnManageUsers
 	#tag Event
 		Sub Pressed()
 		  ' *******************************************************************************
-		  ' btnStartCase.Pressed Event
+		  ' btnManageUsers.Pressed Event
 		  ' *******************************************************************************
-		  If lstCases.SelectedRowIndex < 0 Then
-		    MessageBox("Please select a case")
-		    Return
-		  End If
+		  Var userAdmin As New wc_UserAdmin
+		  userAdmin.ContainerID = "UserAdmin"
+		  userAdmin.Position = wc_Base.PositionEnum.TopLeft
+		  Session.Navigation.NavigateTo(userAdmin)
 		  
-		  Var caseID As Integer = lstCases.RowTagAt(lstCases.SelectedRowIndex)
-		  
-		  Var caseReview As New wc_CaseReview
-		  caseReview.CaseID = caseID
-		  caseReview.ContainerID = "CaseReview"
-		  caseReview.Position = wc_Base.PositionEnum.TopLeft
-		  Session.Navigation.NavigateTo(caseReview)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnManageCases
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnManageCases.Pressed Event
+		  ' *******************************************************************************
+		  Var caseAdmin As New wc_CaseAdmin
+		  caseAdmin.ContainerID = "CaseAdmin"
+		  caseAdmin.Position = wc_Base.PositionEnum.TopLeft
+		  Session.Navigation.NavigateTo(caseAdmin)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnEmailConfig
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnEmailConfig.Pressed Event
+		  ' *******************************************************************************
+		  Var emailConfig As New wc_EmailConfig
+		  emailConfig.ContainerID = "EmailConfig"
+		  emailConfig.Position = wc_Base.PositionEnum.TopLeft
+		  Session.Navigation.NavigateTo(emailConfig)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

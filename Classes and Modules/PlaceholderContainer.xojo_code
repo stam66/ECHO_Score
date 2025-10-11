@@ -24,7 +24,6 @@ Begin wc_base PlaceholderContainer
    Width           =   250
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
 End
 #tag EndWebContainerControl
@@ -159,8 +158,8 @@ End
 		Type="PositionEnum"
 		EditorType="Enum"
 		#tag EnumValues
-			"0 - TopLeft"
-			"1 - Center"
+			"0 - Center"
+			"1 - TopLeft"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

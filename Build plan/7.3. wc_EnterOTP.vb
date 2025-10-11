@@ -83,7 +83,7 @@ Sub Pressed()
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(0, UserEmail)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
       Var userID As Integer = rs.Column("user_id").IntegerValue

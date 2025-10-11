@@ -10,7 +10,7 @@ Public Function SendPasswordResetEmail(toEmail As String, toName As String, otp 
   Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
   
   Try
-    Var rs As RowSet = Session.DB.SQLSelect(configSQL)
+    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
     
     If rs = Nil Or rs.AfterLastRow Then
       System.DebugLog("Email configuration not found")
@@ -47,10 +47,9 @@ Public Function SendPasswordResetEmail(toEmail As String, toName As String, otp 
     socket.Port = smtpPort
     socket.Username = smtpUsername
     socket.Password = smtpPassword
-    socket.ConnectionType = If(useTLS, SMTPSecureSocket.TLSv12, SMTPSecureSocket.None)
     
     socket.Messages.Add(mail)
-    socket.Send
+    socket.SendMail
     
     Var timeout As Integer = 30
     Var elapsed As Integer = 0
@@ -110,10 +109,9 @@ End Function
 '   Return Type: String
 ' *******************************************************************************
 Public Function GenerateOTP() As String
-  Dim crypto As New Crypto
-  Var randomBytes() As Byte = crypto.GenerateRandomBytes(4)
+  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(4)
   
-  Var number As Integer = Abs(randomBytes(0) * 16777216 + randomBytes(1) * 65536 + randomBytes(2) * 256 + randomBytes(3))
+  Var number As Integer = Abs(randomData.UInt8Value(0) * 16777216 + randomData.UInt8Value(1) * 65536 + randomData.UInt8Value(2) * 256 + randomData.UInt8Value(3))
   Var otp As String = Format(number Mod 1000000, "000000")
   
   Return otp
@@ -124,8 +122,12 @@ End Function
 '   Return Type: String
 ' *******************************************************************************
 Public Function GenerateSecureToken() As String
-  Dim crypto As New Crypto
-  Var randomBytes() As Byte = crypto.GenerateRandomBytes(32)
-  Var token As String = EncodeHex(randomBytes)
+  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(32)
+  
+  Var token As String = ""
+  For i As Integer = 0 To randomData.Size - 1
+    token = token + randomData.UInt8Value(i).ToHex(2)
+  Next
+  
   Return token
 End Function

@@ -37,7 +37,7 @@ Sub LoadCases()
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps.Bind(0, Session.CurrentUserID)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     While Not rs.AfterLastRow
       lstCases.AddRow(rs.Column("case_label").StringValue)

@@ -11,18 +11,24 @@ Inherits WebSession
 #tag EndSession
 	#tag Event
 		Sub Opening()
+		  ' *******************************************************************************
+		  ' Session.opening event
+		  ' *******************************************************************************
 		  DB = New MySQLCommunityServer
 		  DB.Host = "127.0.0.1"
 		  DB.Port = 3306
 		  DB.DatabaseName = "echoscore"
-		  DB.UserName = "root"  // MySQL server username
-		  DB.Password = "your_mysql_root_password"  // MySQL server password
+		  DB.UserName = "admin"
+		  DB.Password = "reject66"
 		  
 		  Try
 		    If Not DB.Connect Then
 		      MessageBox("Database connection failed: " + DB.ErrorMessage)
 		      Return
 		    End If
+		    
+		    System.DebugLog("Database connected successfully")
+		    
 		  Catch e As RuntimeException
 		    MessageBox("Database error: " + e.Message)
 		    Return
@@ -32,22 +38,17 @@ Inherits WebSession
 		  MainShell.Show
 		  Navigation = New WebNavigationManager(MainShell)
 		  
-		  // Navigate to login page
 		  Var w As New wc_Login
 		  w.ContainerID = "Login"
 		  w.Position = wc_Base.PositionEnum.Center
 		  Navigation.NavigateTo(w)
-		  
-		  
-		  ' MainShell = New wp_MainShell
-		  ' MainShell.Show
-		  ' 
-		  ' Navigation = New WebNavigationManager(MainShell)
-		  ' var w as new wc_Landing
-		  ' Navigation.NavigateTo(w) // Initial container
 		End Sub
 	#tag EndEvent
 
+
+	#tag Property, Flags = &h0
+		CurrentUserEmail As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		CurrentUserID As Integer = 0
@@ -66,19 +67,11 @@ Inherits WebSession
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		LoginAsAdmin As Boolean = false
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		MainShell As wp_MainShell
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		Navigation As WebNavigationManager
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		ResetUserID As Integer
 	#tag EndProperty
 
 
@@ -305,22 +298,6 @@ Inherits WebSession
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ResetUserID"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LoginAsAdmin"
-			Visible=false
-			Group="Behavior"
-			InitialValue="false"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="CurrentUserID"
 			Visible=false
 			Group="Behavior"
@@ -334,7 +311,23 @@ Inherits WebSession
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsAdmin"
+			Visible=false
+			Group="Behavior"
+			InitialValue="false"
+			Type="Boolean"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CurrentUserEmail"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

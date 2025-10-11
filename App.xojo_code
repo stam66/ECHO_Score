@@ -3,6 +3,8 @@ Protected Class App
 Inherits WebApplication
 	#tag Event
 		Sub Opening(args() As String)
+		   #Pragma Unused args
+		  
 		  Var appFolder As FolderItem = SpecialFolder.Documents.Child("ECHO_score")
 		  if not appFolder.Exists then appFolder.CreateFolder
 		  

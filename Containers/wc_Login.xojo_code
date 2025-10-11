@@ -24,7 +24,6 @@ Begin wc_base wc_Login
    Width           =   446
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblTitle
       Bold            =   True
@@ -60,7 +59,7 @@ Begin wc_base wc_Login
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label2
+   Begin WebLabel lblUsername
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
@@ -94,7 +93,7 @@ Begin wc_base wc_Login
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label3
+   Begin WebLabel lblPassword
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
@@ -196,36 +195,6 @@ Begin wc_base wc_Login
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnCancel
-      AllowAutoDisable=   False
-      Cancel          =   True
-      Caption         =   "Cancel"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   218
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   5
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   448
-      Visible         =   True
-      Width           =   100
-      _mPanelIndex    =   -1
-   End
    Begin WebButton btnLogin
       AllowAutoDisable=   False
       Cancel          =   False
@@ -237,7 +206,7 @@ Begin wc_base wc_Login
       Height          =   38
       Index           =   -2147483648
       Indicator       =   1
-      Left            =   326
+      Left            =   58
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -251,9 +220,9 @@ Begin wc_base wc_Login
       TabIndex        =   6
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   448
+      Top             =   434
       Visible         =   True
-      Width           =   100
+      Width           =   330
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblError
@@ -330,28 +299,26 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  ' *******************************************************************************
+		  ' wc_Login.Opening event
+		  ' *******************************************************************************
 		  lblError.Text = ""
 		  lblError.Visible = False
-		  
-		  // Style forgot password as link
-		  lblForgotPassword.TextColor = & c3498db
+		  lblForgotPassword.TextColor = &c3498db
 		  lblForgotPassword.Underline = True
+		  
 		End Sub
 	#tag EndEvent
 
 
 #tag EndWindowCode
 
-#tag Events btnCancel
-	#tag Event
-		Sub Pressed()
-		  session.Navigation.NavigateBack
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events btnLogin
 	#tag Event
 		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnLogin.Pressed Event:
+		  ' *******************************************************************************
 		  If txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
 		    lblError.Text = "Please enter username and password"
 		    lblError.Visible = True
@@ -368,7 +335,7 @@ End
 		    ps.Bind(0, txtUsername.Text.Trim)
 		    ps.Bind(1, txtPassword.Text.Trim)
 		    
-		    Var rs As RowSet = ps.SQLSelect
+		    Var rs As RowSet = ps.SelectSQL
 		    
 		    If rs <> Nil And Not rs.AfterLastRow Then
 		      Session.CurrentUserID = rs.Column("user_id").IntegerValue
@@ -376,14 +343,12 @@ End
 		      Session.CurrentUserEmail = rs.Column("email").StringValue
 		      Session.IsAdmin = rs.Column("is_admin").BooleanValue
 		      
-		      / / Update last login
 		      Var updateSQL As String = "UPDATE users SET last_login = NOW() WHERE user_id = ?"
 		      Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
 		      updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      updatePS.Bind(0, Session.CurrentUserID)
-		      updatePS.SQLExecute
+		      updatePS.ExecuteSQL
 		      
-		      / / Navigate To appropriate page
 		      If Session.IsAdmin Then
 		        Var adminHome As New wc_AdminHome
 		        adminHome.ContainerID = "AdminHome"
@@ -395,11 +360,11 @@ End
 		        userHome.Position = wc_Base.PositionEnum.TopLeft
 		        Session.Navigation.NavigateTo(userHome)
 		      End If
-		      
 		    Else
 		      lblError.Text = "Invalid username or password"
 		      lblError.Visible = True
 		    End If
+		    
 		  Catch e As DatabaseException
 		    lblError.Text = "Database error: " + e.Message
 		    lblError.Visible = True
@@ -410,6 +375,9 @@ End
 #tag Events lblForgotPassword
 	#tag Event
 		Sub Pressed()
+		  ' *******************************************************************************
+		  ' lblForgotPassword.MouseDown Event:
+		  ' *******************************************************************************
 		  Var forgotPassword As New wc_ForgotPassword
 		  forgotPassword.ContainerID = "ForgotPassword"
 		  forgotPassword.Position = wc_Base.PositionEnum.Center
@@ -544,8 +512,8 @@ End
 		Type="PositionEnum"
 		EditorType="Enum"
 		#tag EnumValues
-			"0 - TopLeft"
-			"1 - Center"
+			"0 - Center"
+			"1 - TopLeft"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

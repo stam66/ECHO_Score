@@ -24,7 +24,6 @@ Begin wc_base wc_EnterOTP
    Width           =   446
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblTitle
       Bold            =   True
@@ -60,7 +59,7 @@ Begin wc_base wc_EnterOTP
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label2
+   Begin WebLabel lblOTP
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
@@ -71,7 +70,7 @@ Begin wc_base wc_EnterOTP
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   20
+      Left            =   72
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -84,48 +83,14 @@ Begin wc_base wc_EnterOTP
       Scope           =   0
       TabIndex        =   1
       TabStop         =   True
-      Text            =   "One-time password: "
+      Text            =   "6-digit code:"
       TextAlignment   =   1
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   162
+      Top             =   237
       Underline       =   False
       Visible         =   True
-      Width           =   146
-      _mPanelIndex    =   -1
-   End
-   Begin WebTextField txtOTP
-      AllowAutoComplete=   False
-      AllowSpellChecking=   False
-      Caption         =   ""
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FieldType       =   0
-      Height          =   38
-      Hint            =   ""
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   174
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      MaximumCharactersAllowed=   0
-      PanelIndex      =   0
-      ReadOnly        =   False
-      Scope           =   0
-      TabIndex        =   3
-      TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   0
-      Tooltip         =   ""
-      Top             =   159
-      Visible         =   True
-      Width           =   198
+      Width           =   91
       _mPanelIndex    =   -1
    End
    Begin WebButton btnCancel
@@ -195,7 +160,7 @@ Begin wc_base wc_EnterOTP
       Enabled         =   True
       FontName        =   ""
       FontSize        =   0.0
-      Height          =   38
+      Height          =   67
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
@@ -207,7 +172,7 @@ Begin wc_base wc_EnterOTP
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Multiline       =   False
+      Multiline       =   True
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   9
@@ -216,7 +181,7 @@ Begin wc_base wc_EnterOTP
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   234
+      Top             =   129
       Underline       =   False
       Visible         =   True
       Width           =   406
@@ -286,12 +251,49 @@ Begin wc_base wc_EnterOTP
       Width           =   99
       _mPanelIndex    =   -1
    End
+   Begin WebTextField txtOTP
+      AllowAutoComplete=   False
+      AllowSpellChecking=   False
+      Caption         =   ""
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FieldType       =   0
+      Height          =   38
+      Hint            =   ""
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   165
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      MaximumCharactersAllowed=   0
+      PanelIndex      =   0
+      ReadOnly        =   False
+      Scope           =   0
+      TabIndex        =   3
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      Tooltip         =   ""
+      Top             =   235
+      Visible         =   True
+      Width           =   198
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebContainerControl
 
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  ' *******************************************************************************
+		  ' wc_EnterOTP.Opening event
+		  ' *******************************************************************************
 		  lblInstructions.Text = "Please enter the 6-digit code sent to " + UserEmail
 		  lblMessage.Text = ""
 		  lblMessage.Visible = False
@@ -301,16 +303,6 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub NavigateToOTPEntry(t as Timer)
-		  Var otpEntry As New wc_EnterOTP
-		  otpEntry.ContainerID = "EnterOTP"
-		  otpEntry.Position = wc_Base.PositionEnum.Center
-		  otpEntry.UserEmail = txtEmail.Text.Trim
-		  Session.Navigation.NavigateTo(otpEntry)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ShowMessage(msg As String, isSuccess As Boolean)
 		  lblMessage.Text = msg
 		  lblMessage.TextColor = If(isSuccess, &c27ae60, &ce74c3c)
@@ -318,15 +310,18 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ValidateEmail(email As String) As Boolean
-		  // Basic email validation
-		  If email.IndexOf("@") < 1 Then Return False
-		  If email.IndexOf(".") < 3 Then Return False
-		  If email.Length < 5 Then Return False
-		  Return True
-		End Function
-	#tag EndMethod
+
+	#tag Property, Flags = &h21
+		Private TokenID As Integer = 0
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		UserEmail As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private UserID As Integer = 0
+	#tag EndProperty
 
 
 #tag EndWindowCode
@@ -334,7 +329,9 @@ End
 #tag Events btnCancel
 	#tag Event
 		Sub Pressed()
-		  // Navigate back to login
+		  ' *******************************************************************************
+		  ' btnCancel.Pressed Event
+		  ' *******************************************************************************
 		  Var login As New wc_Login
 		  login.ContainerID = "Login"
 		  login.Position = wc_Base.PositionEnum.Center
@@ -345,19 +342,20 @@ End
 #tag Events btnVerify
 	#tag Event
 		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnVerify.Pressed Event
+		  ' *******************************************************************************
 		  If txtOTP.Text.Trim.Length <> 6 Then
 		    ShowMessage("Please enter a 6-digit code", False)
 		    Return
 		  End If
 		  
-		  // Verify OTP
 		  Var result As Dictionary = PasswordResetHelper.VerifyOTP(UserEmail, txtOTP.Text.Trim)
 		  
 		  If result.Value("success") Then
 		    UserID = result.Value("userID")
 		    TokenID = result.Value("tokenID")
 		    
-		    // Navigate to new password page
 		    Var newPassword As New wc_NewPassword
 		    newPassword.ContainerID = "NewPassword"
 		    newPassword.Position = wc_Base.PositionEnum.Center
@@ -374,7 +372,9 @@ End
 #tag Events btnResend
 	#tag Event
 		Sub Pressed()
-		  // Find user ID first
+		  ' *******************************************************************************
+		  ' btnResend.Pressed Event
+		  ' *******************************************************************************
 		  Var sql As String = "SELECT user_id, full_name FROM users WHERE email = ?"
 		  
 		  Try
@@ -382,20 +382,18 @@ End
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.Bind(0, UserEmail)
 		    
-		    Var rs As RowSet = ps.SQLSelect
+		    Var rs As RowSet = ps.SelectSQL
 		    
 		    If rs <> Nil And Not rs.AfterLastRow Then
 		      Var userID As Integer = rs.Column("user_id").IntegerValue
 		      Var userName As String = rs.Column("full_name").StringValue
 		      
-		      // Create new token
 		      Var tokenResult As Dictionary = PasswordResetHelper.CreatePasswordResetToken(userID, "unknown")
 		      
 		      If tokenResult.Value("success") Then
 		        Var otp As String = tokenResult.Value("otp")
 		        Var token As String = tokenResult.Value("token")
 		        
-		        // Send email
 		        If EmailHelper.SendPasswordResetEmail(UserEmail, userName, otp, "") Then
 		          ShowMessage("A new code has been sent to your email.", True)
 		          txtOTP.Text = ""
@@ -541,8 +539,8 @@ End
 		Type="PositionEnum"
 		EditorType="Enum"
 		#tag EnumValues
-			"0 - TopLeft"
-			"1 - Center"
+			"0 - Center"
+			"1 - TopLeft"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -670,5 +668,13 @@ End
 		InitialValue="250"
 		Type="Integer"
 		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="UserEmail"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

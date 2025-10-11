@@ -41,7 +41,7 @@ Sub LoadEmailConfig()
   Var sql As String = "SELECT * FROM email_config LIMIT 1"
   
   Try
-    Var rs As RowSet = Session.DB.SQLSelect(sql)
+    Var rs As RowSet = Session.DB.SelectSQL(sql)
     
     If rs <> Nil And Not rs.AfterLastRow Then
       txtSMTPServer.Text = rs.Column("smtp_server").StringValue
@@ -81,7 +81,7 @@ Sub Pressed()
   Var configExists As Boolean = False
   
   Try
-    Var checkRS As RowSet = Session.DB.SQLSelect(checkSQL)
+    Var checkRS As RowSet = Session.DB.SelectSQL(checkSQL)
     configExists = (checkRS <> Nil And Not checkRS.AfterLastRow)
   Catch e As DatabaseException
     ShowMessage("Error checking config: " + e.Message, False)
@@ -101,26 +101,20 @@ Sub Pressed()
     
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(0, txtSMTPServer.Text.Trim)
-    
     ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps.Bind(1, Val(txtSMTPPort.Text.Trim))
-    
     ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(2, txtSMTPUsername.Text.Trim)
-    
     ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(3, txtSMTPPassword.Text.Trim)
-    
     ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(4, txtFromEmail.Text.Trim)
-    
     ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
     ps.Bind(5, txtFromName.Text.Trim)
-    
     ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
     ps.Bind(6, chkUseTLS.Value)
     
-    ps.SQLExecute
+    ps.ExecuteSQL
     
     ShowMessage("Email configuration saved successfully!", True)
     

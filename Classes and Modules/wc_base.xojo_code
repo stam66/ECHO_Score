@@ -2,10 +2,12 @@
 Protected Class wc_base
 Inherits webcontainer
 	#tag Method, Flags = &h0
-		Sub EmbedInto(target As WebView)
-		  // This only handles positioning and locking, NOT the actual embedding
-		  // Don't embed - assume already embedded by NavigationManager
-		  
+		Sub EmbedInto(target As WebContainer)
+		  ' *******************************************************************************
+		  '  Method: EmbedInto
+		  '     Parameters: target As WebContainer
+		  '     Return Type: (none)
+		  ' *******************************************************************************
 		  Select Case Position
 		  Case PositionEnum.TopLeft
 		    Self.LockLeft = True
@@ -19,6 +21,7 @@ Inherits webcontainer
 		    Self.Left = (targetW - Self.Width) / 2
 		    Self.Top = (targetH - Self.Height) / 2
 		  End Select
+		  
 		End Sub
 	#tag EndMethod
 
@@ -33,8 +36,8 @@ Inherits webcontainer
 
 
 	#tag Enum, Name = PositionEnum, Type = Integer, Flags = &h0
-		TopLeft
 		Center
+		TopLeft
 	#tag EndEnum
 
 

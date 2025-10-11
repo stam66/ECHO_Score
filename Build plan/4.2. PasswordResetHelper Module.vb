@@ -31,7 +31,7 @@ Public Function CreatePasswordResetToken(userID As Integer, ipAddress As String)
     ps.Bind(3, expiresAt.SQLDateTime)
     ps.Bind(4, ipAddress)
     
-    ps.SQLExecute
+    ps.ExecuteSQL
     
     result.Value("success") = True
     result.Value("otp") = otp
@@ -65,7 +65,7 @@ Public Function VerifyOTP(email As String, otp As String) As Dictionary
     ps.Bind(0, email.Trim)
     ps.Bind(1, otp.Trim)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
       result.Value("success") = True
@@ -105,7 +105,7 @@ Public Function ResetPassword(tokenID As Integer, userID As Integer, newPassword
     ps1.Bind(0, newPassword)
     ps1.Bind(1, userID)
     
-    ps1.SQLExecute
+    ps1.ExecuteSQL
     
     Var updateTokenSQL As String = "UPDATE password_reset_tokens SET is_used = TRUE, used_at = NOW() WHERE token_id = ?"
     
@@ -113,7 +113,7 @@ Public Function ResetPassword(tokenID As Integer, userID As Integer, newPassword
     ps2.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     ps2.Bind(0, tokenID)
     
-    ps2.SQLExecute
+    ps2.ExecuteSQL
     
     Session.DB.CommitTransaction
     
@@ -135,8 +135,8 @@ End Function
 Public Function CleanupExpiredTokens() As Integer
   Try
     Var sql As String = "DELETE FROM password_reset_tokens WHERE expires_at < NOW() AND is_used = FALSE"
-    Session.DB.SQLExecute(sql)
-    Return Session.DB.RowsAffected
+    Session.DB.ExecuteSQL(sql)
+    Return Session.DB.AffectedRowCount
   Catch e As DatabaseException
     System.DebugLog("Error cleaning up expired tokens: " + e.Message)
     Return 0

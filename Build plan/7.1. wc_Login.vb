@@ -45,7 +45,7 @@ Sub Pressed()
     ps.Bind(0, txtUsername.Text.Trim)
     ps.Bind(1, txtPassword.Text.Trim)
     
-    Var rs As RowSet = ps.SQLSelect
+    Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
       Session.CurrentUserID = rs.Column("user_id").IntegerValue
@@ -57,7 +57,7 @@ Sub Pressed()
       Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
       updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
       updatePS.Bind(0, Session.CurrentUserID)
-      updatePS.SQLExecute
+      updatePS.ExecuteSQL
       
       If Session.IsAdmin Then
         Var adminHome As New wc_AdminHome

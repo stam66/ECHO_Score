@@ -24,7 +24,6 @@ Begin wc_base wc_NewPassword
    Width           =   446
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblTitle
       Bold            =   True
@@ -60,7 +59,7 @@ Begin wc_base wc_NewPassword
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label2
+   Begin WebLabel lblNewPassword
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
@@ -94,7 +93,7 @@ Begin wc_base wc_NewPassword
       Width           =   406
       _mPanelIndex    =   -1
    End
-   Begin WebLabel Label3
+   Begin WebLabel lblConfirmPassword
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
@@ -118,7 +117,7 @@ Begin wc_base wc_NewPassword
       Scope           =   0
       TabIndex        =   2
       TabStop         =   True
-      Text            =   "Confirm new password"
+      Text            =   "Confirm password"
       TextAlignment   =   1
       TextColor       =   &c000000FF
       Tooltip         =   ""
@@ -354,7 +353,7 @@ Begin wc_base wc_NewPassword
       Tooltip         =   ""
       Top             =   386
       Underline       =   False
-      Visible         =   True
+      Visible         =   False
       Width           =   406
       _mPanelIndex    =   -1
    End
@@ -389,7 +388,7 @@ End
 	#tag Method, Flags = &h0
 		Sub ShowMessage(msg As String, isSuccess As Boolean)
 		  lblMessage.Text = msg
-		  lblMessage.TextColor = If (isSuccess, & c27ae60, & ce74c3c)
+		  lblMessage.TextColor = If (isSuccess, &c27ae60, &ce74c3c)
 		  lblMessage.Visible = True
 		  
 		End Sub
@@ -397,10 +396,8 @@ End
 
 	#tag Method, Flags = &h0
 		Function ValidatePassword(password As String) As Boolean
-		  // Minimum 8 characters
 		  If password.Length < 8 Then Return False
 		  
-		  // Check For uppercase, lowercase, And number
 		  Var hasUpper As Boolean = False
 		  Var hasLower As Boolean = False
 		  Var hasNumber As Boolean = False
@@ -436,6 +433,9 @@ End
 #tag Events btnCancel
 	#tag Event
 		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnCancel.Pressed Event
+		  ' *******************************************************************************
 		  Var login As New wc_Login
 		  login.ContainerID = "Login"
 		  login.Position = wc_Base.PositionEnum.Center
@@ -446,7 +446,9 @@ End
 #tag Events btnSetPassword
 	#tag Event
 		Sub Pressed()
-		  // Validate passwords
+		  ' *******************************************************************************
+		  ' btnSetPassword.Pressed Event
+		  ' *******************************************************************************
 		  If txtNewPassword.Text.Trim = "" Or txtConfirmPassword.Text.Trim = "" Then
 		    ShowMessage("Please fill in both password fields", False)
 		    Return
@@ -462,11 +464,9 @@ End
 		    Return
 		  End If
 		  
-		  // Reset password
 		  If PasswordResetHelper.ResetPassword(TokenID, UserID, txtNewPassword.Text) Then
 		    ShowMessage("Password reset successfully! Redirecting to login...", True)
 		    
-		    // Navigate To login after 2 seconds
 		    Var t As New Timer
 		    t.Period = 2000
 		    t.Mode = Timer.ModeOff
@@ -609,8 +609,8 @@ End
 		Type="PositionEnum"
 		EditorType="Enum"
 		#tag EnumValues
-			"0 - TopLeft"
-			"1 - Center"
+			"0 - Center"
+			"1 - TopLeft"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

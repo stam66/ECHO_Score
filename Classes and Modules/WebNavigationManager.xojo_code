@@ -24,13 +24,10 @@ Protected Class WebNavigationManager
 		    Var previousContainer As WebContainer = mHistory.Pop
 		    mHostPage.ContentArea = previousContainer
 		    
-		    // For wc_Base containers, handle embedding properly
 		    If previousContainer IsA wc_Base Then
 		      Var wc As wc_Base = wc_Base(previousContainer)
 		      
-		      // Only embed if not already embedded
 		      If wc.Parent = Nil Then
-		        // Calculate size based on position mode
 		        Var embedW, embedH As Integer
 		        If wc.Position = wc_Base.PositionEnum.TopLeft Then
 		          embedW = mHostPage.Placeholder.Width
@@ -40,11 +37,9 @@ Protected Class WebNavigationManager
 		          embedH = wc.Height
 		        End If
 		        
-		        // Embed with correct size
 		        previousContainer.EmbedWithin(mHostPage.Placeholder, 0, 0, embedW, embedH)
 		      End If
 		      
-		      // Then let EmbedInto do positioning and locking
 		      wc.EmbedInto(mHostPage.Placeholder)
 		    Else
 		      If previousContainer.Parent = Nil Then
@@ -69,13 +64,10 @@ Protected Class WebNavigationManager
 		    Var nextContainer As WebContainer = mForward.Pop
 		    mHostPage.ContentArea = nextContainer
 		    
-		    // For wc_Base containers, handle embedding properly
 		    If nextContainer IsA wc_Base Then
 		      Var wc As wc_Base = wc_Base(nextContainer)
 		      
-		      // Only embed if not already embedded
 		      If wc.Parent = Nil Then
-		        // Calculate size based on position mode
 		        Var embedW, embedH As Integer
 		        If wc.Position = wc_Base.PositionEnum.TopLeft Then
 		          embedW = mHostPage.Placeholder.Width
@@ -85,11 +77,9 @@ Protected Class WebNavigationManager
 		          embedH = wc.Height
 		        End If
 		        
-		        // Embed with correct size
 		        nextContainer.EmbedWithin(mHostPage.Placeholder, 0, 0, embedW, embedH)
 		      End If
 		      
-		      // Then let EmbedInto do positioning and locking
 		      wc.EmbedInto(mHostPage.Placeholder)
 		    Else
 		      If nextContainer.Parent = Nil Then
@@ -113,11 +103,9 @@ Protected Class WebNavigationManager
 		  mForward.RemoveAll
 		  mHostPage.ContentArea = container
 		  
-		  // For wc_Base containers, embed them directly first
 		  If container IsA wc_Base Then
 		    Var wc As wc_Base = wc_Base(container)
 		    
-		    // Calculate size based on position mode
 		    Var embedW, embedH As Integer
 		    If wc.Position = wc_Base.PositionEnum.TopLeft Then
 		      embedW = mHostPage.Placeholder.Width
@@ -127,10 +115,7 @@ Protected Class WebNavigationManager
 		      embedH = wc.Height
 		    End If
 		    
-		    // Embed with correct size
 		    container.EmbedWithin(mHostPage.Placeholder, 0, 0, embedW, embedH)
-		    
-		    // Then let EmbedInto do positioning and locking
 		    wc.EmbedInto(mHostPage.Placeholder)
 		  Else
 		    container.EmbedWithin(mHostPage.Placeholder, 0, 0, mHostPage.Placeholder.Width, mHostPage.Placeholder.Height)
