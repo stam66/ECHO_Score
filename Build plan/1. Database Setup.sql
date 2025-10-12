@@ -1,8 +1,12 @@
--- Create the database
+
+-- =============================================================================
+-- DATABASE SETUP - ECHOScore with User Groups
+-- =============================================================================
+
 CREATE DATABASE IF NOT EXISTS echoscore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE echoscore;
 
--- Users table
+-- Users table (with user_group added)
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
@@ -10,10 +14,12 @@ CREATE TABLE users (
     username VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(64) NOT NULL,
     is_admin BOOLEAN DEFAULT FALSE,
+    user_group VARCHAR(50) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
     INDEX idx_username (username),
-    INDEX idx_email (email)
+    INDEX idx_email (email),
+    INDEX idx_user_group (user_group)
 );
 
 -- Cases table
@@ -112,7 +118,7 @@ CREATE TABLE email_config (
 );
 
 -- Insert default admin user
-INSERT INTO users (full_name, email, username, password_hash, is_admin) VALUES ('Administrator', 'admin@echoscore.local', 'admin', 'temp', 1);
+INSERT INTO users (full_name, email, username, password_hash, is_admin) VALUES ('Administrator', 'echoscore.app@gamil.com', 'admin', 'temp', 1);
 UPDATE users SET password_hash = SHA2('reject66', 256) WHERE username = 'admin';
 
 -- Insert default email configuration

@@ -34,7 +34,7 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -203,7 +203,7 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   388
       LockBottom      =   False
@@ -237,7 +237,7 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   388
       LockBottom      =   False
@@ -293,7 +293,7 @@ Begin wc_base wc_CaseAdmin
       Tooltip         =   ""
       Top             =   151
       Visible         =   True
-      Width           =   145
+      Width           =   178
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblLabel
@@ -305,9 +305,9 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
-      Left            =   541
+      Left            =   585
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -342,12 +342,12 @@ Begin wc_base wc_CaseAdmin
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   541
+      Left            =   585
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       MaximumCharactersAllowed=   0
@@ -373,7 +373,7 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   388
       LockBottom      =   False
@@ -406,7 +406,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -434,7 +434,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -462,7 +462,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -490,7 +490,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -518,7 +518,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -546,7 +546,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -574,7 +574,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -602,7 +602,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -630,7 +630,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -658,7 +658,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -686,7 +686,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -714,7 +714,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   False
       LockedInPosition=   False
@@ -742,7 +742,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   34
       Indeterminate   =   True
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   True
       LockedInPosition=   False
@@ -772,7 +772,7 @@ Begin wc_base wc_CaseAdmin
       Height          =   53
       Hint            =   "Correct conclusions"
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   388
       LockBottom      =   True
       LockedInPosition=   False
@@ -849,7 +849,7 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   762
       LockBottom      =   False
@@ -883,7 +883,7 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   762
       LockBottom      =   True
@@ -943,7 +943,7 @@ Begin wc_base wc_CaseAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   762
       LockBottom      =   True

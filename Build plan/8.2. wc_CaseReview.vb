@@ -1,29 +1,27 @@
+' =============================================================================
+' wc_CaseReview WebContainer (PART 1 - Properties and Video Controls)
+' =============================================================================
+
 ' Insert → WebContainer
 ' Name: wc_CaseReview
 ' Super: wc_Base
 
-' *******************************************************************************
-' Properties
-' *******************************************************************************
+' Properties:
 Public CaseID As Integer
 Private CurrentVideoIndex As Integer = 0
 Private TotalVideos As Integer = 0
 Private VideoFilenames() As String
 Private IsReviewMode As Boolean = False
 
-' *******************************************************************************
-' Video Section Controls
-' *******************************************************************************
+' Video Section Controls:
 ' Label: lblCaseTitle (Bold, Large)
-' HTMLVideos: htmlVideoPlayer (Large area - at least 800px wide)
+' HTMLViewer: htmlVideoPlayer (Large area - at least 800px wide)
 ' Label: lblVideoCounter (text: "")
 ' PushButton: btnPreviousVideo (text: "← Previous")
 ' PushButton: btnNextVideo (text: "Next →")
 ' PushButton: btnReplayVideo (text: "⟳ Replay")
 
-' *******************************************************************************
-' Assessment Section Controls
-' *******************************************************************************
+' Assessment Section Controls (13 checkboxes):
 ' Label: lblAssessment (text: "ASSESSMENT:", Bold)
 ' CheckBox: chkLVSizeDilated (text: "LV Size - Dilated")
 ' CheckBox: chkLVFunctionImpaired (text: "LV Function - Significantly Impaired")
@@ -38,32 +36,22 @@ Private IsReviewMode As Boolean = False
 ' CheckBox: chkPericardialEffusion (text: "Pericardium - Significant Effusion")
 ' CheckBox: chkIVCHighPressure (text: "IVC - High RA Pressure")
 
-' *******************************************************************************
-' Conclusions Section Controls
-' *******************************************************************************
+' Conclusions Section Controls:
 ' Label: lblConclusions (text: "Your Conclusions:")
 ' TextArea: txtConclusions
 ' CheckBox: chkRequiresFullEcho (text: "Requires Full ECHO?")
 
-' *******************************************************************************
-' Action Buttons Controls
-' *******************************************************************************
+' Action Buttons Controls:
 ' PushButton: btnSave (text: "Save Draft")
 ' PushButton: btnSubmit (text: "Submit")
 ' PushButton: btnBack (text: "Back")
 
-' *******************************************************************************
-' Results Section (Initially Hidden) Controls
-' *******************************************************************************
+' Results Section (Initially Hidden) Controls:
 ' Label: lblCorrectConclusionsTitle (text: "Expert Conclusions:", Bold, Visible = False)
 ' Label: lblCorrectConclusions (text: "", Visible = False)
 ' Label: lblScore (text: "", Bold, Visible = False)
 
-
-
-' *******************************************************************************
 ' wc_CaseReview.Opening Event
-' *******************************************************************************
 Sub Opening()
   LoadCase
   LoadExistingResponse
@@ -71,10 +59,7 @@ Sub Opening()
   UpdateVideoNavigation
 End Sub
 
-
-' *******************************************************************************
 ' LoadCase Method
-' *******************************************************************************
 Sub LoadCase()
   Var sql As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
   
@@ -112,12 +97,9 @@ Sub LoadCase()
   End Try
 End Sub
 
-
-' *******************************************************************************
 ' LoadExistingResponse Method
-' *******************************************************************************
 Sub LoadExistingResponse()
-   Var sql As String = "SELECT * FROM user_responses WHERE user_id = ? AND case_id = ?"
+  Var sql As String = "SELECT * FROM user_responses WHERE user_id = ? AND case_id = ?"
   
   Try
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -155,10 +137,7 @@ Sub LoadExistingResponse()
   End Try
 End Sub
 
-
-' *******************************************************************************
 ' LoadVideos Method
-' *******************************************************************************
 Sub LoadVideos()
   Var sql As String = "SELECT video_filename FROM case_videos WHERE case_id = ? ORDER BY video_order"
   
@@ -190,15 +169,30 @@ Sub LoadVideos()
   End Try
 End Sub
 
-
-' *******************************************************************************
-' DisplayCurrentVideo Method
-' *******************************************************************************
+' DisplayCurrentVideo Method (USING WEBFILE)
 Sub DisplayCurrentVideo()
   If CurrentVideoIndex < 0 Or CurrentVideoIndex >= TotalVideos Then Return
   
   Var videoFilename As String = VideoFilenames(CurrentVideoIndex)
-  Var videoPath As String = "../Documents/CaseVideos/" + videoFilename
+  
+  ' Get WebFile URL for the video
+  Var wf As WebFile = Session.ServeVideo(videoFilename)
+  
+  If wf = Nil Then
+    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+    errorHTML = errorHTML + "body{margin:0;padding:20px;background:#1a1a1a;color:#e74c3c;font-family:Arial,sans-serif;text-align:center;}"
+    errorHTML = errorHTML + ".error{background:#2c2c2c;padding:30px;border-radius:8px;border-left:4px solid #e74c3c;max-width:600px;margin:50px auto;}"
+    errorHTML = errorHTML + "</style></head><body><div class='error'>"
+    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+    errorHTML = errorHTML + "</div></body></html>"
+    
+    htmlVideoPlayer.LoadHTML(errorHTML)
+    Return
+  End If
+  
+  Var videoURL As String = wf.URL
+  System.DebugLog("Playing video: " + videoFilename + " at URL: " + videoURL)
   
   Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
   html = html + "body{margin:0;padding:20px;background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;}"
@@ -206,7 +200,7 @@ Sub DisplayCurrentVideo()
   html = html + "video{width:100%;height:auto;display:block;background:#000;}"
   html = html + "</style></head><body><div class='video-container'>"
   html = html + "<video id='mainVideo' controls loop autoplay playsinline>"
-  html = html + "<source src='" + videoPath + "' type='video/mp4'>"
+  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
   html = html + "Your browser does not support the video tag.</video></div>"
   html = html + "<script>var v=document.getElementById('mainVideo');"
   html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});</script>"
@@ -216,22 +210,16 @@ Sub DisplayCurrentVideo()
   UpdateVideoNavigation
 End Sub
 
-
-' *******************************************************************************
 ' UpdateVideoNavigation Method
-' *******************************************************************************
 Sub UpdateVideoNavigation()
   If TotalVideos = 0 Then Return
   
-  lblVideoCounter.Text = "Video " + (CurrentVideoIndex + 1).ToString + " of " + TotalVideos.ToString
+  lblVideoCounter.Text = "Video " + Str(CurrentVideoIndex + 1) + " of " + Str(TotalVideos)
   btnPreviousVideo.Enabled = (CurrentVideoIndex > 0)
   btnNextVideo.Enabled = (CurrentVideoIndex < TotalVideos - 1)
 End Sub
 
-
-' *******************************************************************************
 ' btnPreviousVideo.Pressed Event
-' *******************************************************************************
 Sub Pressed()
   If CurrentVideoIndex > 0 Then
     CurrentVideoIndex = CurrentVideoIndex - 1
@@ -239,10 +227,7 @@ Sub Pressed()
   End If
 End Sub
 
-
-' *******************************************************************************
 ' btnNextVideo.Pressed Event
-' *******************************************************************************
 Sub Pressed()
   If CurrentVideoIndex < TotalVideos - 1 Then
     CurrentVideoIndex = CurrentVideoIndex + 1
@@ -250,18 +235,17 @@ Sub Pressed()
   End If
 End Sub
 
-
-' *******************************************************************************
 ' btnReplayVideo.Pressed Event
-' *******************************************************************************
 Sub Pressed()
   DisplayCurrentVideo
 End Sub
 
 
-' *******************************************************************************
+-- =============================================================================
+-- wc_CaseReview (PART 2 - Save/Submit/ShowAnswers)
+-- =============================================================================
+
 ' SaveResponse Method
-' *******************************************************************************
 Sub SaveResponse(isCompleted As Boolean)
   Var sql As String
   Var checkSQL As String = "SELECT response_id FROM user_responses WHERE user_id = ? AND case_id = ?"
@@ -368,13 +352,10 @@ Sub SaveResponse(isCompleted As Boolean)
   End Try
 End Sub
 
-
-' *******************************************************************************
-' ShowCorrectAnswers Method
-' *******************************************************************************
+' ShowCorrectAnswers Method (WITH WEBSTYLE)
 Sub ShowCorrectAnswers()
   Var sql As String = "SELECT * FROM cases WHERE case_id = ?"
-
+  
   Try
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -383,6 +364,13 @@ Sub ShowCorrectAnswers()
     Var rs As RowSet = ps.SelectSQL
     
     If rs <> Nil And Not rs.AfterLastRow Then
+      ' Create WebStyles for correct and incorrect answers
+      Var correctColorStyle As New WebStyle
+      Var incorrectColorStyle As New WebStyle
+      correctColorStyle.ForegroundColor = &c27ae60
+      incorrectColorStyle.ForegroundColor = &ce74c3c
+      
+      ' Disable all checkboxes
       chkLVSizeDilated.Enabled = False
       chkLVFunctionImpaired.Enabled = False
       chkRVSizeDilated.Enabled = False
@@ -398,13 +386,8 @@ Sub ShowCorrectAnswers()
       chkRequiresFullEcho.Enabled = False
       txtConclusions.ReadOnly = True
       
-      Var correctColorStyle as new WebStyle
-      Var incorrectColorStyle as new WebStyle
-      correctColorStyle.ForegroundColor = &c27ae60
-      incorrectColorStyle.ForegroundColor = &ce74c3c
-      
+      ' Apply styles based on correct/incorrect
       Var correctLVSize As Boolean = rs.Column("lv_size_dilated").BooleanValue
-      
       chkLVSizeDilated.Style = If(chkLVSizeDilated.Value = correctLVSize, correctColorStyle, incorrectColorStyle)
       
       Var correctLVFunction As Boolean = rs.Column("lv_function_impaired").BooleanValue
@@ -442,7 +425,7 @@ Sub ShowCorrectAnswers()
       
       Var correctFullEcho As Boolean = rs.Column("requires_full_echo").BooleanValue
       chkRequiresFullEcho.Style = If(chkRequiresFullEcho.Value = correctFullEcho, correctColorStyle, incorrectColorStyle)
-      
+
       lblCorrectConclusionsTitle.Text = "Expert Conclusions:"
       lblCorrectConclusionsTitle.Visible = True
       lblCorrectConclusions.Text = rs.Column("correct_conclusions").StringValue
@@ -466,7 +449,7 @@ Sub ShowCorrectAnswers()
       If chkRequiresFullEcho.Value = correctFullEcho Then score = score + 1
       
       Var percentage As Double = (score / total) * 100
-      lblScore.Text = "Score: " + score.ToString + "/" + total.ToString + " (" + Format(percentage, "0.0") + "%)"
+      lblScore.Text = "Score: " + Str(score) + "/" + Str(total) + " (" + Format(percentage, "0.0") + "%)"
       lblScore.Visible = True
       
     End If
@@ -475,25 +458,17 @@ Sub ShowCorrectAnswers()
   End Try
 End Sub
 
-' *******************************************************************************
 ' btnSave.Pressed Event
-' *******************************************************************************
 Sub Pressed()
   SaveResponse(False)
 End Sub
 
-
-' *******************************************************************************
 ' btnSubmit.Pressed Event
-' *******************************************************************************
 Sub Pressed()
   SaveResponse(True)
 End Sub
 
-
-' *******************************************************************************
 ' btnBack.Pressed Event
-' *******************************************************************************
 Sub Pressed()
   Session.Navigation.NavigateBack
 End Sub

@@ -1,44 +1,96 @@
-' *******************************************************************************
-' In the Session class, add these properties:
-' *******************************************************************************
-Public MainShell as wp_MainShell
-Public Navigation as WebNavigationManager
-Public CurrentUserID as Integer = 0
-Public CurrentUserName as String = ""
-Public CurrentUserEmail as String = ""
-Public IsAdmin as Boolean = False
-Public DB as MySQLCommunityServer
+' =============================================================================
+' Session Class
+' =============================================================================
 
+' Properties:
+Public MainShell As wp_MainShell
+Public Navigation As WebNavigationManager
+Public CurrentUserID As Integer = 0
+Public CurrentUserName As String = ""
+Public CurrentUserEmail As String = ""
+Public IsAdmin As Boolean = False
+Public DB As MySQLCommunityServer
 
-
-' *******************************************************************************
-' Session.opening event
-' *******************************************************************************
-DB = New MySQLCommunityServer
-DB.Host = "127.0.0.1"
-DB.Port = 3306
-DB.DatabaseName = "echoscore"
-DB.UserName = "root"
-DB.Password = "your_mysql_root_password"
-
-Try
-  If Not DB.Connect Then
-    MessageBox("Database connection failed: " + DB.ErrorMessage)
+' Session.Opening Event
+Sub Opening(args() As String)
+  #Pragma Unused args
+  
+  DB = New MySQLCommunityServer
+  DB.Host = "127.0.0.1"
+  DB.Port = 3306
+  DB.DatabaseName = "echoscore"
+  DB.UserName = "root"
+  DB.Password = "your_mysql_root_password"
+  
+  Try
+    If Not DB.Connect Then
+      MessageBox("Database connection failed: " + DB.ErrorMessage)
+      Return
+    End If
+    
+    System.DebugLog("Database connected successfully")
+    
+  Catch e As RuntimeException
+    MessageBox("Database error: " + e.Message)
     Return
+  End Try
+  
+  ' Ensure CaseVideos folder exists
+  Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+  If Not videoFolder.Exists Then
+    videoFolder.CreateFolder
+    System.DebugLog("Created CaseVideos folder: " + videoFolder.NativePath)
   End If
   
-  System.DebugLog("Database connected successfully")
+  MainShell = New wp_MainShell
+  MainShell.Show
+  Navigation = New WebNavigationManager(MainShell)
   
-Catch e As RuntimeException
-  MessageBox("Database error: " + e.Message)
-  Return
-End Try
+  Var w As New wc_Login
+  w.ContainerID = "Login"
+  w.Position = wc_Base.PositionEnum.Center
+  Navigation.NavigateTo(w)
+End Sub
 
-MainShell = New wp_MainShell
-MainShell.Show
-Navigation = New WebNavigationManager(MainShell)
-
-Var w As New wc_Login
-w.ContainerID = "Login"
-w.Position = wc_Base.PositionEnum.Center
-Navigation.NavigateTo(w)
+' Method: ServeVideo
+'   Parameters: filename As String
+'   Return Type: WebFile
+Public Function ServeVideo(filename As String) As WebFile
+  Try
+    Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+    
+    System.DebugLog("Video folder path: " + videoFolder.NativePath)
+    System.DebugLog("Video folder exists: " + If(videoFolder.Exists, "YES", "NO"))
+    
+    If Not videoFolder.Exists Then
+      System.DebugLog("CaseVideos folder does not exist")
+      Return Nil
+    End If
+    
+    Var videoFile As FolderItem = videoFolder.Child(filename)
+    
+    System.DebugLog("Looking for video: " + videoFile.NativePath)
+    System.DebugLog("Video file exists: " + If(videoFile.Exists, "YES", "NO"))
+    
+    If Not videoFile.Exists Then
+      System.DebugLog("Video file not found: " + filename)
+      Return Nil
+    End If
+    
+    System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
+    
+    Var wf As New WebFile
+    wf.Data = videoFile
+    wf.MIMEType = "video/mp4"
+    wf.Filename = filename
+    wf.ForceDownload = False
+    
+    System.DebugLog("WebFile URL: " + wf.URL)
+    
+    Return wf
+    
+  Catch e As IOException
+    System.DebugLog("Error serving video: " + e.Message)
+    Return Nil
+  End Try
+End Function
