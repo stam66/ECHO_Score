@@ -214,7 +214,7 @@ Videos must be:
 ```
 ┌─────────────────────────────────────┐
 │         Browser (Client)            │
-│  HTML5 Video | JavaScript | CSS    │
+│  HTML5 Video | JavaScript | CSS     │
 └─────────────────┬───────────────────┘
                   │ HTTPS
 ┌─────────────────▼───────────────────┐
