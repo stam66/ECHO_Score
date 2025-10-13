@@ -34,7 +34,7 @@ Begin wc_base wc_UserAdmin
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -61,7 +61,7 @@ Begin wc_base wc_UserAdmin
    End
    Begin WebListBox lstUsers
       AllowRowReordering=   False
-      ColumnCount     =   4
+      ColumnCount     =   5
       ColumnWidths    =   ""
       ControlID       =   ""
       CSSClasses      =   ""
@@ -75,7 +75,7 @@ Begin wc_base wc_UserAdmin
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
-      InitialValue    =   "Name	Email	Username	Admin"
+      InitialValue    =   "Name	Email	Username	Admin	Group"
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
@@ -505,7 +505,7 @@ Begin wc_base wc_UserAdmin
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   419
+      Left            =   899
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -517,6 +517,134 @@ Begin wc_base wc_UserAdmin
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   14
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Visible         =   True
+      Width           =   125
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblUserGroup
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   0.0
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   ""
+      Italic          =   False
+      Left            =   748
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   15
+      TabStop         =   True
+      Text            =   "Password"
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   532
+      Underline       =   False
+      Visible         =   True
+      Width           =   100
+      _mPanelIndex    =   -1
+   End
+   Begin WebCombobox cmbUserGroup
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FilteringMode   =   1
+      Height          =   38
+      Hint            =   ""
+      Index           =   -2147483648
+      Indicator       =   0
+      InitialValue    =   ""
+      LastAddedRowIndex=   0
+      LastRowIndex    =   0
+      Left            =   748
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      RowCount        =   0
+      Scope           =   0
+      SelectedRowIndex=   -1
+      SelectedRowText =   ""
+      TabIndex        =   16
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   578
+      Visible         =   True
+      Width           =   276
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnFilterByGroup
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Filter by Group"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   419
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   17
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   82
+      Visible         =   True
+      Width           =   170
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnClearFilter
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Show All"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   597
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   18
       TabStop         =   True
       Tooltip         =   ""
       Top             =   82
@@ -534,6 +662,7 @@ End
 		  ' wc_UserAdmin.opening event
 		  ' *******************************************************************************
 		  LoadUsers
+		  LoadUserGroups
 		  ClearFields
 		End Sub
 	#tag EndEvent
@@ -549,11 +678,16 @@ End
 		  txtUsername.Text = ""
 		  txtPassword.Text = ""
 		  chkIsAdmin.Value = False
+		  cmbUserGroup.SelectedRowIndex = -1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub HandleDeleteUserConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
+		  ' *******************************************************************************
+		  ' HandleDeleteUserConfirm Method
+		  '   Parameters: dialog As WebMessageDialog, button As WebMessageDialogButton
+		  ' *******************************************************************************
 		  Select Case button
 		  Case dialog.ActionButton
 		    Var userID As Integer = lstUsers.RowTagAt(lstUsers.SelectedRowIndex)
@@ -578,22 +712,81 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub LoadUserGroups()
+		  ' *******************************************************************************
+		  ' LoadUserGroups Method
+		  ' *******************************************************************************
+		  cmbUserGroup.RemoveAllRows
+		  
+		  ' Add common groups
+		  Var currentYear As Integer = DateTime.Now.Year
+		  Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
+		  Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+		  
+		  For Each specialty As String In specialties
+		    For Each quarter As String In quarters
+		      cmbUserGroup.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
+		    Next
+		  Next
+		  
+		  ' Also load existing groups from database
+		  Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL ORDER BY user_group DESC"
+		  Try
+		    Var rs As RowSet = Session.DB.SelectSQL(sql)
+		    While Not rs.AfterLastRow
+		      Var existingGroup As String = rs.Column("user_group").StringValue
+		      If existingGroup.Trim <> "" Then
+		        ' Add if not already in list
+		        Var found As Boolean = False
+		        For i As Integer = 0 To cmbUserGroup.RowCount - 1
+		          If cmbUserGroup.RowTextAt(i) = existingGroup Then
+		            found = True
+		            Exit For i
+		          End If
+		        Next
+		        If Not found Then
+		          cmbUserGroup.AddRow(existingGroup)
+		        End If
+		      End If
+		      rs.MoveToNextRow
+		    Wend
+		  Catch e As DatabaseException
+		    ' Ignore error
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub LoadUsers()
 		  ' *******************************************************************************
 		  ' LoadUsers Method
 		  ' *******************************************************************************
 		  lstUsers.RemoveAllRows
 		  
-		  Var sql As String = "SELECT user_id, full_name, email, username, is_admin FROM users ORDER BY full_name"
+		  Var sql As String
+		  If filterGroup = "" Then
+		    sql = "SELECT user_id, full_name, email, username, is_admin, user_group FROM users ORDER BY full_name"
+		  Else
+		    sql = "SELECT user_id, full_name, email, username, is_admin, user_group FROM users WHERE user_group = ? ORDER BY full_name"
+		  End If
 		  
 		  Try
-		    Var rs As RowSet = Session.DB.SelectSQL(sql)
+		    Var rs As RowSet
+		    If filterGroup = "" Then
+		      rs = Session.DB.SelectSQL(sql)
+		    Else
+		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.Bind(0, filterGroup)
+		      rs = ps.SelectSQL
+		    End If
 		    
 		    While Not rs.AfterLastRow
 		      lstUsers.AddRow(rs.Column("full_name").StringValue)
 		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 1) = rs.Column("email").StringValue
 		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 2) = rs.Column("username").StringValue
 		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 3) = If(rs.Column("is_admin").BooleanValue, "Yes", "No")
+		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 4) = rs.Column("user_group").StringValue
 		      lstUsers.RowTagAt(lstUsers.LastAddedRowIndex) = rs.Column("user_id").IntegerValue
 		      
 		      rs.MoveToNextRow
@@ -613,11 +806,13 @@ End
 		  ' *******************************************************************************
 		  ' lstUsers.SelectionChanged Event
 		  ' *******************************************************************************
+		  #Pragma Unused rows
+		  
 		  If Me.SelectedRowIndex < 0 Then Return
 		  
 		  Var userID As Integer = Me.RowTagAt(Me.SelectedRowIndex)
 		  
-		  Var sql As String = "SELECT full_name, email, username, is_admin FROM users WHERE user_id = ?"
+		  Var sql As String = "SELECT full_name, email, username, is_admin, user_group FROM users WHERE user_id = ?"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -632,6 +827,7 @@ End
 		      txtUsername.Text = rs.Column("username").StringValue
 		      txtPassword.Text = ""
 		      chkIsAdmin.Value = rs.Column("is_admin").BooleanValue
+		      cmbUserGroup.Text = rs.Column("user_group").StringValue
 		    End If
 		  Catch e As DatabaseException
 		    MessageBox("Error loading user: " + e.Message)
@@ -651,7 +847,7 @@ End
 		    Return
 		  End If
 		  
-		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin) VALUES (?, ?, ?, SHA2(?, 256), ?)"
+		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?)"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -660,18 +856,21 @@ End
 		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    
 		    ps.Bind(0, txtName.Text.Trim)
 		    ps.Bind(1, txtEmail.Text.Trim)
 		    ps.Bind(2, txtUsername.Text.Trim)
 		    ps.Bind(3, txtPassword.Text.Trim)
 		    ps.Bind(4, chkIsAdmin.Value)
+		    ps.Bind(5, cmbUserGroup.Text.Trim)
 		    
 		    ps.ExecuteSQL
 		    
 		    MessageBox("User added successfully!")
 		    ClearFields
 		    LoadUsers
+		    LoadUserGroups  ' Refresh groups in case new one was added
 		    
 		  Catch e As DatabaseException
 		    MessageBox("Error adding user: " + e.Message)
@@ -699,7 +898,7 @@ End
 		  Var sql As String
 		  
 		  If txtPassword.Text.Trim = "" Then
-		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, is_admin = ? WHERE user_id = ?"
+		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, is_admin = ?, user_group = ? WHERE user_id = ?"
 		    
 		    Try
 		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -707,24 +906,27 @@ End
 		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		      ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      
 		      ps.Bind(0, txtName.Text.Trim)
 		      ps.Bind(1, txtEmail.Text.Trim)
 		      ps.Bind(2, txtUsername.Text.Trim)
 		      ps.Bind(3, chkIsAdmin.Value)
-		      ps.Bind(4, userID)
+		      ps.Bind(4, cmbUserGroup.Text.Trim)
+		      ps.Bind(5, userID)
 		      
 		      ps.ExecuteSQL
 		      
 		      MessageBox("User updated successfully!")
 		      LoadUsers
+		      LoadUserGroups
 		      
 		    Catch e As DatabaseException
 		      MessageBox("Error updating user: " + e.Message)
 		    End Try
 		  Else
-		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, password_hash = SHA2(?, 256), is_admin = ? WHERE user_id = ?"
+		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, password_hash = SHA2(?, 256), is_admin = ?, user_group = ? WHERE user_id = ?"
 		    
 		    Try
 		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -733,19 +935,22 @@ End
 		      ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      
 		      ps.Bind(0, txtName.Text.Trim)
 		      ps.Bind(1, txtEmail.Text.Trim)
 		      ps.Bind(2, txtUsername.Text.Trim)
 		      ps.Bind(3, txtPassword.Text.Trim)
 		      ps.Bind(4, chkIsAdmin.Value)
-		      ps.Bind(5, userID)
+		      ps.Bind(5, cmbUserGroup.Text.Trim)
+		      ps.Bind(6, userID)
 		      
 		      ps.ExecuteSQL
 		      
 		      MessageBox("User updated successfully!")
 		      LoadUsers
+		      LoadUserGroups
 		      
 		    Catch e As DatabaseException
 		      MessageBox("Error updating user: " + e.Message)
@@ -788,6 +993,29 @@ End
 	#tag Event
 		Sub Pressed()
 		  Session.Navigation.NavigateBack
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnFilterByGroup
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnFilterByGroup.Pressed Event
+		  ' *******************************************************************************
+		  If cmbUserGroup.Text.Trim <> "" Then
+		    LoadUsers(cmbUserGroup.Text.Trim)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnClearFilter
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnClearFilter.Pressed Event
+		  ' *******************************************************************************
+		  LoadUsers("")
+		  cmbUserGroup.SelectedRowIndex = -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

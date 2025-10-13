@@ -14,12 +14,14 @@ Inherits WebSession
 		  ' *******************************************************************************
 		  ' Session.opening event
 		  ' *******************************************************************************
+		  #Pragma Unused args
+		  
 		  DB = New MySQLCommunityServer
 		  DB.Host = "127.0.0.1"
 		  DB.Port = 3306
 		  DB.DatabaseName = "echoscore"
-		  DB.UserName = "admin"
-		  DB.Password = "reject66"
+		  DB.UserName = "root"
+		  DB.Password = "your_mysql_root_password"
 		  
 		  Try
 		    If Not DB.Connect Then
@@ -34,6 +36,13 @@ Inherits WebSession
 		    Return
 		  End Try
 		  
+		  ' Ensure CaseVideos folder exists
+		  Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		  If Not videoFolder.Exists Then
+		    videoFolder.CreateFolder
+		    System.DebugLog("Created CaseVideos folder: " + videoFolder.NativePath)
+		  End If
+		  
 		  MainShell = New wp_MainShell
 		  MainShell.Show
 		  Navigation = New WebNavigationManager(MainShell)
@@ -44,6 +53,55 @@ Inherits WebSession
 		  Navigation.NavigateTo(w)
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function ServeVideo(filename As String) As WebFile
+		  ' *******************************************************************************
+		  ' Method: ServeVideo
+		  '   Parameters: filename As String
+		  '   Return Type: WebFile
+		  ' *******************************************************************************
+		  
+		  Try
+		    Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		    
+		    System.DebugLog("Video folder path: " + videoFolder.NativePath)
+		    System.DebugLog("Video folder exists: " + If(videoFolder.Exists, "YES", "NO"))
+		    
+		    If Not videoFolder.Exists Then
+		      System.DebugLog("CaseVideos folder does not exist")
+		      Return Nil
+		    End If
+		    
+		    Var videoFile As FolderItem = videoFolder.Child(filename)
+		    
+		    System.DebugLog("Looking for video: " + videoFile.NativePath)
+		    System.DebugLog("Video file exists: " + If(videoFile.Exists, "YES", "NO"))
+		    
+		    If Not videoFile.Exists Then
+		      System.DebugLog("Video file not found: " + filename)
+		      Return Nil
+		    End If
+		    
+		    System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
+		    
+		    Var wf As New WebFile
+		    wf.Data = videoFile
+		    wf.MIMEType = "video/mp4"
+		    wf.Filename = filename
+		    wf.ForceDownload = False
+		    
+		    System.DebugLog("WebFile URL: " + wf.URL)
+		    
+		    Return wf
+		    
+		  Catch e As IOException
+		    System.DebugLog("Error serving video: " + e.Message)
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
 
 
 	#tag Property, Flags = &h0
