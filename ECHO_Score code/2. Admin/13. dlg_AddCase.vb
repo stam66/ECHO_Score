@@ -1,12 +1,14 @@
--- =============================================================================
--- dlg_AddCase WebDialog
--- Dialog for creating new cases with auto-incrementing case numbers
--- =============================================================================
+' =============================================================================
+' dlg_AddCase WebDialog
+' Dialog for creating new cases with auto-incrementing case numbers
+' =============================================================================
 
 ' Insert → WebDialog
 ' Name: dlg_AddCase
 
+' ******************************************************************
 ' Controls:
+' ******************************************************************
 ' Label: lblTitle (text: "Add New Case", Bold)
 ' Label: lblSerialNumber (text: "Case Number:")
 ' TextField: txtSerialNumber (ReadOnly = True)
@@ -15,7 +17,9 @@
 ' PushButton: btnOK (text: "Create Case", Default = True)
 ' PushButton: btnCancel (text: "Cancel", Cancel = True)
 
+' ******************************************************************
 ' dlg_AddCase.Opening Event
+' ******************************************************************
 Sub Opening()
   ' Get next case number
   Var sql As String = "SELECT serial_number FROM cases ORDER BY serial_number DESC LIMIT 1"
@@ -43,7 +47,9 @@ Sub Opening()
   txtDescription.SetFocus
 End Sub
 
+' ******************************************************************
 ' btnOK.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If txtDescription.Text.Trim = "" Then
     MessageBox("Please enter a case description")
@@ -68,7 +74,9 @@ Sub Pressed()
   End Try
 End Sub
 
+' ******************************************************************
 ' btnCancel.Pressed Event
+' ******************************************************************
 Sub Pressed()
   Self.Close
 End Sub

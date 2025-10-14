@@ -126,7 +126,7 @@ UPDATE users SET password_hash = SHA2('reject66', 256) WHERE username = 'admin';
 
 -- Insert default email configuration (UPDATE WITH YOUR CREDENTIALS)
 INSERT INTO email_config (smtp_server, smtp_port, smtp_username, smtp_password, from_email, from_name, use_tls) 
-VALUES ('smtp.gmail.com', 587, 'your-email@gmail.com', 'your-app-password', 'noreply@echoscore.local', 'ECHOScore System', 1);
+VALUES ('smtp.gmail.com', 587, 'echoscore.app@gmail.com', 'kqfzidauezxfugda', 'noreply@echoscore.local', 'ECHOScore System', 1);
 
 -- =============================================================================
 -- Notes:

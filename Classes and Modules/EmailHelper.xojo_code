@@ -5,7 +5,9 @@ Protected Module EmailHelper
 		  ' *******************************************************************************
 		  ' Add Method: GenerateOTP
 		  '   Return Type: String
+		  '   Purpose: Generates a secure 6-digit OTP
 		  ' *******************************************************************************
+		  
 		  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(4)
 		  
 		  Var number As Integer = Abs(randomData.UInt8Value(0) * 16777216 + randomData.UInt8Value(1) * 65536 + randomData.UInt8Value(2) * 256 + randomData.UInt8Value(3))
@@ -15,14 +17,16 @@ Protected Module EmailHelper
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GeneratePasswordResetEmailHTML(userName As String, otp As String, resetLink As String) As String
+	#tag Method, Flags = &h21
+		Private Function GeneratePasswordResetEmailHTML(userName As String, otp As String) As String
 		  ' *******************************************************************************
 		  ' Add Method: GeneratePasswordResetEmailHTML
-		  '   Parameters: userName As String, otp As String, resetLink As String
+		  '   Parameters: userName As String, otp As String
 		  '   Return Type: String
 		  '   Scope: Private
+		  '   Purpose: Creates styled HTML email content
 		  ' *******************************************************************************
+		  
 		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
 		  html = html + "body{font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;}"
 		  html = html + ".container{background:#f9f9f9;border-radius:10px;padding:30px;}"
@@ -44,7 +48,6 @@ Protected Module EmailHelper
 		  html = html + "</div></body></html>"
 		  
 		  Return html
-		  
 		End Function
 	#tag EndMethod
 
@@ -53,6 +56,7 @@ Protected Module EmailHelper
 		  ' *******************************************************************************
 		  ' Add Method: GenerateSecureToken
 		  '   Return Type: String
+		  '   Purpose: Generates a secure 64-character token
 		  ' *******************************************************************************
 		  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(32)
 		  
@@ -72,6 +76,10 @@ Protected Module EmailHelper
 		  '   Parameters: toEmail As String, toName As String, otp As String, resetLink As String
 		  '   Return Type: Boolean
 		  ' *******************************************************************************
+		  
+		  #Pragma Unused resetLink
+		  
+		  ' Load email configuration from database
 		  Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
 		  
 		  Try
@@ -90,14 +98,19 @@ Protected Module EmailHelper
 		    Var fromName As String = rs.Column("from_name").StringValue
 		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
 		    
+		    System.DebugLog("SMTP Config - Server: " + smtpServer + ", Port: " + Str(smtpPort) + ", Username: " + smtpUsername + ", TLS: " + If(useTLS, "Yes", "No"))
+		    
+		    ' Create email message
 		    Var mail As New EmailMessage
 		    mail.FromAddress = fromEmail
 		    mail.Subject = "ECHOScore - Password Reset Request"
 		    mail.AddRecipient(toEmail)
 		    
-		    Var htmlBody As String = GeneratePasswordResetEmailHTML(toName, otp, resetLink)
+		    ' Generate HTML body
+		    Var htmlBody As String = GeneratePasswordResetEmailHTML(toName, otp)
 		    mail.BodyHTML = htmlBody
 		    
+		    ' Generate plain text body
 		    Var textBody As String = "Hello " + toName + "," + EndOfLine + EndOfLine
 		    textBody = textBody + "You have requested to reset your ECHOScore password." + EndOfLine + EndOfLine
 		    textBody = textBody + "Your one-time password (OTP) is: " + otp + EndOfLine + EndOfLine
@@ -107,15 +120,20 @@ Protected Module EmailHelper
 		    textBody = textBody + "ECHOScore Team"
 		    mail.BodyPlainText = textBody
 		    
+		    ' Configure SMTP socket
+		    System.DebugLog("Creating SMTP socket...")
 		    Var socket As New SMTPSecureSocket
 		    socket.Address = smtpServer
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
 		    
+		    ' Send email
+		    System.DebugLog("Adding message and sending...")
 		    socket.Messages.Add(mail)
 		    socket.SendMail
 		    
+		    ' Wait for send completion (max 30 seconds)
 		    Var timeout As Integer = 30
 		    Var elapsed As Integer = 0
 		    While socket.Messages.Count > 0 And elapsed < timeout
@@ -127,15 +145,17 @@ Protected Module EmailHelper
 		      System.DebugLog("Password reset email sent successfully to: " + toEmail)
 		      Return True
 		    Else
-		      System.DebugLog("Failed to send password reset email to: " + toEmail)
+		      System.DebugLog("Failed to send password reset email to: " + toEmail + " - Message still in queue")
 		      Return False
 		    End If
 		    
 		  Catch e As RuntimeException
 		    System.DebugLog("Error sending email: " + e.Message)
+		    If e.Stack.Count > 0 Then
+		      System.DebugLog("Stack trace: " + String.FromArray(e.Stack, EndOfLine))
+		    End If
 		    Return False
 		  End Try
-		  
 		End Function
 	#tag EndMethod
 

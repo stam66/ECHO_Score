@@ -1,25 +1,31 @@
--- =============================================================================
--- wc_UserHome WebContainer
--- Student dashboard with case list
--- =============================================================================
+' =============================================================================
+' wc_UserHome WebContainer
+' Student dashboard with case list
+' =============================================================================
 
 ' Insert → WebContainer
 ' Name: wc_UserHome
 ' Super: wc_Base
 
+' ******************************************************************
 ' Controls:
+' ******************************************************************
 ' Label: lblWelcome (Bold, Large)
 ' ListBox: lstCases (3 columns: Case, Serial, Status)
 ' PushButton: btnStartCase (text: "Start/Continue Case")
 ' PushButton: btnLogout (text: "Logout")
 
+' ******************************************************************
 ' wc_UserHome.Opening Event
+' ******************************************************************
 Sub Opening()
   lblWelcome.Text = "Welcome, " + Session.CurrentUserName
   LoadCases
 End Sub
 
+' ******************************************************************
 ' LoadCases Method (WITH MULTI-GROUP FILTERING)
+' ******************************************************************
 Sub LoadCases()
   lstCases.RemoveAllRows
   
@@ -102,7 +108,9 @@ Sub LoadCases()
   End Try
 End Sub
 
+' ******************************************************************
 ' btnStartCase.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If lstCases.SelectedRowIndex < 0 Then
     MessageBox("Please select a case")
@@ -118,7 +126,9 @@ Sub Pressed()
   Session.Navigation.NavigateTo(caseReview)
 End Sub
 
+' ******************************************************************
 ' btnLogout.Pressed Event
+' ******************************************************************
 Sub Pressed()
   Session.CurrentUserID = 0
   Session.CurrentUserName = ""

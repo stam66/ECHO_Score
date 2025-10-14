@@ -1,13 +1,15 @@
--- =============================================================================
--- wc_Login WebContainer
--- User login screen
--- =============================================================================
+' =============================================================================
+' wc_Login WebContainer
+' User login screen
+' =============================================================================
 
 ' Insert → WebContainer
 ' Name: wc_Login
 ' Super: wc_Base
 
+' ******************************************************************
 ' Controls:
+' ******************************************************************
 ' Label: lblTitle (text: "ECHOScore Login", Bold, Large Font)
 ' Label: lblUsername (text: "Username:")
 ' TextField: txtUsername
@@ -17,7 +19,9 @@
 ' Label: lblForgotPassword (text: "Forgot Password?", Blue color, Underline)
 ' Label: lblError (text: "", Red color, Visible = False)
 
+' ******************************************************************
 ' wc_Login.Opening Event
+' ******************************************************************
 Sub Opening()
   lblError.Text = ""
   lblError.Visible = False
@@ -25,7 +29,9 @@ Sub Opening()
   lblForgotPassword.Underline = True
 End Sub
 
+' ******************************************************************
 ' btnLogin.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
     lblError.Text = "Please enter username and password"
@@ -82,7 +88,9 @@ Sub Pressed()
   End Try
 End Sub
 
+' ******************************************************************
 ' lblForgotPassword.MouseDown Event
+' ******************************************************************
 Sub MouseDown(x As Integer, y As Integer)
   #Pragma Unused x, y
   

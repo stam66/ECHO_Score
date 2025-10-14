@@ -16,14 +16,17 @@ Protected Class WebNavigationManager
 	#tag Method, Flags = &h0
 		Sub NavigateBack()
 		  If mHistory.Count > 0 Then
+		    ' Save current to forward history
 		    If mHostPage.ContentArea <> Nil Then
 		      mForward.Add(mHostPage.ContentArea)
 		      mHostPage.ContentArea.Visible = False
 		    End If
 		    
+		    ' Get previous container
 		    Var previousContainer As WebContainer = mHistory.Pop
 		    mHostPage.ContentArea = previousContainer
 		    
+		    ' Re-embed if necessary
 		    If previousContainer IsA wc_Base Then
 		      Var wc As wc_Base = wc_Base(previousContainer)
 		      
@@ -56,14 +59,17 @@ Protected Class WebNavigationManager
 	#tag Method, Flags = &h0
 		Sub NavigateForward()
 		  If mForward.Count > 0 Then
+		    ' Save current to history
 		    If mHostPage.ContentArea <> Nil Then
 		      mHistory.Add(mHostPage.ContentArea)
 		      mHostPage.ContentArea.Visible = False
 		    End If
 		    
+		    ' Get next container
 		    Var nextContainer As WebContainer = mForward.Pop
 		    mHostPage.ContentArea = nextContainer
 		    
+		    ' Re-embed if necessary
 		    If nextContainer IsA wc_Base Then
 		      Var wc As wc_Base = wc_Base(nextContainer)
 		      
@@ -95,14 +101,17 @@ Protected Class WebNavigationManager
 
 	#tag Method, Flags = &h0
 		Sub NavigateTo(container as WebContainer)
+		  ' Save current container to history
 		  If mHostPage.ContentArea <> Nil Then
 		    mHistory.Add(mHostPage.ContentArea)
 		    mHostPage.ContentArea.Visible = False
 		  End If
 		  
+		  ' Clear forward history on new navigation
 		  mForward.RemoveAll
 		  mHostPage.ContentArea = container
 		  
+		  ' Handle wc_Base positioning
 		  If container IsA wc_Base Then
 		    Var wc As wc_Base = wc_Base(container)
 		    

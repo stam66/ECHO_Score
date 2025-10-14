@@ -1,22 +1,24 @@
--- =============================================================================
--- PasswordResetHelper Module
--- Manages password reset tokens and OTP verification
--- =============================================================================
+' =============================================================================
+' PasswordResetHelper Module
+' Manages password reset tokens and OTP verification
+' =============================================================================
 
 ' Insert → Module
 ' Name: PasswordResetHelper
 
+' ******************************************************************
 ' Method: CreatePasswordResetToken
 ' Parameters: userID As Integer, ipAddress As String
 ' Return Type: Dictionary
 ' Purpose: Creates a new password reset token with OTP
+' ******************************************************************
 Public Function CreatePasswordResetToken(userID As Integer, ipAddress As String) As Dictionary
   Var result As New Dictionary
   
   Try
     ' Generate OTP and token
     Var otp As String = EmailHelper.GenerateOTP
-    Var token As String = EmailHelper.GenerateSecureToken
+    Var token As String = EmailHelper.'ecureToken
     
     ' Set expiration to 30 minutes from now
     Var expiresAt As DateTime = DateTime.Now
@@ -53,10 +55,12 @@ Public Function CreatePasswordResetToken(userID As Integer, ipAddress As String)
   Return result
 End Function
 
+' ******************************************************************
 ' Method: VerifyOTP
 ' Parameters: email As String, otp As String
 ' Return Type: Dictionary
 ' Purpose: Verifies OTP and returns token info if valid
+' ******************************************************************
 Public Function VerifyOTP(email As String, otp As String) As Dictionary
   Var result As New Dictionary
   
@@ -92,10 +96,12 @@ Public Function VerifyOTP(email As String, otp As String) As Dictionary
   Return result
 End Function
 
+' ******************************************************************
 ' Method: ResetPassword
 ' Parameters: tokenID As Integer, userID As Integer, newPassword As String
 ' Return Type: Boolean
 ' Purpose: Updates user password and marks token as used
+' ******************************************************************
 Public Function ResetPassword(tokenID As Integer, userID As Integer, newPassword As String) As Boolean
   Try
     Session.DB.BeginTransaction
@@ -133,9 +139,11 @@ Public Function ResetPassword(tokenID As Integer, userID As Integer, newPassword
   End Try
 End Function
 
+' ******************************************************************
 ' Method: CleanupExpiredTokens
 ' Return Type: Integer
 ' Purpose: Removes expired, unused tokens from database
+' ******************************************************************
 Public Function CleanupExpiredTokens() As Integer
   Try
     Var sql As String = "DELETE FROM password_reset_tokens WHERE expires_at < NOW() AND is_used = FALSE"

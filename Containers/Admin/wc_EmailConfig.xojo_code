@@ -34,7 +34,7 @@ Begin wc_base wc_EmailConfig
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -646,7 +646,7 @@ End
 		    
 		    If rs <> Nil And Not rs.AfterLastRow Then
 		      txtSMTPServer.Text = rs.Column("smtp_server").StringValue
-		      txtSMTPPort.Text = rs.Column("smtp_port").IntegerValue.ToString
+		      txtSMTPPort.Text = Str(rs.Column("smtp_port").IntegerValue)
 		      txtSMTPUsername.Text = rs.Column("smtp_username").StringValue
 		      txtSMTPPassword.Text = rs.Column("smtp_password").StringValue
 		      txtFromEmail.Text = rs.Column("from_email").StringValue

@@ -14,14 +14,14 @@ Inherits WebSession
 		  ' *******************************************************************************
 		  ' Session.opening event
 		  ' *******************************************************************************
-		  #Pragma Unused args
 		  
+		  ' Initialize database connection
 		  DB = New MySQLCommunityServer
 		  DB.Host = "127.0.0.1"
 		  DB.Port = 3306
 		  DB.DatabaseName = "echoscore"
-		  DB.UserName = "root"
-		  DB.Password = "your_mysql_root_password"
+		  DB.UserName = "admin"
+		  DB.Password = "reject66"  ' UPDATE THIS
 		  
 		  Try
 		    If Not DB.Connect Then
@@ -43,10 +43,12 @@ Inherits WebSession
 		    System.DebugLog("Created CaseVideos folder: " + videoFolder.NativePath)
 		  End If
 		  
+		  ' Initialize main shell and navigation
 		  MainShell = New wp_MainShell
 		  MainShell.Show
 		  Navigation = New WebNavigationManager(MainShell)
 		  
+		  ' Navigate to login screen
 		  Var w As New wc_Login
 		  w.ContainerID = "Login"
 		  w.Position = wc_Base.PositionEnum.Center
@@ -75,7 +77,6 @@ Inherits WebSession
 		    End If
 		    
 		    Var videoFile As FolderItem = videoFolder.Child(filename)
-		    
 		    System.DebugLog("Looking for video: " + videoFile.NativePath)
 		    System.DebugLog("Video file exists: " + If(videoFile.Exists, "YES", "NO"))
 		    
@@ -86,8 +87,14 @@ Inherits WebSession
 		    
 		    System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
 		    
+		    ' Read file contents into MemoryBlock
+		    Var stream As BinaryStream = BinaryStream.Open(videoFile)
+		    Var videoData As MemoryBlock = stream.Read(stream.Length)
+		    stream.Close
+		    
+		    ' Create WebFile for streaming
 		    Var wf As New WebFile
-		    wf.Data = videoFile
+		    wf.Data = videoData 
 		    wf.MIMEType = "video/mp4"
 		    wf.Filename = filename
 		    wf.ForceDownload = False

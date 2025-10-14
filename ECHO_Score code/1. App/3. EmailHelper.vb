@@ -1,15 +1,17 @@
--- =============================================================================
--- EmailHelper Module
--- Handles email sending and OTP generation
--- =============================================================================
+' =============================================================================
+' EmailHelper Module
+' Handles email sending and OTP generation
+' =============================================================================
 
 ' Insert → Module
 ' Name: EmailHelper
 
+' ******************************************************************
 ' Method: SendPasswordResetEmail
 ' Parameters: toEmail As String, toName As String, otp As String, resetLink As String
 ' Return Type: Boolean
 ' Purpose: Sends password reset email with OTP
+' ******************************************************************
 Public Function SendPasswordResetEmail(toEmail As String, toName As String, otp As String, resetLink As String) As Boolean
   #Pragma Unused resetLink
   
@@ -84,15 +86,20 @@ Public Function SendPasswordResetEmail(toEmail As String, toName As String, otp 
     End If
     
   Catch e As RuntimeException
-    System.DebugLog("Error sending email: " + e.Message + " (Stack: " + e.Stack + ")")
+    System.DebugLog("Error sending email: " + e.Message)
+    If e.Stack.Count > 0 Then
+      System.DebugLog("Stack trace: " + String.FromArray(e.Stack, EndOfLine))
+    End If
     Return False
   End Try
 End Function
 
+' ******************************************************************
 ' Method: GeneratePasswordResetEmailHTML (Private)
 ' Parameters: userName As String, otp As String
 ' Return Type: String
 ' Purpose: Creates styled HTML email content
+' ******************************************************************
 Private Function GeneratePasswordResetEmailHTML(userName As String, otp As String) As String
   Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
   html = html + "body{font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;}"
@@ -117,9 +124,11 @@ Private Function GeneratePasswordResetEmailHTML(userName As String, otp As Strin
   Return html
 End Function
 
+' ******************************************************************
 ' Method: GenerateOTP
 ' Return Type: String
-' Purpose: Generates a secure 6-digit OTP
+' Purpose: ' a secure 6-digit OTP
+' ******************************************************************
 Public Function GenerateOTP() As String
   Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(4)
   
@@ -129,10 +138,12 @@ Public Function GenerateOTP() As String
   Return otp
 End Function
 
+' ******************************************************************
 ' Method: GenerateSecureToken
 ' Return Type: String
-' Purpose: Generates a secure 64-character token
-Public Function GenerateSecureToken() As String
+' Purpose: Generatesa secure 64-character token
+' ******************************************************************
+Public Function 'ecureToken() As String
   Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(32)
   
   Var token As String = ""

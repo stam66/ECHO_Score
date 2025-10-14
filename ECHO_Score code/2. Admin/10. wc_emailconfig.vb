@@ -1,13 +1,15 @@
--- =============================================================================
--- wc_EmailConfig WebContainer
--- SMTP email configuration management
--- =============================================================================
+' =============================================================================
+' wc_EmailConfig WebContainer
+' SMTP email configuration management
+' =============================================================================
 
 ' Insert → WebContainer
 ' Name: wc_EmailConfig
 ' Super: wc_Base
 
+' ******************************************************************
 ' Controls:
+' ******************************************************************
 ' Label: lblTitle (text: "Email Configuration", Bold)
 ' Label: lblSMTPServer (text: "SMTP Server:")
 ' TextField: txtSMTPServer
@@ -27,13 +29,17 @@
 ' PushButton: btnBack (text: "Back")
 ' Label: lblMessage (text: "", Visible = False)
 
+' ******************************************************************
 ' wc_EmailConfig.Opening Event
+' ******************************************************************
 Sub Opening()
   LoadEmailConfig
   lblMessage.Visible = False
 End Sub
 
+' ******************************************************************
 ' LoadEmailConfig Method
+' ******************************************************************
 Sub LoadEmailConfig()
   Var sql As String = "SELECT * FROM email_config LIMIT 1"
   
@@ -54,14 +60,18 @@ Sub LoadEmailConfig()
   End Try
 End Sub
 
+' ******************************************************************
 ' ShowMessage Method
+' ******************************************************************
 Sub ShowMessage(msg As String, isSuccess As Boolean)
   lblMessage.Text = msg
   lblMessage.TextColor = If(isSuccess, &c27ae60, &ce74c3c)
   lblMessage.Visible = True
 End Sub
 
+' ******************************************************************
 ' btnSave.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If txtSMTPServer.Text.Trim = "" Or txtSMTPPort.Text.Trim = "" Or txtSMTPUsername.Text.Trim = "" Or txtFromEmail.Text.Trim = "" Then
     ShowMessage("Please fill all required fields", False)
@@ -114,7 +124,9 @@ Sub Pressed()
   End Try
 End Sub
 
+' ******************************************************************
 ' btnTestEmail.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If Session.CurrentUserEmail = "" Then
     ShowMessage("No email address available for test", False)
@@ -130,7 +142,9 @@ Sub Pressed()
   End If
 End Sub
 
+' ******************************************************************
 ' btnBack.Pressed Event
+' ******************************************************************
 Sub Pressed()
   Session.Navigation.NavigateBack
 End Sub

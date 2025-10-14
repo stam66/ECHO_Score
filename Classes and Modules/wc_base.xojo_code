@@ -7,21 +7,23 @@ Inherits webcontainer
 		  '  Method: EmbedInto
 		  '     Parameters: target As WebContainer
 		  '     Return Type: (none)
+		  '   Purpose: Positions the container within the target based on Position property
 		  ' *******************************************************************************
 		  Select Case Position
 		  Case PositionEnum.TopLeft
+		    ' Lock all sides for full-screen containers
 		    Self.LockLeft = True
 		    Self.LockTop = True
 		    Self.LockRight = True
 		    Self.LockBottom = True
 		    
 		  Case PositionEnum.Center
+		    ' Center the container within the target
 		    Var targetW As Integer = target.Width
 		    Var targetH As Integer = target.Height
 		    Self.Left = (targetW - Self.Width) / 2
 		    Self.Top = (targetH - Self.Height) / 2
 		  End Select
-		  
 		End Sub
 	#tag EndMethod
 
@@ -302,8 +304,8 @@ Inherits webcontainer
 			Type="PositionEnum"
 			EditorType="Enum"
 			#tag EnumValues
-				"0 - TopLeft"
-				"1 - Center"
+				"0 - Center"
+				"1 - TopLeft"
 			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior

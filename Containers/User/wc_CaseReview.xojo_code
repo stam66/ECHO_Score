@@ -600,10 +600,10 @@ Begin wc_base wc_CaseReview
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   62
+      Top             =   66
       Underline       =   False
       Visible         =   True
-      Width           =   80
+      Width           =   69
       _mPanelIndex    =   -1
    End
    Begin WebButton btnPreviousVideo
@@ -631,7 +631,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   20
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   62
+      Top             =   66
       Visible         =   True
       Width           =   115
       _mPanelIndex    =   -1
@@ -647,7 +647,7 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   231
+      Left            =   220
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -661,7 +661,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   21
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   62
+      Top             =   66
       Visible         =   True
       Width           =   115
       _mPanelIndex    =   -1
@@ -691,7 +691,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   22
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   62
+      Top             =   66
       Visible         =   True
       Width           =   115
       _mPanelIndex    =   -1
@@ -879,7 +879,6 @@ End
 		  LoadExistingResponse
 		  LoadVideos
 		  UpdateVideoNavigation
-		  
 		End Sub
 	#tag EndEvent
 
@@ -892,7 +891,25 @@ End
 		  If CurrentVideoIndex < 0 Or CurrentVideoIndex >= TotalVideos Then Return
 		  
 		  Var videoFilename As String = VideoFilenames(CurrentVideoIndex)
-		  Var videoPath As String = "../Documents/CaseVideos/" + videoFilename
+		  
+		  ' Get WebFile URL for the video
+		  Var wf As WebFile = Session.ServeVideo(videoFilename)
+		  
+		  If wf = Nil Then
+		    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		    errorHTML = errorHTML + "body{margin:0;padding:20px;background:#1a1a1a;color:#e74c3c;font-family:Arial,sans-serif;text-align:center;}"
+		    errorHTML = errorHTML + ".error{background:#2c2c2c;padding:30px;border-radius:8px;border-left:4px solid #e74c3c;max-width:600px;margin:50px auto;}"
+		    errorHTML = errorHTML + "</style></head><body><div class='error'>"
+		    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+		    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+		    errorHTML = errorHTML + "</div></body></html>"
+		    
+		    htmlVideoPlayer.LoadHTML(errorHTML)
+		    Return
+		  End If
+		  
+		  Var videoURL As String = wf.URL
+		  System.DebugLog("Playing video: " + videoFilename + " at URL: " + videoURL)
 		  
 		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
 		  html = html + "body{margin:0;padding:20px;background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;}"
@@ -900,7 +917,7 @@ End
 		  html = html + "video{width:100%;height:auto;display:block;background:#000;}"
 		  html = html + "</style></head><body><div class='video-container'>"
 		  html = html + "<video id='mainVideo' controls loop autoplay playsinline>"
-		  html = html + "<source src='" + videoPath + "' type='video/mp4'>"
+		  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
 		  html = html + "Your browser does not support the video tag.</video></div>"
 		  html = html + "<script>var v=document.getElementById('mainVideo');"
 		  html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});</script>"
@@ -929,6 +946,7 @@ End
 		      Var serialNumber As String = rs.Column("serial_number").StringValue
 		      Var caseLabel As String = rs.Column("case_label").StringValue
 		      
+		      ' Check if already completed
 		      Var checkSQL As String = "SELECT is_completed FROM user_responses WHERE user_id = ? AND case_id = ?"
 		      Var checkPS As MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
 		      checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -941,6 +959,7 @@ End
 		        IsReviewMode = checkRS.Column("is_completed").BooleanValue
 		      End If
 		      
+		      ' Show full label if completed or admin
 		      If IsReviewMode Or Session.IsAdmin Then
 		        lblCaseTitle.Text = caseLabel + " (" + serialNumber + ")"
 		      Else
@@ -1002,12 +1021,52 @@ End
 		  ' *******************************************************************************
 		  ' LoadVideos Method
 		  ' *******************************************************************************
-		  Var sql As String = "SELECT video_filename FROM case_videos WHERE case_id = ? ORDER BY video_order"
+		  ' Get current user's group
+		  Var userGroup As String = ""
+		  Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
+		  
+		  Try
+		    Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
+		    userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    userPS.Bind(0, Session.CurrentUserID)
+		    
+		    Var userRS As RowSet = userPS.SelectSQL
+		    If userRS <> Nil And Not userRS.AfterLastRow Then
+		      userGroup = userRS.Column("user_group").StringValue
+		    End If
+		  Catch e As DatabaseException
+		    ' If error, show all videos
+		  End Try
+		  
+		  ' Build SQL based on whether user has a group
+		  Var sql As String
+		  If userGroup.Trim = "" Then
+		    ' No group - show all videos
+		    sql = "SELECT video_filename FROM case_videos WHERE case_id = ? ORDER BY video_order"
+		  Else
+		    ' Has group - show matching videos OR videos with no purpose set
+		    sql = "SELECT video_filename FROM case_videos " + _
+		    "WHERE case_id = ? " + _
+		    "AND (video_purpose IS NULL OR video_purpose = '' " + _
+		    "OR FIND_IN_SET(?, REPLACE(video_purpose, ' ', '')) > 0 " + _
+		    "OR video_purpose LIKE ?) " + _
+		    "ORDER BY video_order"
+		  End If
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    ps.Bind(0, CaseID)
+		    
+		    If userGroup.Trim <> "" Then
+		      ' Remove spaces from user group for comparison
+		      Var cleanUserGroup As String = userGroup.ReplaceAll(" ", "")
+		      
+		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.Bind(1, cleanUserGroup)
+		      ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.Bind(2, "%" + userGroup + "%")
+		    End If
 		    
 		    Var rs As RowSet = ps.SelectSQL
 		    
@@ -1024,7 +1083,7 @@ End
 		      CurrentVideoIndex = 0
 		      DisplayCurrentVideo
 		    Else
-		      MessageBox("No videos found for this case")
+		      MessageBox("No videos available for your group")
 		    End If
 		    
 		  Catch e As DatabaseException
@@ -1159,6 +1218,13 @@ End
 		    Var rs As RowSet = ps.SelectSQL
 		    
 		    If rs <> Nil And Not rs.AfterLastRow Then
+		      ' Create WebStyles for correct and incorrect answers
+		      Var correctColorStyle As New WebStyle
+		      Var incorrectColorStyle As New WebStyle
+		      correctColorStyle.ForegroundColor = &c27ae60
+		      incorrectColorStyle.ForegroundColor = &ce74c3c
+		      
+		      ' Disable all checkboxes
 		      chkLVSizeDilated.Enabled = False
 		      chkLVFunctionImpaired.Enabled = False
 		      chkRVSizeDilated.Enabled = False
@@ -1174,56 +1240,43 @@ End
 		      chkRequiresFullEcho.Enabled = False
 		      txtConclusions.ReadOnly = True
 		      
-		      Var correctColorStyle as new WebStyle
-		      Var incorrectColorStyle as new WebStyle
-		      correctColorStyle.ForegroundColor = &c27ae60
-		      incorrectColorStyle.ForegroundColor = &ce74c3c
-		      
+		      ' Get correct answers from database
 		      Var correctLVSize As Boolean = rs.Column("lv_size_dilated").BooleanValue
-		      
-		      chkLVSizeDilated.Style = If(chkLVSizeDilated.Value = correctLVSize, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctLVFunction As Boolean = rs.Column("lv_function_impaired").BooleanValue
-		      chkLVFunctionImpaired.Style = If(chkLVFunctionImpaired.Value = correctLVFunction, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctRVSize As Boolean = rs.Column("rv_size_dilated").BooleanValue
-		      chkRVSizeDilated.Style = If(chkRVSizeDilated.Value = correctRVSize, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctRVFunction As Boolean = rs.Column("rv_function_impaired").BooleanValue
-		      chkRVFunctionImpaired.Style = If(chkRVFunctionImpaired.Value = correctRVFunction, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctAorticStenosis As Boolean = rs.Column("aortic_stenosis_significant").BooleanValue
-		      chkAorticStenosis.Style = If(chkAorticStenosis.Value = correctAorticStenosis, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctAorticRegurg As Boolean = rs.Column("aortic_regurgitation_significant").BooleanValue
-		      chkAorticRegurgitation.Style = If(chkAorticRegurgitation.Value = correctAorticRegurg, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctMitralStenosis As Boolean = rs.Column("mitral_stenosis_significant").BooleanValue
-		      chkMitralStenosis.Style = If(chkMitralStenosis.Value = correctMitralStenosis, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctMitralRegurg As Boolean = rs.Column("mitral_regurgitation_significant").BooleanValue
-		      chkMitralRegurgitation.Style = If(chkMitralRegurgitation.Value = correctMitralRegurg, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctTricuspidStenosis As Boolean = rs.Column("tricuspid_stenosis_significant").BooleanValue
-		      chkTricuspidStenosis.Style = If(chkTricuspidStenosis.Value = correctTricuspidStenosis, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctTricuspidRegurg As Boolean = rs.Column("tricuspid_regurgitation_significant").BooleanValue
-		      chkTricuspidRegurgitation.Style = If(chkTricuspidRegurgitation.Value = correctTricuspidRegurg, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctPericardial As Boolean = rs.Column("pericardial_effusion_significant").BooleanValue
-		      chkPericardialEffusion.Style = If(chkPericardialEffusion.Value = correctPericardial, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctIVC As Boolean = rs.Column("ivc_high_ra_pressure").BooleanValue
-		      chkIVCHighPressure.Style = If(chkIVCHighPressure.Value = correctIVC, correctColorStyle, incorrectColorStyle)
-		      
 		      Var correctFullEcho As Boolean = rs.Column("requires_full_echo").BooleanValue
+		      
+		      ' Apply color styles based on correct/incorrect
+		      chkLVSizeDilated.Style = If(chkLVSizeDilated.Value = correctLVSize, correctColorStyle, incorrectColorStyle)
+		      chkLVFunctionImpaired.Style = If(chkLVFunctionImpaired.Value = correctLVFunction, correctColorStyle, incorrectColorStyle)
+		      chkRVSizeDilated.Style = If(chkRVSizeDilated.Value = correctRVSize, correctColorStyle, incorrectColorStyle)
+		      chkRVFunctionImpaired.Style = If(chkRVFunctionImpaired.Value = correctRVFunction, correctColorStyle, incorrectColorStyle)
+		      chkAorticStenosis.Style = If(chkAorticStenosis.Value = correctAorticStenosis, correctColorStyle, incorrectColorStyle)
+		      chkAorticRegurgitation.Style = If(chkAorticRegurgitation.Value = correctAorticRegurg, correctColorStyle, incorrectColorStyle)
+		      chkMitralStenosis.Style = If(chkMitralStenosis.Value = correctMitralStenosis, correctColorStyle, incorrectColorStyle)
+		      chkMitralRegurgitation.Style = If(chkMitralRegurgitation.Value = correctMitralRegurg, correctColorStyle, incorrectColorStyle)
+		      chkTricuspidStenosis.Style = If(chkTricuspidStenosis.Value = correctTricuspidStenosis, correctColorStyle, incorrectColorStyle)
+		      chkTricuspidRegurgitation.Style = If(chkTricuspidRegurgitation.Value = correctTricuspidRegurg, correctColorStyle, incorrectColorStyle)
+		      chkPericardialEffusion.Style = If(chkPericardialEffusion.Value = correctPericardial, correctColorStyle, incorrectColorStyle)
+		      chkIVCHighPressure.Style = If(chkIVCHighPressure.Value = correctIVC, correctColorStyle, incorrectColorStyle)
 		      chkRequiresFullEcho.Style = If(chkRequiresFullEcho.Value = correctFullEcho, correctColorStyle, incorrectColorStyle)
 		      
+		      ' Show expert conclusions
 		      lblCorrectConclusionsTitle.Text = "Expert Conclusions:"
 		      lblCorrectConclusionsTitle.Visible = True
 		      lblCorrectConclusions.Text = rs.Column("correct_conclusions").StringValue
 		      lblCorrectConclusions.Visible = True
 		      
+		      ' Calculate score
 		      Var score As Integer = 0
 		      Var total As Integer = 13
 		      
@@ -1242,7 +1295,7 @@ End
 		      If chkRequiresFullEcho.Value = correctFullEcho Then score = score + 1
 		      
 		      Var percentage As Double = (score / total) * 100
-		      lblScore.Text = "Score: " + score.ToString + "/" + total.ToString + " (" + Format(percentage, "0.0") + "%)"
+		      lblScore.Text = "Score: " + Str(score) + "/" + Str(total) + " (" + Format(percentage, "0.0") + "%)"
 		      lblScore.Visible = True
 		      
 		    End If
@@ -1259,7 +1312,7 @@ End
 		  ' *******************************************************************************
 		  If TotalVideos = 0 Then Return
 		  
-		  lblVideoCounter.Text = "Video " + str(CurrentVideoIndex + 1) + " of " + str(TotalVideos)
+		  lblVideoCounter.Text = "Video " + Str(CurrentVideoIndex + 1) + " of " + Str(TotalVideos)
 		  btnPreviousVideo.Enabled = (CurrentVideoIndex > 0)
 		  btnNextVideo.Enabled = (CurrentVideoIndex < TotalVideos - 1)
 		End Sub

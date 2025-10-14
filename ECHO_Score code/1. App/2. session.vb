@@ -1,9 +1,11 @@
--- =============================================================================
--- Session Class
--- Manages global application state and database connection
--- =============================================================================
+' =============================================================================
+' Session Class
+' Manages global application state and database connection
+' =============================================================================
 
+' ******************************************************************
 ' Properties:
+' ******************************************************************
 Public MainShell As wp_MainShell
 Public Navigation As WebNavigationManager
 Public CurrentUserID As Integer = 0
@@ -12,7 +14,9 @@ Public CurrentUserEmail As String = ""
 Public IsAdmin As Boolean = False
 Public DB As MySQLCommunityServer
 
+' ******************************************************************
 ' Session.Opening Event
+' ******************************************************************
 Sub Opening(args() As String)
   #Pragma Unused args
   
@@ -56,10 +60,11 @@ Sub Opening(args() As String)
   Navigation.NavigateTo(w)
 End Sub
 
+' *******************************************************************************
 ' Method: ServeVideo
-' Parameters: filename As String
-' Return Type: WebFile
-' Purpose: Creates a WebFile for video streaming with proper URL generation
+'   Parameters: filename As String
+'   Return Type: WebFile
+' *******************************************************************************
 Public Function ServeVideo(filename As String) As WebFile
   Try
     Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
@@ -73,7 +78,6 @@ Public Function ServeVideo(filename As String) As WebFile
     End If
     
     Var videoFile As FolderItem = videoFolder.Child(filename)
-    
     System.DebugLog("Looking for video: " + videoFile.NativePath)
     System.DebugLog("Video file exists: " + If(videoFile.Exists, "YES", "NO"))
     
@@ -84,9 +88,14 @@ Public Function ServeVideo(filename As String) As WebFile
     
     System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
     
+    ' Read file contents into MemoryBlock
+    Var stream As BinaryStream = BinaryStream.Open(videoFile)
+    Var videoData As MemoryBlock = stream.Read(stream.Length)
+    stream.Close
+    
     ' Create WebFile for streaming
     Var wf As New WebFile
-    wf.Data = videoFile
+    wf.Data = videoData 
     wf.MIMEType = "video/mp4"
     wf.Filename = filename
     wf.ForceDownload = False
@@ -99,7 +108,7 @@ Public Function ServeVideo(filename As String) As WebFile
     System.DebugLog("Error serving video: " + e.Message)
     Return Nil
   End Try
-End Function
+End Function  
 
 ' =============================================================================
 ' Notes:

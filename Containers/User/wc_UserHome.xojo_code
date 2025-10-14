@@ -21,12 +21,12 @@ Begin wc_base wc_UserHome
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   1002
+   Width           =   812
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
    Begin WebLabel lblWelcome
-      Bold            =   False
+      Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
@@ -49,20 +49,20 @@ Begin wc_base wc_UserHome
       Scope           =   0
       TabIndex        =   0
       TabStop         =   True
-      Text            =   ""
+      Text            =   "Welcome, <user>"
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
       Top             =   20
       Underline       =   False
       Visible         =   True
-      Width           =   807
+      Width           =   512
       _mPanelIndex    =   -1
    End
    Begin WebListBox lstCases
       AllowRowReordering=   False
-      ColumnCount     =   4
-      ColumnWidths    =   ""
+      ColumnCount     =   3
+      ColumnWidths    =   "60%,20%,20%"
       ControlID       =   ""
       CSSClasses      =   ""
       DefaultRowHeight=   49
@@ -75,7 +75,7 @@ Begin wc_base wc_UserHome
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
-      InitialValue    =   "Case	Serial	Status	Score"
+      InitialValue    =   "Case	Serial	Status"
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
@@ -101,7 +101,7 @@ Begin wc_base wc_UserHome
       Tooltip         =   ""
       Top             =   154
       Visible         =   True
-      Width           =   962
+      Width           =   772
       _mPanelIndex    =   -1
    End
    Begin WebButton btnStartCase
@@ -145,12 +145,12 @@ Begin wc_base wc_UserHome
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   882
+      Left            =   248
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -181,18 +181,63 @@ End
 
 	#tag Method, Flags = &h0
 		Sub LoadCases()
+		  ' *******************************************************************************
+		  '  LoadCases Method (WITH MULTI-GROUP FILTERING)
+		  ' *******************************************************************************
 		  lstCases.RemoveAllRows
 		  
-		  Var sql As String = _
-		  "SELECT c.case_id, c.serial_number, c.case_label, ur.is_completed, ur.response_id " + _
-		  "FROM cases c " + _
-		  "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
-		  "ORDER BY c.serial_number"
+		  ' Get current user's group
+		  Var userGroup As String = ""
+		  Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
+		  
+		  Try
+		    Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
+		    userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    userPS.Bind(0, Session.CurrentUserID)
+		    
+		    Var userRS As RowSet = userPS.SelectSQL
+		    If userRS <> Nil And Not userRS.AfterLastRow Then
+		      userGroup = userRS.Column("user_group").StringValue
+		    End If
+		  Catch e As DatabaseException
+		    ' If error, show all cases
+		  End Try
+		  
+		  ' Build SQL based on whether user has a group
+		  Var sql As String
+		  If userGroup.Trim = "" Then
+		    ' No group - show all cases
+		    sql = "SELECT c.case_id, c.serial_number, c.case_label, ur.is_completed, ur.response_id " + _
+		    "FROM cases c " + _
+		    "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
+		    "ORDER BY c.serial_number"
+		  Else
+		    ' Has group - show cases with matching videos OR cases with no purpose set
+		    ' Use FIND_IN_SET or LIKE to match comma-separated values
+		    sql = "SELECT DISTINCT c.case_id, c.serial_number, c.case_label, ur.is_completed, ur.response_id " + _
+		    "FROM cases c " + _
+		    "LEFT JOIN case_videos cv ON c.case_id = cv.case_id " + _
+		    "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
+		    "WHERE cv.video_purpose IS NULL OR cv.video_purpose = '' " + _
+		    "OR FIND_IN_SET(?, REPLACE(cv.video_purpose, ' ', '')) > 0 " + _
+		    "OR cv.video_purpose LIKE ? " + _
+		    "ORDER BY c.serial_number"
+		  End If
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    ps.Bind(0, Session.CurrentUserID)
+		    
+		    If userGroup.Trim <> "" Then
+		      ' Remove spaces from user group for comparison
+		      Var cleanUserGroup As String = userGroup.ReplaceAll(" ", "")
+		      
+		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.Bind(1, cleanUserGroup)
+		      ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.Bind(2, "%" + userGroup + "%")
+		    End If
 		    
 		    Var rs As RowSet = ps.SelectSQL
 		    

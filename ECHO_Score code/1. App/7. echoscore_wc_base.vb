@@ -1,13 +1,15 @@
--- =============================================================================
--- wc_Base Class
--- Base class for all WebContainers with positioning support
--- =============================================================================
+' =============================================================================
+' wc_Base Class
+' Base class for all WebContainers with positioning support
+' =============================================================================
 
 ' Insert → Class
 ' Name: wc_Base
 ' Super: WebContainer
 
+' ******************************************************************
 ' Properties:
+' ******************************************************************
 Public ContainerID As String
 Public Position As PositionEnum
 
@@ -17,9 +19,11 @@ Public Position As PositionEnum
 '   - Center
 '   - TopLeft
 
+' ******************************************************************
 ' Method: EmbedInto
 ' Parameters: target As WebContainer
 ' Purpose: Positions the container within the target based on Position property
+' ******************************************************************
 Public Sub EmbedInto(target As WebContainer) 
   Select Case Position
   Case PositionEnum.TopLeft

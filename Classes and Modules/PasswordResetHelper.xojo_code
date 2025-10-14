@@ -5,7 +5,9 @@ Protected Module PasswordResetHelper
 		  ' *******************************************************************************
 		  ' Add Method: CleanupExpiredTokens
 		  '   Return Type: Integer
+		  '   Purpose: Removes expired, unused tokens from database
 		  ' *******************************************************************************
+		  
 		  Try
 		    Var sql As String = "DELETE FROM password_reset_tokens WHERE expires_at < NOW() AND is_used = FALSE"
 		    Session.DB.ExecuteSQL(sql)
@@ -23,16 +25,21 @@ Protected Module PasswordResetHelper
 		  ' Add Method: CreatePasswordResetToken
 		  '   Parameters: userID As Integer, ipAddress As String
 		  '   Return Type: Dictionary
+		  '   Purpose: Creates a new password reset token with OTP
 		  ' *******************************************************************************
+		  
 		  Var result As New Dictionary
 		  
 		  Try
+		    ' Generate OTP and token
 		    Var otp As String = EmailHelper.GenerateOTP
 		    Var token As String = EmailHelper.GenerateSecureToken
 		    
+		    ' Set expiration to 30 minutes from now
 		    Var expiresAt As DateTime = DateTime.Now
 		    expiresAt = expiresAt.AddInterval(0, 0, 0, 0, 30, 0)
 		    
+		    ' Insert token into database
 		    Var sql As String = "INSERT INTO password_reset_tokens (user_id, token, otp, expires_at, ip_address) VALUES (?, ?, ?, ?, ?)"
 		    
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -70,10 +77,12 @@ Protected Module PasswordResetHelper
 		  ' Add Method: ResetPassword
 		  '   Parameters: tokenID As Integer, userID As Integer, newPassword As String
 		  '   Return Type: Boolean
+		  '   Purpose: Updates user password and marks token as used
 		  ' *******************************************************************************
 		  Try
 		    Session.DB.BeginTransaction
 		    
+		    ' Update user password
 		    Var updateUserSQL As String = "UPDATE users SET password_hash = SHA2(?, 256) WHERE user_id = ?"
 		    
 		    Var ps1 As MySQLPreparedStatement = Session.DB.Prepare(updateUserSQL)
@@ -85,6 +94,7 @@ Protected Module PasswordResetHelper
 		    
 		    ps1.ExecuteSQL
 		    
+		    ' Mark token as used
 		    Var updateTokenSQL As String = "UPDATE password_reset_tokens SET is_used = TRUE, used_at = NOW() WHERE token_id = ?"
 		    
 		    Var ps2 As MySQLPreparedStatement = Session.DB.Prepare(updateTokenSQL)
@@ -95,7 +105,7 @@ Protected Module PasswordResetHelper
 		    
 		    Session.DB.CommitTransaction
 		    
-		    System.DebugLog("Password reset successfully for user ID: " + userID.ToString)
+		    System.DebugLog("Password reset successfully for user ID: " + Str(userID))
 		    Return True
 		    
 		  Catch e As DatabaseException
@@ -112,10 +122,13 @@ Protected Module PasswordResetHelper
 		  ' Add Method: VerifyOTP
 		  '   Parameters: email As String, otp As String
 		  '   Return Type: Dictionary
+		  ' Purpose: Verifies OTP and returns token info if valid
 		  ' *******************************************************************************
+		  
 		  Var result As New Dictionary
 		  
 		  Try
+		    ' Find valid, unexpired token for this user
 		    Var sql As String = "SELECT prt.token_id, prt.token, prt.user_id, prt.otp FROM password_reset_tokens prt INNER JOIN users u ON prt.user_id = u.user_id WHERE u.email = ? AND prt.otp = ? AND prt.expires_at > NOW() AND prt.is_used = FALSE ORDER BY prt.created_at DESC LIMIT 1"
 		    
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)

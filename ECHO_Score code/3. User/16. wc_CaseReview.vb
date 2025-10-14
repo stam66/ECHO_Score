@@ -7,13 +7,18 @@
 ' Name: wc_CaseReview
 ' Super: wc_Base
 
+' ******************************************************************
 ' Properties:
+' ******************************************************************
 Public CaseID As Integer
 Private CurrentVideoIndex As Integer = 0
 Private TotalVideos As Integer = 0
 Private VideoFilenames() As String
 Private IsReviewMode As Boolean = False
 
+' ******************************************************************
+' Controls:
+' ******************************************************************
 ' Video Section Controls:
 ' Label: lblCaseTitle (Bold, Large)
 ' HTMLViewer: htmlVideoPlayer (Large area - at least 800px wide)
@@ -52,7 +57,9 @@ Private IsReviewMode As Boolean = False
 ' Label: lblCorrectConclusions (text: "", Visible = False)
 ' Label: lblScore (text: "", Bold, Visible = False)
 
+' ******************************************************************
 ' wc_CaseReview.Opening Event
+' ******************************************************************
 Sub Opening()
   LoadCase
   LoadExistingResponse
@@ -60,7 +67,9 @@ Sub Opening()
   UpdateVideoNavigation
 End Sub
 
+' ******************************************************************
 ' LoadCase Method
+' ******************************************************************
 Sub LoadCase()
   Var sql As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
   
@@ -100,7 +109,9 @@ Sub LoadCase()
   End Try
 End Sub
 
+' ******************************************************************
 ' LoadExistingResponse Method
+' ******************************************************************
 Sub LoadExistingResponse()
   Var sql As String = "SELECT * FROM user_responses WHERE user_id = ? AND case_id = ?"
   
@@ -140,7 +151,9 @@ Sub LoadExistingResponse()
   End Try
 End Sub
 
+' ******************************************************************
 ' LoadVideos Method (WITH MULTI-GROUP FILTERING)
+' ******************************************************************
 Sub LoadVideos()
   ' Get current user's group
   Var userGroup As String = ""
@@ -216,7 +229,9 @@ End Sub
 ' wc_CaseReview WebContainer (PART 2 - Video Display and Save/Submit)
 ' =============================================================================
 
+' ******************************************************************
 ' DisplayCurrentVideo Method (USING WEBFILE)
+' ******************************************************************
 Sub DisplayCurrentVideo()
   If CurrentVideoIndex < 0 Or CurrentVideoIndex >= TotalVideos Then Return
   
@@ -257,7 +272,9 @@ Sub DisplayCurrentVideo()
   UpdateVideoNavigation
 End Sub
 
+' ******************************************************************
 ' UpdateVideoNavigation Method
+' ******************************************************************
 Sub UpdateVideoNavigation()
   If TotalVideos = 0 Then Return
   
@@ -266,7 +283,9 @@ Sub UpdateVideoNavigation()
   btnNextVideo.Enabled = (CurrentVideoIndex < TotalVideos - 1)
 End Sub
 
+' ******************************************************************
 ' btnPreviousVideo.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If CurrentVideoIndex > 0 Then
     CurrentVideoIndex = CurrentVideoIndex - 1
@@ -274,7 +293,9 @@ Sub Pressed()
   End If
 End Sub
 
+' ******************************************************************
 ' btnNextVideo.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If CurrentVideoIndex < TotalVideos - 1 Then
     CurrentVideoIndex = CurrentVideoIndex + 1
@@ -287,7 +308,9 @@ Sub Pressed()
   DisplayCurrentVideo
 End Sub
 
+' ******************************************************************
 ' SaveResponse Method
+' ******************************************************************
 Sub SaveResponse(isCompleted As Boolean)
   Var sql As String
   Var checkSQL As String = "SELECT response_id FROM user_responses WHERE user_id = ? AND case_id = ?"
@@ -394,17 +417,23 @@ Sub SaveResponse(isCompleted As Boolean)
   End Try
 End Sub
 
+' ******************************************************************
 ' btnSave.Pressed Event
+' ******************************************************************
 Sub Pressed()
   SaveResponse(False)
 End Sub
 
+' ******************************************************************
 ' btnSubmit.Pressed Event
+' ******************************************************************
 Sub Pressed()
   SaveResponse(True)
 End Sub
 
+' ******************************************************************
 ' btnBack.Pressed Event
+' ******************************************************************
 Sub Pressed()
   Session.Navigation.NavigateBack
 End Sub

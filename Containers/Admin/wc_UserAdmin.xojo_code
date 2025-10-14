@@ -548,11 +548,11 @@ Begin wc_base wc_UserAdmin
       Scope           =   0
       TabIndex        =   15
       TabStop         =   True
-      Text            =   "Password"
+      Text            =   "Group"
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   532
+      Top             =   539
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -661,7 +661,7 @@ End
 		  ' *******************************************************************************
 		  ' wc_UserAdmin.opening event
 		  ' *******************************************************************************
-		  LoadUsers
+		  LoadUsers("")
 		  LoadUserGroups
 		  ClearFields
 		End Sub
@@ -702,12 +702,13 @@ End
 		      
 		      MessageBox("User deleted successfully!")
 		      ClearFields
-		      LoadUsers
+		      LoadUsers("")
 		      
 		    Catch e As DatabaseException
 		      MessageBox("Error deleting user: " + e.Message)
 		    End Try
 		  End Select
+		  
 		End Sub
 	#tag EndMethod
 
@@ -757,7 +758,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadUsers()
+		Sub LoadUsers(filterGroup as String)
 		  ' *******************************************************************************
 		  ' LoadUsers Method
 		  ' *******************************************************************************
@@ -798,6 +799,11 @@ End
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mSelectedUserID As Integer = 0
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
 #tag Events lstUsers
@@ -808,9 +814,14 @@ End
 		  ' *******************************************************************************
 		  #Pragma Unused rows
 		  
-		  If Me.SelectedRowIndex < 0 Then Return
+		  If Me.SelectedRowIndex < 0 Then
+		    mSelectedUserID = 0
+		    ClearFields()
+		    Return
+		  End If
 		  
 		  Var userID As Integer = Me.RowTagAt(Me.SelectedRowIndex)
+		  mSelectedUserID = userID  ' Store for later use
 		  
 		  Var sql As String = "SELECT full_name, email, username, is_admin, user_group FROM users WHERE user_id = ?"
 		  
@@ -832,7 +843,6 @@ End
 		  Catch e As DatabaseException
 		    MessageBox("Error loading user: " + e.Message)
 		  End Try
-		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -842,6 +852,7 @@ End
 		  ' *******************************************************************************
 		  ' btnAddUser.Pressed Event
 		  ' *******************************************************************************
+		  
 		  If txtName.Text.Trim = "" Or txtEmail.Text.Trim = "" Or txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
 		    MessageBox("Please fill all fields")
 		    Return
@@ -869,7 +880,7 @@ End
 		    
 		    MessageBox("User added successfully!")
 		    ClearFields
-		    LoadUsers
+		    LoadUsers("")
 		    LoadUserGroups  ' Refresh groups in case new one was added
 		    
 		  Catch e As DatabaseException
@@ -884,7 +895,8 @@ End
 		  ' *******************************************************************************
 		  ' btnUpdateUser.Pressed Event
 		  ' *******************************************************************************
-		  If lstUsers.SelectedRowIndex < 0 Then
+		  ' Check if a user is selected
+		  If mSelectedUserID = 0 Then
 		    MessageBox("Please select a user to update")
 		    Return
 		  End If
@@ -894,10 +906,55 @@ End
 		    Return
 		  End If
 		  
-		  Var userID As Integer = lstUsers.RowTagAt(lstUsers.SelectedRowIndex)
+		  ' Check if username is already taken by ANOTHER user
+		  Var checkUsernameSQL As String = "SELECT user_id FROM users WHERE username = ? AND user_id <> ?"
+		  
+		  Try
+		    Var checkPS As MySQLPreparedStatement = Session.DB.Prepare(checkUsernameSQL)
+		    checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    checkPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    checkPS.Bind(0, txtUsername.Text.Trim)
+		    checkPS.Bind(1, mSelectedUserID)
+		    
+		    Var checkRS As RowSet = checkPS.SelectSQL
+		    
+		    If checkRS <> Nil And Not checkRS.AfterLastRow Then
+		      MessageBox("Username '" + txtUsername.Text.Trim + "' is already taken by another user.")
+		      Return
+		    End If
+		    
+		  Catch e As DatabaseException
+		    MessageBox("Error checking username: " + e.Message)
+		    Return
+		  End Try
+		  
+		  ' Check if email is already taken by ANOTHER user
+		  Var checkEmailSQL As String = "SELECT user_id FROM users WHERE email = ? AND user_id <> ?"
+		  
+		  Try
+		    Var checkEmailPS As MySQLPreparedStatement = Session.DB.Prepare(checkEmailSQL)
+		    checkEmailPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    checkEmailPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    checkEmailPS.Bind(0, txtEmail.Text.Trim)
+		    checkEmailPS.Bind(1, mSelectedUserID)
+		    
+		    Var checkEmailRS As RowSet = checkEmailPS.SelectSQL
+		    
+		    If checkEmailRS <> Nil And Not checkEmailRS.AfterLastRow Then
+		      MessageBox("Email '" + txtEmail.Text.Trim + "' is already taken by another user.")
+		      Return
+		    End If
+		    
+		  Catch e As DatabaseException
+		    MessageBox("Error checking email: " + e.Message)
+		    Return
+		  End Try
+		  
+		  ' Proceed with the update
 		  Var sql As String
 		  
 		  If txtPassword.Text.Trim = "" Then
+		    ' Update without changing password
 		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, is_admin = ?, user_group = ? WHERE user_id = ?"
 		    
 		    Try
@@ -914,18 +971,20 @@ End
 		      ps.Bind(2, txtUsername.Text.Trim)
 		      ps.Bind(3, chkIsAdmin.Value)
 		      ps.Bind(4, cmbUserGroup.Text.Trim)
-		      ps.Bind(5, userID)
+		      ps.Bind(5, mSelectedUserID)
 		      
 		      ps.ExecuteSQL
 		      
 		      MessageBox("User updated successfully!")
-		      LoadUsers
+		      LoadUsers("")
 		      LoadUserGroups
 		      
 		    Catch e As DatabaseException
 		      MessageBox("Error updating user: " + e.Message)
 		    End Try
+		    
 		  Else
+		    ' Update including password
 		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, password_hash = SHA2(?, 256), is_admin = ?, user_group = ? WHERE user_id = ?"
 		    
 		    Try
@@ -944,12 +1003,12 @@ End
 		      ps.Bind(3, txtPassword.Text.Trim)
 		      ps.Bind(4, chkIsAdmin.Value)
 		      ps.Bind(5, cmbUserGroup.Text.Trim)
-		      ps.Bind(6, userID)
+		      ps.Bind(6, mSelectedUserID)
 		      
 		      ps.ExecuteSQL
 		      
 		      MessageBox("User updated successfully!")
-		      LoadUsers
+		      LoadUsers("")
 		      LoadUserGroups
 		      
 		    Catch e As DatabaseException

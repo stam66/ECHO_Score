@@ -7,21 +7,27 @@
 ' Name: wc_CaseDetails
 ' Super: wc_Base
 
+' ******************************************************************
 ' Properties:
+' ******************************************************************
 Public CaseID As Integer
 Private mOriginalCellValue As String
 Private mLastVideoID As Integer
 Private mLastColumn As Integer
 Private mLastOldValue As String
 Private mLastNewValue As String
+Private mCaseInfoChanged As Boolean = False
 Private mAnswersChanged As Boolean = False
 
+' ******************************************************************
+' Controls:
+' ******************************************************************
 ' CASE INFO SECTION (Top):
 ' Label: lblCaseInfo (text: "Case Information", Bold)
 ' Label: lblSerial (text: "Serial Number:")
 ' TextField: txtSerialNumber (ReadOnly = True)
 ' Label: lblLabel (text: "Description:")
-' TextField: txtCaseLabel (ReadOnly = True)
+' TextField: txtCaseLabel (ReadOnly = False, Editable = True)
 
 ' CORRECT ANSWERS SECTION:
 ' Label: lblCorrectAnswers (text: "Correct Answers", Bold)
@@ -40,20 +46,22 @@ Private mAnswersChanged As Boolean = False
 ' Label: lblCorrectConclusions (text: "Correct Conclusions:")
 ' TextArea: txtCorrectConclusions
 ' CheckBox: chkRequiresFullEcho (text: "Requires Full ECHO?")
-' PushButton: btnSaveAnswers (text: "Save Answers")
-' PushButton: btnCancelAnswers (text: "Cancel")
+
+' SAVE/CANCEL SECTION (Bottom of page):
+' PushButton: btnSaveAll (text: "Save All Changes", Large, Primary style)
+' PushButton: btnCancelChanges (text: "Cancel Changes")
 
 ' VIDEOS SECTION:
 ' Label: lblVideos (text: "Case Videos", Bold)
-' Label: lblVideoInstructions (text: "Double-click cells to edit. Use commas to separate multiple groups (e.g., 'Cardiology 2025 Q1,ICU 2025 Q1')")
+' Label: lblVideoInstructions (text: "Click 'Choose File' to select video, then click 'Upload'. Double-click cells to edit. Use commas to separate multiple groups (e.g., 'Cardiology 2025 Q1,ICU 2025 Q1')")
 ' ListBox: lstVideos (4 columns: Filename, View Description, Purpose, Order)
 '   - Set ColumnTypeAt(1) = TextField (editable)
 '   - Set ColumnTypeAt(2) = TextField (editable)
 '   - Set ColumnTypeAt(3) = TextField (editable)
-' PushButton: btnUploadVideo (text: "Upload Video")
+' WebFileUploader: uplVideo (AllowMultipleFiles = False, Filter = "video/mp4,video/*")
+' PushButton: btnStartUpload (text: "Upload Selected Video")
 ' PushButton: btnDeleteVideo (text: "Delete Video")
 ' PushButton: btnUndoVideoEdit (text: "Undo Last Change", Enabled = False)
-' WebUploader: uplVideo
 
 ' VIDEO PREVIEW SECTION:
 ' Label: lblVideoPreview (text: "Video Preview", Bold)
@@ -62,15 +70,26 @@ Private mAnswersChanged As Boolean = False
 ' NAVIGATION:
 ' PushButton: btnBackToList (text: "Back to Case List")
 
+' ******************************************************************
 ' wc_CaseDetails.Opening Event
+' ******************************************************************
 Sub Opening()
+  ' Configure editable columns in video listbox
+  lstVideos.ColumnTypeAt(1) = ListBox.CellTypes.TextField
+  lstVideos.ColumnTypeAt(2) = ListBox.CellTypes.TextField
+  lstVideos.ColumnTypeAt(3) = ListBox.CellTypes.TextField
+  
   LoadCaseDetails
   LoadCaseVideos
+  mCaseInfoChanged = False
   mAnswersChanged = False
   btnUndoVideoEdit.Enabled = False
+  btnStartUpload.Enabled = False  ' Disabled until file is selected
 End Sub
 
+' ******************************************************************
 ' LoadCaseDetails Method
+' ******************************************************************
 Sub LoadCaseDetails()
   Var sql As String = "SELECT * FROM cases WHERE case_id = ?"
   
@@ -187,9 +206,12 @@ End Sub
 
 ' =============================================================================
 ' wc_CaseDetails WebContainer (PART 2 - Video Management)
+' Continued from Part 1
 ' =============================================================================
 
+' ******************************************************************
 ' LoadCaseVideos Method (WITH PURPOSE COLUMN)
+' ******************************************************************
 Sub LoadCaseVideos()
   lstVideos.RemoveAllRows
   
@@ -216,68 +238,189 @@ Sub LoadCaseVideos()
   End Try
 End Sub
 
+' ******************************************************************
+' Track changes to case info
+' ******************************************************************
+Sub TrackCaseInfoChange()
+  mCaseInfoChanged = True
+End Sub
+
+' ******************************************************************
 ' Track changes to answers
+' ******************************************************************
 Sub TrackAnswerChange()
   mAnswersChanged = True
 End Sub
 
-' NOTE: In the IDE, add ValueChanged event to each checkbox that calls TrackAnswerChange()
+' NOTE: In the IDE, add the following event handlers:
+' - txtCaseLabel.TextChanged → call TrackCaseInfoChange()
+' - All checkboxes ValueChanged → call TrackAnswerChange()
+' - txtCorrectConclusions.TextChanged → call TrackAnswerChange()
 
-' btnSaveAnswers.Pressed Event
+' ******************************************************************
+' btnSaveAll.Pressed Event
+' ******************************************************************
 Sub Pressed()
-  Var sql As String = "UPDATE cases SET lv_size_dilated=?, lv_function_impaired=?, rv_size_dilated=?, rv_function_impaired=?, aortic_stenosis_significant=?, aortic_regurgitation_significant=?, mitral_stenosis_significant=?, mitral_regurgitation_significant=?, tricuspid_stenosis_significant=?, tricuspid_regurgitation_significant=?, pericardial_effusion_significant=?, ivc_high_ra_pressure=?, correct_conclusions=?, requires_full_echo=? WHERE case_id=?"
+  Var changesMade As Boolean = False
+  Var errors As String = ""
+  
+  ' Validate case label
+  If txtCaseLabel.Text.Trim = "" Then
+    MessageBox("Case description cannot be empty")
+    Return
+  End If
   
   Try
-    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    Session.DB.BeginTransaction
     
-    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(0, If(chkLVSizeDilated.Indeterminate, Nil, chkLVSizeDilated.Value))
-    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(1, If(chkLVFunctionImpaired.Indeterminate, Nil, chkLVFunctionImpaired.Value))
-    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(2, If(chkRVSizeDilated.Indeterminate, Nil, chkRVSizeDilated.Value))
-    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(3, If(chkRVFunctionImpaired.Indeterminate, Nil, chkRVFunctionImpaired.Value))
-    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(4, If(chkAorticStenosis.Indeterminate, Nil, chkAorticStenosis.Value))
-    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(5, If(chkAorticRegurgitation.Indeterminate, Nil, chkAorticRegurgitation.Value))
-    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(6, If(chkMitralStenosis.Indeterminate, Nil, chkMitralStenosis.Value))
-    ps.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(7, If(chkMitralRegurgitation.Indeterminate, Nil, chkMitralRegurgitation.Value))
-    ps.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(8, If(chkTricuspidStenosis.Indeterminate, Nil, chkTricuspidStenosis.Value))
-    ps.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(9, If(chkTricuspidRegurgitation.Indeterminate, Nil, chkTricuspidRegurgitation.Value))
-    ps.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(10, If(chkPericardialEffusion.Indeterminate, Nil, chkPericardialEffusion.Value))
-    ps.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(11, If(chkIVCHighPressure.Indeterminate, Nil, chkIVCHighPressure.Value))
-    ps.BindType(12, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-    ps.Bind(12, txtCorrectConclusions.Text)
-    ps.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-    ps.Bind(13, If(chkRequiresFullEcho.Indeterminate, Nil, chkRequiresFullEcho.Value))
-    ps.BindType(14, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-    ps.Bind(14, CaseID)
+    ' Save case description if changed
+    If mCaseInfoChanged Then
+      Var sqlCase As String = "UPDATE cases SET case_label = ? WHERE case_id = ?"
+      Var psCase As MySQLPreparedStatement = Session.DB.Prepare(sqlCase)
+      psCase.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psCase.Bind(0, txtCaseLabel.Text.Trim)
+      psCase.Bind(1, CaseID)
+      psCase.ExecuteSQL
+      changesMade = True
+    End If
     
-    ps.ExecuteSQL
+    ' Save correct answers if changed
+    If mAnswersChanged Then
+      Var sqlAnswers As String = "UPDATE cases SET lv_size_dilated=?, lv_function_impaired=?, rv_size_dilated=?, rv_function_impaired=?, aortic_stenosis_significant=?, aortic_regurgitation_significant=?, mitral_stenosis_significant=?, mitral_regurgitation_significant=?, tricuspid_stenosis_significant=?, tricuspid_regurgitation_significant=?, pericardial_effusion_significant=?, ivc_high_ra_pressure=?, correct_conclusions=?, requires_full_echo=? WHERE case_id=?"
+      
+      Var psAnswers As MySQLPreparedStatement = Session.DB.Prepare(sqlAnswers)
+      
+      psAnswers.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkLVSizeDilated.Indeterminate Then
+        psAnswers.Bind(0, Nil)
+      Else
+        psAnswers.Bind(0, chkLVSizeDilated.Value)
+      End If
+      
+      psAnswers.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkLVFunctionImpaired.Indeterminate Then
+        psAnswers.Bind(1, Nil)
+      Else
+        psAnswers.Bind(1, chkLVFunctionImpaired.Value)
+      End If
+      
+      psAnswers.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkRVSizeDilated.Indeterminate Then
+        psAnswers.Bind(2, Nil)
+      Else
+        psAnswers.Bind(2, chkRVSizeDilated.Value)
+      End If
+      
+      psAnswers.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkRVFunctionImpaired.Indeterminate Then
+        psAnswers.Bind(3, Nil)
+      Else
+        psAnswers.Bind(3, chkRVFunctionImpaired.Value)
+      End If
+      
+      psAnswers.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkAorticStenosis.Indeterminate Then
+        psAnswers.Bind(4, Nil)
+      Else
+        psAnswers.Bind(4, chkAorticStenosis.Value)
+      End If
+      
+      psAnswers.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkAorticRegurgitation.Indeterminate Then
+        psAnswers.Bind(5, Nil)
+      Else
+        psAnswers.Bind(5, chkAorticRegurgitation.Value)
+      End If
+      
+      psAnswers.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkMitralStenosis.Indeterminate Then
+        psAnswers.Bind(6, Nil)
+      Else
+        psAnswers.Bind(6, chkMitralStenosis.Value)
+      End If
+      
+      psAnswers.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkMitralRegurgitation.Indeterminate Then
+        psAnswers.Bind(7, Nil)
+      Else
+        psAnswers.Bind(7, chkMitralRegurgitation.Value)
+      End If
+      
+      psAnswers.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkTricuspidStenosis.Indeterminate Then
+        psAnswers.Bind(8, Nil)
+      Else
+        psAnswers.Bind(8, chkTricuspidStenosis.Value)
+      End If
+      
+      psAnswers.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkTricuspidRegurgitation.Indeterminate Then
+        psAnswers.Bind(9, Nil)
+      Else
+        psAnswers.Bind(9, chkTricuspidRegurgitation.Value)
+      End If
+      
+      psAnswers.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkPericardialEffusion.Indeterminate Then
+        psAnswers.Bind(10, Nil)
+      Else
+        psAnswers.Bind(10, chkPericardialEffusion.Value)
+      End If
+      
+      psAnswers.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkIVCHighPressure.Indeterminate Then
+        psAnswers.Bind(11, Nil)
+      Else
+        psAnswers.Bind(11, chkIVCHighPressure.Value)
+      End If
+      
+      psAnswers.BindType(12, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      psAnswers.Bind(12, txtCorrectConclusions.Text)
+      
+      psAnswers.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+      If chkRequiresFullEcho.Indeterminate Then
+        psAnswers.Bind(13, Nil)
+      Else
+        psAnswers.Bind(13, chkRequiresFullEcho.Value)
+      End If
+      
+      psAnswers.BindType(14, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psAnswers.Bind(14, CaseID)
+      
+      psAnswers.ExecuteSQL
+      changesMade = True
+    End If
     
-    MessageBox("Answers saved successfully!")
-    mAnswersChanged = False
+    Session.DB.CommitTransaction
+    
+    If changesMade Then
+      MessageBox("All changes saved successfully!")
+      mCaseInfoChanged = False
+      mAnswersChanged = False
+    Else
+      MessageBox("No changes to save")
+    End If
     
   Catch e As DatabaseException
-    MessageBox("Error saving answers: " + e.Message)
+    Session.DB.RollbackTransaction
+    MessageBox("Error saving changes: " + e.Message)
   End Try
 End Sub
 
-' btnCancelAnswers.Pressed Event
+' ******************************************************************
+' btnCancelChanges.Pressed Event
+' ******************************************************************
 Sub Pressed()
-  LoadCaseDetails  ' Reload original values
+  ' Reload original values
+  LoadCaseDetails
+  mCaseInfoChanged = False
   mAnswersChanged = False
 End Sub
 
+' ******************************************************************
 ' lstVideos.SelectionChanged Event (WITH WEBFILE AND PURPOSE)
+' ******************************************************************
 Sub SelectionChanged(rows() As Integer)
   #Pragma Unused rows
   
@@ -323,76 +466,119 @@ Sub SelectionChanged(rows() As Integer)
   htmlVideoPreview.LoadHTML(html)
 End Sub
 
-' lstVideos.CellAction Event - Allow editing columns 1, 2, 3
-Sub CellAction(row As Integer, column As Integer)
-  If column >= 1 And column <= 3 Then ' View Description, Purpose, or Order
+' ******************************************************************
+' lstVideos.CellAction Event - Handle inline editing
+' ******************************************************************
+Sub CellAction(row As Integer, column As Integer, value As Variant)
+  If column >= 1 And column <= 3 Then
+    ' Store original value before editing
     mOriginalCellValue = Me.CellTextAt(row, column)
-    Me.EditCell(row, column)
+    
+    ' Get the new value from the edit
+    Var newValue As String = value.StringValue
+    
+    ' If value actually changed, save it
+    If newValue <> mOriginalCellValue Then
+      Var videoID As Integer = Me.RowTagAt(row)
+      
+      ' Store for undo
+      mLastVideoID = videoID
+      mLastColumn = column
+      mLastOldValue = mOriginalCellValue
+      mLastNewValue = newValue
+      
+      ' Update the cell display
+      Me.CellTextAt(row, column) = newValue
+      
+      ' Save to database
+      Var sql As String
+      Select Case column
+      Case 1
+        sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
+      Case 2
+        sql = "UPDATE case_videos SET video_purpose = ? WHERE video_id = ?"
+      Case 3
+        sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
+      Else
+        Return
+      End Select
+      
+      Try
+        Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+        
+        If column = 3 Then
+          ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+          Var orderValue As Integer = Val(newValue)
+          If orderValue < 0 Then orderValue = 0
+          ps.Bind(0, orderValue)
+        Else
+          ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+          ps.Bind(0, newValue)
+        End If
+        
+        ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+        ps.Bind(1, videoID)
+        
+        ps.ExecuteSQL
+        
+        System.DebugLog("Video metadata updated: video_id=" + Str(videoID))
+        btnUndoVideoEdit.Enabled = True
+        
+      Catch e As DatabaseException
+        MessageBox("Error updating video: " + e.Message)
+        Me.CellTextAt(row, column) = mOriginalCellValue
+      End Try
+    End If
   End If
 End Sub
 
 
 ' =============================================================================
-' wc_CaseDetails WebContainer (PART 3 - Video Upload/Delete/Undo)
+' wc_CaseDetails WebContainer (PART 3 - Video Upload/Delete/Undo/Navigation)
+' Continued from Part 2
 ' =============================================================================
 
-' lstVideos.CellTextChanged Event - Save and track for undo (WITH PURPOSE)
-Sub CellTextChanged(row As Integer, column As Integer)
-  Var videoID As Integer = Me.RowTagAt(row)
-  Var newValue As String = Me.CellTextAt(row, column)
-  
-  ' Store for undo
-  mLastVideoID = videoID
-  mLastColumn = column
-  mLastOldValue = mOriginalCellValue
-  mLastNewValue = newValue
-  
-  Var sql As String
-  Select Case column
-  Case 1
-    sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
-  Case 2
-    sql = "UPDATE case_videos SET video_purpose = ? WHERE video_id = ?"
-  Case 3
-    sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
-  Else
-    Return
-  End Select
-  
-  Try
-    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-    
-    If column = 3 Then
-      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-      Var orderValue As Integer = Val(newValue)
-      If orderValue < 0 Then orderValue = 0
-      ps.Bind(0, orderValue)
-    Else
-      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-      ps.Bind(0, newValue)
-    End If
-    
-    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-    ps.Bind(1, videoID)
-    
-    ps.ExecuteSQL
-    
-    System.DebugLog("Video metadata updated: video_id=" + Str(videoID))
-    btnUndoVideoEdit.Enabled = True
-    
-  Catch e As DatabaseException
-    MessageBox("Error updating video: " + e.Message)
-    Me.CellTextAt(row, column) = mOriginalCellValue
-  End Try
-End Sub
-
-' btnUploadVideo.Pressed Event
+' ******************************************************************
+' btnStartUpload.Pressed Event
+' ******************************************************************
 Sub Pressed()
-  uplVideo.ShowDialog
+  ' Start the upload process for selected file(s)
+  uplVideo.StartUpload
 End Sub
 
-' uplVideo.FileReceived Event (WITH PURPOSE)
-Sub FileReceived(file As FolderItem)
+' ******************************************************************
+' uplVideo.FileAdded Event
+' ******************************************************************
+Sub FileAdded(filename As String, bytes As UInt64, mimeType As String)
+  ' Enable upload button when file is selected
+  btnStartUpload.Enabled = True
+  System.DebugLog("File selected: " + filename + " (" + Str(bytes) + " bytes)")
+End Sub
+
+' ******************************************************************
+' uplVideo.FileRemoved Event
+' ******************************************************************
+Sub FileRemoved(filename As String)
+  ' Disable upload button when file is removed
+  btnStartUpload.Enabled = False
+  System.DebugLog("File removed: " + filename)
+End Sub
+
+' ******************************************************************
+' uplVideo.UploadError Event
+' ******************************************************************
+Sub UploadError(error As RuntimeException)
+  MessageBox("Upload error: " + error.Message)
+  btnStartUpload.Enabled = True  ' Re-enable for retry
+End Sub
+
+' ******************************************************************
+' uplVideo.UploadFinished Event
+' ******************************************************************
+Sub UploadFinished(files() As WebUploadedFile)
+  ' Get the first (and only, since AllowMultipleFiles = False) file
+  Var uploadedFile As WebUploadedFile = files(0)
+  
   Try
     Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
     If Not targetFolder.Exists Then
@@ -400,9 +586,15 @@ Sub FileReceived(file As FolderItem)
       System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
     End If
     
-    Var targetFile As FolderItem = targetFolder.Child(file.Name)
-    file.CopyTo(targetFile)
-    System.DebugLog("Video copied to: " + targetFile.NativePath)
+    ' Create target file with the original filename
+    Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+    
+    ' Save the uploaded file data to disk
+    Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
+    outputStream.Write(uploadedFile.Data)
+    outputStream.Close
+    
+    System.DebugLog("Video saved to: " + targetFile.NativePath)
     
     ' Get next order number
     Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
@@ -415,6 +607,7 @@ Sub FileReceived(file As FolderItem)
       videoOrder = orderRS.Column("next_order").IntegerValue
     End If
     
+    ' Insert into database
     Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -424,7 +617,7 @@ Sub FileReceived(file As FolderItem)
     ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
     
     ps.Bind(0, CaseID)
-    ps.Bind(1, file.Name)
+    ps.Bind(1, uploadedFile.Name)
     ps.Bind(2, "")  ' Empty, user can edit inline
     ps.Bind(3, "")  ' Empty, user can edit inline
     ps.Bind(4, videoOrder)
@@ -434,14 +627,20 @@ Sub FileReceived(file As FolderItem)
     MessageBox("Video uploaded successfully!")
     LoadCaseVideos
     
+    ' Clear the uploader for next file and disable upload button
+    uplVideo.RemoveAllFiles
+    btnStartUpload.Enabled = False
+    
   Catch e As IOException
-    MessageBox("Error copying video file: " + e.Message)
+    MessageBox("Error saving video file: " + e.Message)
   Catch e As DatabaseException
     MessageBox("Error saving video: " + e.Message)
   End Try
 End Sub
 
+' ******************************************************************
 ' btnDeleteVideo.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If lstVideos.SelectedRowIndex < 0 Then
     MessageBox("Please select a video to delete")
@@ -459,7 +658,9 @@ Sub Pressed()
   d.Show
 End Sub
 
+' ******************************************************************
 ' HandleDeleteVideoConfirm Method
+' ******************************************************************
 Private Sub HandleDeleteVideoConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
   Select Case button
   Case dialog.ActionButton
@@ -483,7 +684,9 @@ Private Sub HandleDeleteVideoConfirm(dialog As WebMessageDialog, button As WebMe
   End Select
 End Sub
 
+' ******************************************************************
 ' btnUndoVideoEdit.Pressed Event
+' ******************************************************************
 Sub Pressed()
   If mLastVideoID = 0 Then
     MessageBox("No change to undo")
@@ -535,18 +738,87 @@ Sub Pressed()
   End Try
 End Sub
 
+' ******************************************************************
 ' btnBackToList.Pressed Event
+' ******************************************************************
 Sub Pressed()
   Session.Navigation.NavigateBack
 End Sub
 
 ' =============================================================================
-' Notes:
-' * 4-column video list: Filename, Description, Purpose, Order
-' * Purpose supports comma-separated groups (e.g., "Cardiology 2025 Q1,ICU 2025 Q1")
-' * Inline editing for Description, Purpose, and Order columns
-' * Undo functionality for video metadata changes
-' * Video preview with auto-loop
-' * Indeterminate checkbox state for NULL values
-' * Save/Cancel buttons for correct answers
+' wc_CaseDetails Complete Summary
+' =============================================================================
+' 
+' This container is split into 3 parts:
+' 
+' PART 1: 
+' - Properties (including mCaseInfoChanged and mAnswersChanged flags)
+' - Layout definitions (including WebFileUploader: uplVideo and btnStartUpload)
+' - Opening event (configures editable columns, initializes flags, disables btnStartUpload)
+' - LoadCaseDetails (loads case info and correct answers with indeterminate state)
+' - LoadCaseVideos (loads video list with 4 columns)
+' 
+' PART 2:
+' - TrackCaseInfoChange (monitors txtCaseLabel changes)
+' - TrackAnswerChange (monitors checkbox and conclusion changes)
+' - btnSaveAll (UNIFIED SAVE - saves description + answers in transaction)
+' - btnCancelChanges (reloads original values, resets flags)
+' - lstVideos.SelectionChanged (displays video preview)
+' - lstVideos.CellAction (handles inline editing AND saves to database)
+' 
+' PART 3 (THIS FILE):
+' - btnStartUpload.Pressed (calls uplVideo.StartUpload to begin upload)
+' - uplVideo.FileAdded (enables upload button when file selected)
+' - uplVideo.FileRemoved (disables upload button when file removed)
+' - uplVideo.UploadError (handles upload errors)
+' - uplVideo.UploadFinished (saves file to disk and database, clears uploader)
+' - btnDeleteVideo (with confirmation dialog)
+' - btnUndoVideoEdit (reverts last metadata change)
+' - btnBackToList (navigation)
+' 
+' =============================================================================
+' Key Features:
+' =============================================================================
+' 
+' SINGLE SAVE BUTTON DESIGN:
+' - One "Save All Changes" button for description + correct answers
+' - Uses database transaction (atomic save)
+' - Only saves what changed (smart saving)
+' - Video metadata auto-saves on inline edit (immediate feedback)
+' 
+' VIDEO UPLOAD WORKFLOW:
+' 1. User clicks WebFileUploader ("Choose File")
+' 2. FileAdded event enables "Upload Selected Video" button
+' 3. User clicks "Upload Selected Video" 
+' 4. btnStartUpload calls uplVideo.StartUpload()
+' 5. UploadFinished event saves file to disk and database
+' 6. Uploader cleared and button disabled (ready for next file)
+' 
+' Case Info Section:
+' - Serial Number: Read-only (auto-generated)
+' - Description: Editable, tracked by mCaseInfoChanged flag
+' 
+' Correct Answers Section:
+' - 12 checkboxes + conclusions + requires_full_echo
+' - Supports indeterminate state (NULL values)
+' - Changes tracked by mAnswersChanged flag
+' 
+' Video Management Section:
+' - 4-column listbox: Filename, View Description, Purpose, Order
+' - Inline editing for Description, Purpose, Order (auto-saves immediately)
+' - Purpose supports comma-separated groups (e.g., "Cardiology 2025 Q1,ICU 2025 Q1")
+' - Video preview with auto-loop
+' - Upload videos (two-step: select, then upload)
+' - Delete videos (with confirmation)
+' - Undo last metadata change
+' 
+' Save Strategy:
+' - Case description + Correct answers: Saved together via "Save All Changes"
+' - Video metadata: Auto-saved immediately on inline edit (better UX)
+' - Video upload: Two-step process (select file, then click upload)
+' - Video delete: Immediate (with confirmation dialog)
+' 
+' Navigation:
+' - Back button returns to wc_CaseList
+' 
 ' =============================================================================

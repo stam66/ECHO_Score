@@ -1,26 +1,32 @@
--- =============================================================================
--- WebNavigationManager Class
--- Manages navigation between WebContainers with history support
--- =============================================================================
+' =============================================================================
+' WebNavigationManager Class
+' Manages navigation between WebContainers with history support
+' =============================================================================
 
 ' Insert → Class
 ' Name: WebNavigationManager
 ' Super: (none)
 
+' ******************************************************************
 ' Properties:
+' ******************************************************************
 Private mHostPage As wp_MainShell
 Private mHistory() As WebContainer
 Private mForward() As WebContainer
 
+' ******************************************************************
 ' Method: Constructor
 ' Parameters: host As wp_MainShell
+' ******************************************************************
 Public Sub Constructor(host As wp_MainShell)
   mHostPage = host
 End Sub
 
+' ******************************************************************
 ' Method: NavigateTo
 ' Parameters: container As WebContainer
 ' Purpose: Navigate to a new container, adding current to history
+' ******************************************************************
 Public Sub NavigateTo(container As WebContainer)
   ' Save current container to history
   If mHostPage.ContentArea <> Nil Then
@@ -55,8 +61,10 @@ Public Sub NavigateTo(container As WebContainer)
   LogNavigation("NavigateTo", container)
 End Sub
 
+' ******************************************************************
 ' Method: NavigateBack
 ' Purpose: Navigate to previous container in history
+' ******************************************************************
 Public Sub NavigateBack()
   If mHistory.Count > 0 Then
     ' Save current to forward history
@@ -98,8 +106,10 @@ Public Sub NavigateBack()
   End If
 End Sub
 
+' ******************************************************************
 ' Method: NavigateForward
 ' Purpose: Navigate forward in history (after NavigateBack)
+' ******************************************************************
 Public Sub NavigateForward()
   If mForward.Count > 0 Then
     ' Save current to history
@@ -141,9 +151,11 @@ Public Sub NavigateForward()
   End If
 End Sub
 
+' ******************************************************************
 ' Method: LogNavigation (Private)
 ' Parameters: action As String, destination As WebContainer
 ' Purpose: Debug logging for navigation actions
+' ******************************************************************
 Private Sub LogNavigation(action As String, destination As WebContainer)
   Var name As String = If(destination IsA wc_Base, wc_Base(destination).ContainerID, "Unknown")
   System.DebugLog("Navigation: " + action + " → " + name)

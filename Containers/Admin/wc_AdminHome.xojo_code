@@ -24,7 +24,6 @@ Begin wc_base wc_AdminHome
    Width           =   382
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblWelcome
       Bold            =   True
@@ -35,7 +34,7 @@ Begin wc_base wc_AdminHome
       FontSize        =   0.0
       Height          =   38
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -186,7 +185,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		   lblWelcome.Text = "Admin Dashboard - Welcome, " + Session.CurrentUserName
+		    lblWelcome.Text = "Admin Dashboard - Welcome, " + Session.CurrentUserName
 		End Sub
 	#tag EndEvent
 
@@ -203,7 +202,6 @@ End
 		  userAdmin.ContainerID = "UserAdmin"
 		  userAdmin.Position = wc_Base.PositionEnum.TopLeft
 		  Session.Navigation.NavigateTo(userAdmin)
-		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -213,10 +211,10 @@ End
 		  ' *******************************************************************************
 		  ' btnManageCases.Pressed Event
 		  ' *******************************************************************************
-		  Var caseAdmin As New wc_CaseAdmin
-		  caseAdmin.ContainerID = "CaseAdmin"
-		  caseAdmin.Position = wc_Base.PositionEnum.TopLeft
-		  Session.Navigation.NavigateTo(caseAdmin)
+		  Var caseList As New wc_CaseList
+		  caseList.ContainerID = "CaseList"
+		  caseList.Position = wc_Base.PositionEnum.TopLeft
+		  Session.Navigation.NavigateTo(caseList)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
