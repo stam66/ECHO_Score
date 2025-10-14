@@ -5,7 +5,7 @@ Begin WebDialog dlg_AddCase
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   299
+   Height          =   355
    Index           =   -2147483648
    Indicator       =   0
    LayoutDirection =   0
@@ -91,7 +91,7 @@ Begin WebDialog dlg_AddCase
       Top             =   82
       Underline       =   False
       Visible         =   True
-      Width           =   161
+      Width           =   135
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtSerialNumber
@@ -159,7 +159,7 @@ Begin WebDialog dlg_AddCase
       Top             =   156
       Underline       =   False
       Visible         =   True
-      Width           =   161
+      Width           =   135
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtDescription
@@ -196,7 +196,7 @@ Begin WebDialog dlg_AddCase
       Width           =   271
       _mPanelIndex    =   -1
    End
-   Begin WebButton Button1
+   Begin WebButton btnOK
       AllowAutoDisable=   False
       Cancel          =   False
       Caption         =   "OK"
@@ -221,12 +221,12 @@ Begin WebDialog dlg_AddCase
       TabIndex        =   5
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   241
+      Top             =   297
       Visible         =   True
       Width           =   100
       _mPanelIndex    =   -1
    End
-   Begin WebButton Button2
+   Begin WebButton btnCancel
       AllowAutoDisable=   False
       Cancel          =   True
       Caption         =   "Cancel"
@@ -251,9 +251,77 @@ Begin WebDialog dlg_AddCase
       TabIndex        =   6
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   241
+      Top             =   297
       Visible         =   True
       Width           =   100
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblGroup
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   0.0
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   7
+      TabStop         =   True
+      Text            =   "Grouping:"
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   230
+      Underline       =   False
+      Visible         =   True
+      Width           =   135
+      _mPanelIndex    =   -1
+   End
+   Begin WebCombobox cmbGroup
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FilteringMode   =   1
+      Height          =   38
+      Hint            =   ""
+      Index           =   -2147483648
+      Indicator       =   0
+      InitialValue    =   ""
+      LastAddedRowIndex=   0
+      LastRowIndex    =   0
+      Left            =   163
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      RowCount        =   0
+      Scope           =   2
+      SelectedRowIndex=   -1
+      SelectedRowText =   ""
+      TabIndex        =   9
+      TabStop         =   True
+      Text            =   ""
+      Tooltip         =   ""
+      Top             =   230
+      Visible         =   True
+      Width           =   271
       _mPanelIndex    =   -1
    End
 End
@@ -262,8 +330,11 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  ' Get next case number
-		  Var sql As String = "SELECT serial_number FROM cases ORDER BY serial_number DESC LIMIT 1"
+		  ' ******************************************************************
+		  ' dlg_AddCase.Opening Event
+		  ' ******************************************************************
+		  ' Get next case number using NUMERICAL sorting
+		  Var sql As String = "SELECT serial_number FROM cases ORDER BY CAST(SUBSTRING(serial_number, 6) AS UNSIGNED) DESC LIMIT 1"
 		  
 		  Try
 		    Var rs As RowSet = Session.DB.SelectSQL(sql)
@@ -285,19 +356,109 @@ End
 		    txtSerialNumber.Text = "Case 1"
 		  End Try
 		  
+		  ' Load available groups
+		  LoadGroups
+		  
 		  txtDescription.SetFocus
 		End Sub
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub LoadGroups()
+		  ' ******************************************************************
+		  ' LoadGroups Method
+		  ' ******************************************************************
+		  cmbGroup.RemoveAllRows
+		  cmbGroup.AddRow("(No group)")
+		  
+		  ' Add common groups
+		  Var currentYear As Integer = DateTime.Now.Year
+		  Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
+		  Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+		  
+		  For Each specialty As String In specialties
+		    For Each quarter As String In quarters
+		      cmbGroup.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
+		    Next
+		  Next
+		  
+		  ' Also load existing groups from database
+		  Var sql As String = "SELECT DISTINCT video_purpose FROM case_videos WHERE video_purpose IS NOT NULL AND video_purpose <> '' ORDER BY video_purpose"
+		  
+		  Try
+		    Var rs As RowSet = Session.DB.SelectSQL(sql)
+		    Var uniqueGroups() As String
+		    
+		    While Not rs.AfterLastRow
+		      Var purposeText As String = rs.Column("video_purpose").StringValue
+		      
+		      ' Split comma-separated groups
+		      If purposeText.Trim <> "" Then
+		        Var groups() As String = purposeText.Split(",")
+		        For Each group As String In groups
+		          Var cleanGroup As String = group.Trim
+		          If cleanGroup <> "" Then
+		            ' Add if not already in list
+		            Var found As Boolean = False
+		            For Each existing As String In uniqueGroups
+		              If existing = cleanGroup Then
+		                found = True
+		                Exit For existing
+		              End If
+		            Next
+		            If Not found Then
+		              uniqueGroups.Add(cleanGroup)
+		            End If
+		          End If
+		        Next
+		      End If
+		      
+		      rs.MoveToNextRow
+		    Wend
+		    
+		    ' Add unique groups to combobox
+		    For Each group As String In uniqueGroups
+		      ' Check if already in combobox
+		      Var alreadyExists As Boolean = False
+		      For i As Integer = 0 To cmbGroup.RowCount - 1
+		        If cmbGroup.RowTextAt(i) = group Then
+		          alreadyExists = True
+		          Exit For i
+		        End If
+		      Next
+		      
+		      If Not alreadyExists Then
+		        cmbGroup.AddRow(group)
+		      End If
+		    Next
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error loading groups: " + e.Message)
+		  End Try
+		  
+		  cmbGroup.SelectedRowIndex = 0
+		End Sub
+	#tag EndMethod
+
+
 #tag EndWindowCode
 
-#tag Events Button1
+#tag Events btnOK
 	#tag Event
 		Sub Pressed()
+		  ' ******************************************************************
+		  ' btnOK.Pressed Event
+		  ' ******************************************************************
 		  If txtDescription.Text.Trim = "" Then
 		    MessageBox("Please enter a case description")
 		    Return
+		  End If
+		  
+		  ' Get selected group (if any)
+		  Var selectedGroup As String = ""
+		  If cmbGroup.SelectedRowIndex > 0 Then  ' Skip "(No group)"
+		    selectedGroup = cmbGroup.Text.Trim
 		  End If
 		  
 		  ' Create the case with all checkboxes set to NULL (indeterminate)
@@ -311,7 +472,15 @@ End
 		    ps.Bind(1, txtDescription.Text.Trim)
 		    ps.ExecuteSQL
 		    
-		    MessageBox("Case created successfully!")
+		    ' Store the selected group in the session for use when uploading videos
+		    ' This will be used as the default group in wc_CaseDetails
+		    If selectedGroup <> "" Then
+		      Session.LastCreatedCaseGroup = selectedGroup
+		    Else
+		      Session.LastCreatedCaseGroup = ""
+		    End If
+		    
+		    MessageBox("Case created successfully!" + If(selectedGroup <> "", EndOfLine + "Default group: " + selectedGroup, ""))
 		    Self.Close
 		  Catch e As DatabaseException
 		    MessageBox("Error creating case: " + e.Message)
@@ -319,7 +488,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Button2
+#tag Events btnCancel
 	#tag Event
 		Sub Pressed()
 		   Self.Close

@@ -1,6 +1,6 @@
 ' =============================================================================
-' wc_CaseList WebContainer (FIXED - with selection preservation)
-' Case list view with filtering and search (Screen 1 of 2)
+' wc_CaseList WebContainer (Complete with all fixes)
+' Case list view with filtering, search, and numerical sorting (Screen 1 of 2)
 ' =============================================================================
 
 ' Insert → WebContainer
@@ -26,7 +26,7 @@ Private mSelectedCaseID As Integer = 0
 ' PushButton: btnClearFilters (text: "Clear Filters")
 
 ' ListBox: lstCases (4 columns: Serial Number, Description, Groups, Videos)
-'   - Set SelectionType to Single (NOT None)
+'   - IMPORTANT: Set SelectionType = Single (NOT None)
 ' PushButton: btnNewCase (text: "New Case")
 ' PushButton: btnDeleteCase (text: "Delete Case")
 ' PushButton: btnBack (text: "Back to Admin")
@@ -93,7 +93,7 @@ Sub LoadGroupFilter()
 End Sub
 
 ' ******************************************************************
-' LoadCases Method (WITH FILTERING, SEARCH, AND SELECTION PRESERVATION)
+' LoadCases Method (WITH NUMERICAL SORTING, FILTERING, SEARCH, AND SELECTION PRESERVATION)
 ' ******************************************************************
 Sub LoadCases()
   ' Store currently selected case ID (if any)
@@ -111,7 +111,7 @@ Sub LoadCases()
   
   Var searchTerm As String = txtSearch.Text.Trim
   
-  ' Build SQL with filtering
+  ' Build SQL with filtering and NUMERICAL SORTING
   Var sql As String = _
   "SELECT c.case_id, c.serial_number, c.case_label, " + _
   "GROUP_CONCAT(DISTINCT cv.video_purpose ORDER BY cv.video_purpose SEPARATOR ', ') AS all_groups, " + _
@@ -136,7 +136,8 @@ Sub LoadCases()
     sql = sql + "WHERE " + String.FromArray(whereConditions, " AND ")
   End If
   
-  sql = sql + " GROUP BY c.case_id, c.serial_number, c.case_label ORDER BY c.serial_number"
+  ' Use NUMERICAL sorting instead of alphabetical
+  sql = sql + " GROUP BY c.case_id, c.serial_number, c.case_label ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
   
   Try
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -206,6 +207,7 @@ End Sub
 Sub SelectionChanged(rows() As Integer)
   #Pragma Unused rows
   
+  ' Store selected case ID - DO NOT call LoadCases here!
   If Me.SelectedRowIndex >= 0 Then
     mSelectedCaseID = Me.RowTagAt(Me.SelectedRowIndex)
   Else
@@ -213,7 +215,9 @@ Sub SelectionChanged(rows() As Integer)
   End If
 End Sub
 
+' ******************************************************************
 ' popFilterGroup.SelectionChanged Event
+' ******************************************************************
 Sub SelectionChanged(newRowIndex As Integer)
   #Pragma Unused newRowIndex
   LoadCases
@@ -223,7 +227,7 @@ End Sub
 ' txtSearch.TextChanged Event
 ' ******************************************************************
 Sub TextChanged()
-  ' Optional: Add slight delay to avoid excessive queries while typing
+  ' Real-time filtering as user types
   LoadCases
 End Sub
 
@@ -326,23 +330,29 @@ End Sub
 ' Notes:
 ' =============================================================================
 ' 
-' FIXES APPLIED:
+' CRITICAL FIXES APPLIED:
 ' 
-' 1. Selection Preservation:
-'    - Added mSelectedCaseID property to store selected case ID
-'    - SelectionChanged event updates mSelectedCaseID
+' 1. Numerical Sorting:
+'    - Uses: ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)
+'    - Extracts number after "Case " and sorts numerically
+'    - Result: Case 1, Case 2... Case 9, Case 10, Case 11 ✅
+'    - NOT: Case 1, Case 10, Case 2... Case 9 ❌
+' 
+' 2. Selection Preservation:
+'    - mSelectedCaseID property stores selected case
+'    - SelectionChanged ONLY stores ID, does NOT call LoadCases
 '    - LoadCases preserves and restores selection after reload
-'    - DoublePressed and btnDeleteCase use stored ID instead of SelectedRowIndex
+'    - Delete/DoubleClick use stored ID, not SelectedRowIndex
 ' 
-' 2. Dialog Handling:
-'    - Uses dlg.Dismissed event (not Closed) for WebDialog
-'    - AddHandler works correctly with no IDE conflicts
+' 3. Dialog Integration:
+'    - Uses dlg.Dismissed event (WebDialog doesn't have Closed)
+'    - Reloads cases and groups after dialog closes
+'    - Admin can assign group when creating case
 ' 
-' 3. ListBox Configuration:
-'    - IMPORTANT: Set lstCases.SelectionType = Single in IDE
-'    - Do NOT set it to None or selection won't work
+' IDE CONFIGURATION REQUIRED:
+' - lstCases.SelectionType MUST be set to Single (NOT None)
 ' 
-' ENHANCED FEATURES:
+' FEATURES:
 ' 
 ' 1. Four-Column ListBox:
 '    - Serial Number (e.g., "Case 1")
@@ -351,25 +361,32 @@ End Sub
 '    - Videos (e.g., "5")
 ' 
 ' 2. Group Filter:
-'    - PopupMenu populated with all unique groups from video_purpose
-'    - Automatically extracts groups from comma-separated values
+'    - PopupMenu with unique groups from video_purpose
+'    - Extracts groups from comma-separated values
 '    - "All Groups" option to show everything
-'    - Updates case list when selection changes
 ' 
 ' 3. Search Filter:
-'    - TextField searches both serial number and description
+'    - Searches serial number and description
 '    - Real-time filtering as user types
-'    - Case-insensitive search using LIKE
+'    - Case-insensitive LIKE query
 ' 
 ' 4. Clear Filters Button:
 '    - Resets popup to "All Groups"
 '    - Clears search text
-'    - Reloads full case list
+'    - Reloads full list
 ' 
 ' SQL FEATURES:
-' - Uses GROUP_CONCAT to collect all unique groups per case
-' - COUNT to get video count per case
-' - Combines multiple WHERE conditions dynamically
-' - Handles comma-separated groups in video_purpose
+' - GROUP_CONCAT for collecting unique groups per case
+' - COUNT for video count per case
+' - Dynamic WHERE conditions
+' - Numerical sorting using CAST and SUBSTRING
+' 
+' WORKFLOW:
+' 1. Admin clicks "New Case"
+' 2. Dialog opens, assigns group
+' 3. Case created with numerical ordering
+' 4. Admin double-clicks to manage details/videos
+' 5. Admin can filter by group or search
+' 6. Admin can delete cases with confirmation
 ' 
 ' =============================================================================

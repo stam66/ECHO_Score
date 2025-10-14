@@ -46,7 +46,7 @@ Begin wc_base wc_CaseList
       LockVertical    =   False
       Multiline       =   False
       PanelIndex      =   0
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   0
       TabStop         =   True
       Text            =   "Case Management"
@@ -92,7 +92,7 @@ Begin wc_base wc_CaseList
       ProcessingMessage=   ""
       RowCount        =   0
       RowSelectionType=   1
-      Scope           =   0
+      Scope           =   2
       SearchCriteria  =   ""
       SelectedRowColor=   &c0d6efd
       SelectedRowIndex=   0
@@ -125,7 +125,7 @@ Begin wc_base wc_CaseList
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   11
       TabStop         =   True
       Tooltip         =   ""
@@ -155,7 +155,7 @@ Begin wc_base wc_CaseList
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
@@ -185,7 +185,7 @@ Begin wc_base wc_CaseList
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   14
       TabStop         =   True
       Tooltip         =   ""
@@ -382,7 +382,7 @@ Begin wc_base wc_CaseList
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   24
       TabStop         =   True
       Tooltip         =   ""
@@ -415,7 +415,6 @@ End
 		  ' Reload cases and groups after dialog closes
 		  LoadGroupFilter
 		  LoadCases
-		  
 		End Sub
 	#tag EndMethod
 
@@ -426,7 +425,7 @@ End
 		  ' ******************************************************************
 		  Select Case button
 		  Case dialog.ActionButton
-		    Var caseID As Integer = mSelectedCaseID  ' Use stored ID
+		    Var caseID As Integer = mSelectedCaseID
 		    Var sql As String = "DELETE FROM cases WHERE case_id = ?"
 		    
 		    Try
@@ -438,7 +437,7 @@ End
 		      
 		      MessageBox("Case deleted successfully!")
 		      mSelectedCaseID = 0  ' Clear stored ID
-		      LoadGroupFilter
+		      LoadGroupFilter  ' Refresh group list in case groups were removed
 		      LoadCases
 		      
 		    Catch e As DatabaseException
@@ -451,12 +450,10 @@ End
 	#tag Method, Flags = &h0
 		Sub LoadCases()
 		  ' ******************************************************************
-		  ' LoadCases Method (WITH FILTERING AND SEARCH)
+		  ' LoadCases Method (WITH NUMERICAL SORTING, FILTERING, SEARCH, AND SELECTION PRESERVATION)
 		  ' ******************************************************************
-		  Var selectedCaseID As Integer = 0
-		  If lstCases.SelectedRowIndex >= 0 Then
-		    selectedCaseID = lstCases.RowTagAt(lstCases.SelectedRowIndex)
-		  End If
+		  ' Store currently selected case ID (if any)
+		  Var selectedCaseID As Integer = mSelectedCaseID
 		  
 		  lstCases.RemoveAllRows
 		  
@@ -470,7 +467,7 @@ End
 		  
 		  Var searchTerm As String = txtSearch.Text.Trim
 		  
-		  ' Build SQL with filtering
+		  ' Build SQL with filtering and NUMERICAL SORTING
 		  Var sql As String = _
 		  "SELECT c.case_id, c.serial_number, c.case_label, " + _
 		  "GROUP_CONCAT(DISTINCT cv.video_purpose ORDER BY cv.video_purpose SEPARATOR ', ') AS all_groups, " + _
@@ -495,7 +492,8 @@ End
 		    sql = sql + "WHERE " + String.FromArray(whereConditions, " AND ")
 		  End If
 		  
-		  sql = sql + " GROUP BY c.case_id, c.serial_number, c.case_label ORDER BY c.serial_number"
+		  ' Use NUMERICAL sorting instead of alphabetical
+		  sql = sql + " GROUP BY c.case_id, c.serial_number, c.case_label ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -544,18 +542,19 @@ End
 		      rs.MoveToNextRow
 		    Wend
 		    
+		    ' Restore selection after reload
+		    If selectedCaseID > 0 Then
+		      For i As Integer = 0 To lstCases.RowCount - 1
+		        If lstCases.RowTagAt(i) = selectedCaseID Then
+		          lstCases.SelectedRowIndex = i
+		          Exit For i
+		        End If
+		      Next
+		    End If
+		    
 		  Catch e As DatabaseException
 		    MessageBox("Error loading cases: " + e.Message)
 		  End Try
-		  
-		  If selectedCaseID > 0 Then
-		    For i As Integer = 0 To lstCases.RowCount - 1
-		      If lstCases.RowTagAt(i) = selectedCaseID Then
-		        lstCases.SelectedRowIndex = i
-		        Exit For i
-		      End If
-		    Next
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -625,8 +624,12 @@ End
 #tag Events lstCases
 	#tag Event
 		Sub SelectionChanged(rows() As Integer)
+		  ' ******************************************************************
+		  ' lstCases.SelectionChanged Event
+		  ' ******************************************************************
 		  #Pragma Unused rows
 		  
+		  ' Store selected case ID - DO NOT call LoadCases here!
 		  If Me.SelectedRowIndex >= 0 Then
 		    mSelectedCaseID = Me.RowTagAt(Me.SelectedRowIndex)
 		  Else
@@ -636,14 +639,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DoublePressed(row As Integer, column As Integer)
-		  If Me.SelectedRowIndex < 0 Then Return
-		  
-		  Var caseID As Integer = Me.RowTagAt(Me.SelectedRowIndex)
+		  ' ******************************************************************
+		  ' lstCases.DoublePressed Event
+		  ' ******************************************************************
+		  If mSelectedCaseID = 0 Then Return
 		  
 		  Var caseDetails As New wc_CaseDetails
 		  caseDetails.ContainerID = "CaseDetails"
 		  caseDetails.Position = wc_Base.PositionEnum.TopLeft
-		  caseDetails.CaseID = caseID
+		  caseDetails.CaseID = mSelectedCaseID
 		  Session.Navigation.NavigateTo(caseDetails)
 		End Sub
 	#tag EndEvent
@@ -651,9 +655,9 @@ End
 #tag Events btnNewCase
 	#tag Event
 		Sub Pressed()
-		  ' *******************************************************************************
+		  ' ******************************************************************
 		  ' btnNewCase.Pressed Event
-		  ' *******************************************************************************
+		  ' ******************************************************************
 		  Var dlg As New dlg_AddCase
 		  AddHandler dlg.Dismissed, AddressOf HandleAddCaseDialogClosed
 		  dlg.Show
@@ -680,7 +684,6 @@ End
 		  
 		  AddHandler d.ButtonPressed, AddressOf HandleDeleteCaseConfirm
 		  d.Show
-		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -691,10 +694,24 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events popFilterGroup
+	#tag Event
+		Sub SelectionChanged(item As WebMenuItem)
+		  ' ******************************************************************
+		  ' popFilterGroup.SelectionChanged Event
+		  ' ******************************************************************
+		  #Pragma Unused item
+		  LoadCases
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events txtSearch
 	#tag Event
 		Sub TextChanged()
-		  ' Optional: Add slight delay to avoid excessive queries while typing
+		  ' ******************************************************************
+		  ' txtSearch.TextChanged Event
+		  ' Real-time filtering as user types
+		  ' ******************************************************************
 		  LoadCases
 		End Sub
 	#tag EndEvent
@@ -702,6 +719,9 @@ End
 #tag Events btnClearFilters
 	#tag Event
 		Sub Pressed()
+		  ' ******************************************************************
+		  ' btnClearFilters.Pressed Event
+		  ' ******************************************************************
 		  popFilterGroup.SelectedRowIndex = 0
 		  txtSearch.Text = ""
 		  LoadCases

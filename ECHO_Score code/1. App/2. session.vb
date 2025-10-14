@@ -13,6 +13,7 @@ Public CurrentUserName As String = ""
 Public CurrentUserEmail As String = ""
 Public IsAdmin As Boolean = False
 Public DB As MySQLCommunityServer
+Public LastCreatedCaseGroup As String = ""
 
 ' ******************************************************************
 ' Session.Opening Event

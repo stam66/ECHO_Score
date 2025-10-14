@@ -132,6 +132,10 @@ Inherits WebSession
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		LastCreatedCaseGroup As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		MainShell As wp_MainShell
 	#tag EndProperty
 
