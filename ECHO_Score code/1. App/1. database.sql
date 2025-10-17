@@ -135,3 +135,12 @@ VALUES ('smtp.gmail.com', 587, 'echoscore.app@gmail.com', 'kqfzidauezxfugda', 'n
 -- * Videos with NULL or empty purpose are visible to all users
 -- * Update email_config with your actual SMTP credentials
 -- =============================================================================
+
+-- modify cases to include groups at case level
+ALTER TABLE cases 
+ADD COLUMN case_groups TEXT NULL 
+COMMENT 'Comma-separated list of groups this case is assigned to (e.g., "Cardiology 2025 Q1,ICU 2025 Q1")';
+
+-- Add index for searching/filtering by groups
+ALTER TABLE cases 
+ADD INDEX idx_case_groups (case_groups(100));

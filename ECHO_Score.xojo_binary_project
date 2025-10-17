@@ -51,6 +51,7 @@ Folder=User;Containers/User;&h0000000024251FFF;&h000000007BAD2FFF;false
 WebContainer=wc_UserHome;Containers/User/wc_UserHome.xojo_code;&h000000003E8D37FF;&h0000000024251FFF;false
 WebContainer=wc_CaseReview;Containers/User/wc_CaseReview.xojo_code;&h0000000019858FFF;&h0000000024251FFF;false
 WebView=dlg_AddCase;Dialogs/dlg_AddCase.xojo_code;&h0000000031BB4FFF;&h0000000042AA17FF;false
+WebContainer=videoContainer;Containers/App/videoContainer.xojo_code;&h00000000362757FF;&h0000000060699FFF;false
 DefaultWindow=wp_MainShell
 MajorVersion=1
 MinorVersion=0

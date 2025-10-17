@@ -1,6 +1,7 @@
+
 ' =============================================================================
-' wc_CaseDetails WebContainer (PART 1 - Properties and Layout)
-' Detailed case editor with video management (Screen 2 of 2)
+' wc_CaseDetails WebContainer (COMPLETE - with Tag-Based Group Selection)
+' Detailed case editor with video management and group assignment
 ' =============================================================================
 
 ' Insert → WebContainer
@@ -18,16 +19,27 @@ Private mLastOldValue As String
 Private mLastNewValue As String
 Private mCaseInfoChanged As Boolean = False
 Private mAnswersChanged As Boolean = False
+Private mGroupsChanged As Boolean = False
+Private mOriginalGroups() As String
 
 ' ******************************************************************
-' Controls:
+'Controls:
 ' ******************************************************************
 ' CASE INFO SECTION (Top):
 ' Label: lblCaseInfo (text: "Case Information", Bold)
 ' Label: lblSerial (text: "Serial Number:")
 ' TextField: txtSerialNumber (ReadOnly = True)
-' Label: lblLabel (text: "Description:")
+' Label: lblDescription (text: "Case Description:")
 ' TextField: txtCaseLabel (ReadOnly = False, Editable = True)
+
+' GROUP ASSIGNMENT SECTION:
+' Label: lblGroupAssignment (text: "Assigned Groups", Bold)
+' Label: lblGroupInstructions (text: "Select a group and click Add. Students in any assigned group will see this case.")
+' PopupMenu: popAvailableGroups
+' PushButton: btnAddGroup (text: "Add Group")
+' Label: lblCurrentGroups (text: "Currently Assigned:")
+' ListBox: lstAssignedGroups (1 column: Group Name)
+' PushButton: btnRemoveGroup (text: "Remove Selected")
 
 ' CORRECT ANSWERS SECTION:
 ' Label: lblCorrectAnswers (text: "Correct Answers", Bold)
@@ -47,17 +59,15 @@ Private mAnswersChanged As Boolean = False
 ' TextArea: txtCorrectConclusions
 ' CheckBox: chkRequiresFullEcho (text: "Requires Full ECHO?")
 
-' SAVE/CANCEL SECTION (Bottom of page):
+' SAVE/CANCEL SECTION:
 ' PushButton: btnSaveAll (text: "Save All Changes", Large, Primary style)
 ' PushButton: btnCancelChanges (text: "Cancel Changes")
 
 ' VIDEOS SECTION:
 ' Label: lblVideos (text: "Case Videos", Bold)
-' Label: lblVideoInstructions (text: "Click 'Choose File' to select video, then click 'Upload'. Double-click cells to edit. Use commas to separate multiple groups (e.g., 'Cardiology 2025 Q1,ICU 2025 Q1')")
-' ListBox: lstVideos (4 columns: Filename, View Description, Purpose, Order)
-'   - Set ColumnTypeAt(1) = TextField (editable)
-'   - Set ColumnTypeAt(2) = TextField (editable)
-'   - Set ColumnTypeAt(3) = TextField (editable)
+' Label: lblVideoInstructions (text: "Click 'Choose File' to select video, then click 'Upload'. Double-click cells to edit view description or order.")
+' ListBox: lstVideos (3 columns: Filename, View Description, Order)
+'   - Column widths: Filename (fill remaining), View Description (150px), Order (50px)
 ' WebFileUploader: uplVideo (AllowMultipleFiles = False, Filter = "video/mp4,video/*")
 ' PushButton: btnStartUpload (text: "Upload Selected Video")
 ' PushButton: btnDeleteVideo (text: "Delete Video")
@@ -73,18 +83,100 @@ Private mAnswersChanged As Boolean = False
 ' ******************************************************************
 ' wc_CaseDetails.Opening Event
 ' ******************************************************************
-Sub Opening()
-  ' Configure editable columns in video listbox
-  lstVideos.ColumnTypeAt(1) = ListBox.CellTypes.TextField
-  lstVideos.ColumnTypeAt(2) = ListBox.CellTypes.TextField
-  lstVideos.ColumnTypeAt(3) = ListBox.CellTypes.TextField
+Sub Opening() // CHANGED
+  ' Configure listbox columns (3 columns: Filename, View Description, Order)
+  lstVideos.ColumnWidthAt(0) = 390  ' Filename
+  lstVideos.ColumnWidthAt(1) = 200  ' View Description - fits "parasternal LAX" with spacing
+  lstVideos.ColumnWidthAt(2) = 100  ' Order - 3 digits with spacing
   
+  ' Set editable columns
+  lstVideos.ColumnTypeAt(1) = WebListBox.CellTypes.TextField
+  lstVideos.ColumnTypeAt(2) = WebListBox.CellTypes.TextField
+  
+  LoadAvailableGroups
   LoadCaseDetails
   LoadCaseVideos
   mCaseInfoChanged = False
   mAnswersChanged = False
+  mGroupsChanged = False
   btnUndoVideoEdit.Enabled = False
-  btnStartUpload.Enabled = False  ' Disabled until file is selected
+  btnStartUpload.Enabled = False
+End Sub
+
+' ******************************************************************
+' LoadAvailableGroups Method
+' ******************************************************************
+Sub LoadAvailableGroups()
+  popAvailableGroups.RemoveAllRows
+  
+  ' Add common groups
+  Var currentYear As Integer = DateTime.Now.Year
+  Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
+  Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+  
+  For Each specialty As String In specialties
+    For Each quarter As String In quarters
+      popAvailableGroups.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
+    Next
+  Next
+  
+  ' Load existing groups from database (from both user_group and case_groups)
+  Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL AND user_group <> '' UNION SELECT DISTINCT case_groups FROM cases WHERE case_groups IS NOT NULL AND case_groups <> '' ORDER BY 1"
+  
+  Try
+    Var rs As RowSet = Session.DB.SelectSQL(sql)
+    Var uniqueGroups() As String
+    
+    While Not rs.AfterLastRow
+      Var groupText As String = rs.Column(0).StringValue
+      
+      ' Split comma-separated groups
+      If groupText.Trim <> "" Then
+        Var groups() As String = groupText.Split(",")
+        For Each group As String In groups
+          Var cleanGroup As String = group.Trim
+          If cleanGroup <> "" Then
+            ' Add if not already in list
+            Var found As Boolean = False
+            For Each existing As String In uniqueGroups
+              If existing = cleanGroup Then
+                found = True
+                Exit For existing
+              End If
+            Next
+            If Not found Then
+              uniqueGroups.Add(cleanGroup)
+            End If
+          End If
+        Next
+      End If
+      
+      rs.MoveToNextRow
+    Wend
+    
+    ' Add unique groups to popup
+    For Each group As String In uniqueGroups
+      ' Check if already in popup
+      Var alreadyExists As Boolean = False
+      For i As Integer = 0 To popAvailableGroups.RowCount - 1
+        If popAvailableGroups.RowTextAt(i) = group Then
+          alreadyExists = True
+          Exit For i
+        End If
+      Next
+      
+      If Not alreadyExists Then
+        popAvailableGroups.AddRow(group)
+      End If
+    Next
+    
+  Catch e As DatabaseException
+    System.DebugLog("Error loading groups: " + e.Message)
+  End Try
+  
+  If popAvailableGroups.RowCount > 0 Then
+    popAvailableGroups.SelectedRowIndex = 0
+  End If
 End Sub
 
 ' ******************************************************************
@@ -103,6 +195,10 @@ Sub LoadCaseDetails()
     If rs <> Nil And Not rs.AfterLastRow Then
       txtSerialNumber.Text = rs.Column("serial_number").StringValue
       txtCaseLabel.Text = rs.Column("case_label").StringValue
+      
+      ' Load assigned groups
+      Var caseGroups As String = rs.Column("case_groups").StringValue
+      LoadAssignedGroups(caseGroups)
       
       ' Load checkbox values (may be NULL/indeterminate)
       If rs.Column("lv_size_dilated").Value = Nil Then
@@ -203,19 +299,85 @@ Sub LoadCaseDetails()
   End Try
 End Sub
 
-
-' =============================================================================
-' wc_CaseDetails WebContainer (PART 2 - Video Management)
-' Continued from Part 1
-' =============================================================================
+' ******************************************************************
+' LoadAssignedGroups Method
+' ******************************************************************
+Sub LoadAssignedGroups(caseGroups As String)
+  lstAssignedGroups.RemoveAllRows
+  Redim mOriginalGroups(-1)
+  
+  If caseGroups.Trim <> "" Then
+    Var groups() As String = caseGroups.Split(",")
+    For Each group As String In groups
+      Var cleanGroup As String = group.Trim
+      If cleanGroup <> "" Then
+        lstAssignedGroups.AddRow(cleanGroup)
+        mOriginalGroups.Add(cleanGroup)
+      End If
+    Next
+  End If
+End Sub
 
 ' ******************************************************************
-' LoadCaseVideos Method (WITH PURPOSE COLUMN)
+' GetCurrentGroups Method
 ' ******************************************************************
-Sub LoadCaseVideos()
+Function GetCurrentGroups() As String
+  Var groups() As String
+  
+  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+    groups.Add(lstAssignedGroups.CellTextAt(i, 0))
+  Next
+  
+  Return String.FromArray(groups, ",")
+End Function
+
+' btnAddGroup.Pressed Event
+Sub Pressed()
+  If popAvailableGroups.SelectedRowIndex < 0 Then
+    MessageBox("Please select a group to add")
+    Return
+  End If
+  
+  Var selectedGroup As String = popAvailableGroups.RowTextAt(popAvailableGroups.SelectedRowIndex)
+  
+  ' Check if already assigned
+  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+    If lstAssignedGroups.CellTextAt(i, 0) = selectedGroup Then
+      MessageBox("This group is already assigned")
+      Return
+    End If
+  Next
+  
+  ' Add to list
+  lstAssignedGroups.AddRow(selectedGroup)
+  mGroupsChanged = True
+  
+  System.DebugLog("Group added: " + selectedGroup)
+End Sub
+
+' ******************************************************************
+' btnRemoveGroup.Pressed Event
+' ******************************************************************
+Sub Pressed()
+  If lstAssignedGroups.SelectedRowIndex < 0 Then
+    MessageBox("Please select a group to remove")
+    Return
+  End If
+  
+  Var selectedGroup As String = lstAssignedGroups.CellTextAt(lstAssignedGroups.SelectedRowIndex, 0)
+  lstAssignedGroups.RemoveRowAt(lstAssignedGroups.SelectedRowIndex)
+  mGroupsChanged = True
+  
+  System.DebugLog("Group removed: " + selectedGroup)
+End Sub
+
+' ******************************************************************
+' LoadCaseVideos Method
+' ******************************************************************
+Sub LoadCaseVideos() // CHANGED
   lstVideos.RemoveAllRows
   
-  Var sql As String = "SELECT video_id, video_filename, view_description, video_purpose, video_order FROM case_videos WHERE case_id = ? ORDER BY video_order"
+  Var sql As String = "SELECT video_id, video_filename, view_description, video_order FROM case_videos WHERE case_id = ? ORDER BY video_order"
   
   Try
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -227,8 +389,7 @@ Sub LoadCaseVideos()
     While Not rs.AfterLastRow
       lstVideos.AddRow(rs.Column("video_filename").StringValue)
       lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 1) = rs.Column("view_description").StringValue
-      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 2) = rs.Column("video_purpose").StringValue
-      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 3) = Str(rs.Column("video_order").IntegerValue)
+      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 2) = Str(rs.Column("video_order").IntegerValue)
       lstVideos.RowTagAt(lstVideos.LastAddedRowIndex) = rs.Column("video_id").IntegerValue
       
       rs.MoveToNextRow
@@ -239,20 +400,17 @@ Sub LoadCaseVideos()
 End Sub
 
 ' ******************************************************************
-' Track changes to case info
+' Track changes
 ' ******************************************************************
 Sub TrackCaseInfoChange()
   mCaseInfoChanged = True
 End Sub
 
-' ******************************************************************
-' Track changes to answers
-' ******************************************************************
 Sub TrackAnswerChange()
   mAnswersChanged = True
 End Sub
 
-' NOTE: In the IDE, add the following event handlers:
+' NOTE: In the IDE, add these event handlers:
 ' - txtCaseLabel.TextChanged → call TrackCaseInfoChange()
 ' - All checkboxes ValueChanged → call TrackAnswerChange()
 ' - txtCorrectConclusions.TextChanged → call TrackAnswerChange()
@@ -262,7 +420,6 @@ End Sub
 ' ******************************************************************
 Sub Pressed()
   Var changesMade As Boolean = False
-  Var errors As String = ""
   
   ' Validate case label
   If txtCaseLabel.Text.Trim = "" Then
@@ -273,14 +430,16 @@ Sub Pressed()
   Try
     Session.DB.BeginTransaction
     
-    ' Save case description if changed
-    If mCaseInfoChanged Then
-      Var sqlCase As String = "UPDATE cases SET case_label = ? WHERE case_id = ?"
+    ' Save case info (description and groups)
+    If mCaseInfoChanged Or mGroupsChanged Then
+      Var sqlCase As String = "UPDATE cases SET case_label = ?, case_groups = ? WHERE case_id = ?"
       Var psCase As MySQLPreparedStatement = Session.DB.Prepare(sqlCase)
       psCase.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      psCase.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
       psCase.Bind(0, txtCaseLabel.Text.Trim)
-      psCase.Bind(1, CaseID)
+      psCase.Bind(1, GetCurrentGroups())
+      psCase.Bind(2, CaseID)
       psCase.ExecuteSQL
       changesMade = True
     End If
@@ -398,6 +557,13 @@ Sub Pressed()
       MessageBox("All changes saved successfully!")
       mCaseInfoChanged = False
       mAnswersChanged = False
+      mGroupsChanged = False
+      
+      ' Update original groups
+      Redim mOriginalGroups(-1)
+      For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+        mOriginalGroups.Add(lstAssignedGroups.CellTextAt(i, 0))
+      Next
     Else
       MessageBox("No changes to save")
     End If
@@ -412,14 +578,14 @@ End Sub
 ' btnCancelChanges.Pressed Event
 ' ******************************************************************
 Sub Pressed()
-  ' Reload original values
   LoadCaseDetails
   mCaseInfoChanged = False
   mAnswersChanged = False
+  mGroupsChanged = False
 End Sub
 
 ' ******************************************************************
-' lstVideos.SelectionChanged Event (WITH WEBFILE AND PURPOSE)
+' lstVideos.SelectionChanged Event
 ' ******************************************************************
 Sub SelectionChanged(rows() As Integer)
   #Pragma Unused rows
@@ -431,7 +597,6 @@ Sub SelectionChanged(rows() As Integer)
   
   Var videoFilename As String = Me.CellTextAt(Me.SelectedRowIndex, 0)
   
-  ' Get WebFile URL for the video
   Var wf As WebFile = Session.ServeVideo(videoFilename)
   
   If wf = Nil Then
@@ -467,37 +632,30 @@ Sub SelectionChanged(rows() As Integer)
 End Sub
 
 ' ******************************************************************
-' lstVideos.CellAction Event - Handle inline editing
+' lstVideos.CellAction Event
 ' ******************************************************************
+ // CHANGED
 Sub CellAction(row As Integer, column As Integer, value As Variant)
-  If column >= 1 And column <= 3 Then
-    ' Store original value before editing
+  If column >= 1 And column <= 2 Then
     mOriginalCellValue = Me.CellTextAt(row, column)
     
-    ' Get the new value from the edit
     Var newValue As String = value.StringValue
     
-    ' If value actually changed, save it
     If newValue <> mOriginalCellValue Then
       Var videoID As Integer = Me.RowTagAt(row)
       
-      ' Store for undo
       mLastVideoID = videoID
       mLastColumn = column
       mLastOldValue = mOriginalCellValue
       mLastNewValue = newValue
       
-      ' Update the cell display
       Me.CellTextAt(row, column) = newValue
       
-      ' Save to database
       Var sql As String
       Select Case column
       Case 1
         sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
       Case 2
-        sql = "UPDATE case_videos SET video_purpose = ? WHERE video_id = ?"
-      Case 3
         sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
       Else
         Return
@@ -506,7 +664,7 @@ Sub CellAction(row As Integer, column As Integer, value As Variant)
       Try
         Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
         
-        If column = 3 Then
+        If column = 2 Then
           ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
           Var orderValue As Integer = Val(newValue)
           If orderValue < 0 Then orderValue = 0
@@ -532,17 +690,87 @@ Sub CellAction(row As Integer, column As Integer, value As Variant)
   End If
 End Sub
 
-
-' =============================================================================
-' wc_CaseDetails WebContainer (PART 3 - Video Upload/Delete/Undo/Navigation)
-' Continued from Part 2
-' =============================================================================
+' ******************************************************************
+' LoadVideoPreview method (Private)
+'   Parameter: rowIndex - index of the selected row in lstVideos
+'   Called from lstVideos.SelectionChanged event and LoadCaseVideos method
+' ******************************************************************
+Private Sub LoadVideoPreview(rowIndex As Integer)
+  If rowIndex < 0 Then
+    htmlVideoPreview.LoadHTML("")
+    Return
+  End If
+  
+  Var videoFilename As String = lstVideos.CellTextAt(rowIndex, 0)
+  
+  Var wf As WebFile = Session.ServeVideo(videoFilename)
+  
+  If wf = Nil Then
+    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+    errorHTML = errorHTML + "body{margin:0;padding:20px;background:transparent;color:#e74c3c;font-family:Arial,sans-serif;}"
+    errorHTML = errorHTML + ".error{background:#2c2c2c;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
+    errorHTML = errorHTML + "</style></head><body><div class='error'>"
+    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+    errorHTML = errorHTML + "</div></body></html>"
+    
+    htmlVideoPreview.LoadHTML(errorHTML)
+    Return
+  End If
+  
+  Var videoURL As String = wf.URL
+  System.DebugLog("Loading video in preview: " + videoURL)
+  
+  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+  html = html + "body{margin:0;padding:10px;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100%;font-family:Arial,sans-serif;}"
+  html = html + ".video-container{width:100%;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.5);}"
+  html = html + "video{width:100%;height:auto;display:block;background:#000;object-fit:contain;}"
+  html = html + ".info{color:#666;font-size:12px;margin-top:10px;text-align:center;}"
+  html = html + ".error{color:#e74c3c;background:#2c2c2c;padding:15px;border-radius:8px;margin-top:10px;}"
+  html = html + ".debug{color:#3498db;font-size:11px;margin-top:5px;}"
+  html = html + "</style></head><body>"
+  html = html + "<div class='video-container'>"
+  html = html + "<video id='videoPlayer' controls loop autoplay playsinline preload='metadata'>"
+  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+  html = html + "Your browser does not support the video tag.</video></div>"
+  html = html + "<div class='info'>" + videoFilename + "</div>"
+  html = html + "<div id='errorMsg' class='error' style='display:none;'></div>"
+  html = html + "<div id='debugInfo' class='debug'></div>"
+  html = html + "<script>"
+  html = html + "var v=document.getElementById('videoPlayer');"
+  html = html + "var err=document.getElementById('errorMsg');"
+  html = html + "var dbg=document.getElementById('debugInfo');"
+  html = html + "dbg.textContent='Video URL: " + videoURL + "';"
+  html = html + "v.addEventListener('loadedmetadata',function(){"
+  html = html + "  console.log('Video metadata loaded');"
+  html = html + "  dbg.textContent+=' | Duration: '+v.duration.toFixed(1)+'s';"
+  html = html + "});"
+  html = html + "v.addEventListener('canplay',function(){"
+  html = html + "  console.log('Video can play');"
+  html = html + "  dbg.textContent+=' | Ready';"
+  html = html + "  v.play().catch(function(e){console.log('Autoplay prevented:',e);});"
+  html = html + "});"
+  html = html + "v.addEventListener('error',function(e){"
+  html = html + "  console.error('Video error:',e);"
+  html = html + "  var errCode=v.error?v.error.code:'unknown';"
+  html = html + "  var errMsg='Error loading video (code: '+errCode+')';"
+  html = html + "  if(errCode==1)errMsg='Video loading aborted';"
+  html = html + "  if(errCode==2)errMsg='Network error loading video';"
+  html = html + "  if(errCode==3)errMsg='Video decoding failed - codec not supported';"
+  html = html + "  if(errCode==4)errMsg='Video format not supported';"
+  html = html + "  err.textContent=errMsg;"
+  html = html + "  err.style.display='block';"
+  html = html + "});"
+  html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});"
+  html = html + "</script></body></html>"
+  
+  htmlVideoPreview.LoadHTML(html)
+End Sub
 
 ' ******************************************************************
 ' btnStartUpload.Pressed Event
 ' ******************************************************************
 Sub Pressed()
-  ' Start the upload process for selected file(s)
   uplVideo.StartUpload
 End Sub
 
@@ -550,7 +778,6 @@ End Sub
 ' uplVideo.FileAdded Event
 ' ******************************************************************
 Sub FileAdded(filename As String, bytes As UInt64, mimeType As String)
-  ' Enable upload button when file is selected
   btnStartUpload.Enabled = True
   System.DebugLog("File selected: " + filename + " (" + Str(bytes) + " bytes)")
 End Sub
@@ -559,7 +786,6 @@ End Sub
 ' uplVideo.FileRemoved Event
 ' ******************************************************************
 Sub FileRemoved(filename As String)
-  ' Disable upload button when file is removed
   btnStartUpload.Enabled = False
   System.DebugLog("File removed: " + filename)
 End Sub
@@ -569,14 +795,13 @@ End Sub
 ' ******************************************************************
 Sub UploadError(error As RuntimeException)
   MessageBox("Upload error: " + error.Message)
-  btnStartUpload.Enabled = True  ' Re-enable for retry
+  btnStartUpload.Enabled = True
 End Sub
 
 ' ******************************************************************
 ' uplVideo.UploadFinished Event
 ' ******************************************************************
 Sub UploadFinished(files() As WebUploadedFile)
-  ' Get the first (and only, since AllowMultipleFiles = False) file
   Var uploadedFile As WebUploadedFile = files(0)
   
   Try
@@ -586,10 +811,8 @@ Sub UploadFinished(files() As WebUploadedFile)
       System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
     End If
     
-    ' Create target file with the original filename
     Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
     
-    ' Save the uploaded file data to disk
     Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
     outputStream.Write(uploadedFile.Data)
     outputStream.Close
@@ -607,7 +830,7 @@ Sub UploadFinished(files() As WebUploadedFile)
       videoOrder = orderRS.Column("next_order").IntegerValue
     End If
     
-    ' Insert into database
+    ' Insert into database (video_purpose can be empty or used for other purposes)
     Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
     ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -618,8 +841,8 @@ Sub UploadFinished(files() As WebUploadedFile)
     
     ps.Bind(0, CaseID)
     ps.Bind(1, uploadedFile.Name)
-    ps.Bind(2, "")  ' Empty, user can edit inline
-    ps.Bind(3, "")  ' Empty, user can edit inline
+    ps.Bind(2, "")
+    ps.Bind(3, "")  ' video_purpose left empty (reserved for future use)
     ps.Bind(4, videoOrder)
     
     ps.ExecuteSQL
@@ -627,7 +850,6 @@ Sub UploadFinished(files() As WebUploadedFile)
     MessageBox("Video uploaded successfully!")
     LoadCaseVideos
     
-    ' Clear the uploader for next file and disable upload button
     uplVideo.RemoveAllFiles
     btnStartUpload.Enabled = False
     
@@ -687,7 +909,7 @@ End Sub
 ' ******************************************************************
 ' btnUndoVideoEdit.Pressed Event
 ' ******************************************************************
-Sub Pressed()
+Sub Pressed() // CHANGED
   If mLastVideoID = 0 Then
     MessageBox("No change to undo")
     Return
@@ -698,8 +920,6 @@ Sub Pressed()
   Case 1
     sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
   Case 2
-    sql = "UPDATE case_videos SET video_purpose = ? WHERE video_id = ?"
-  Case 3
     sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
   Else
     Return
@@ -708,7 +928,7 @@ Sub Pressed()
   Try
     Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
     
-    If mLastColumn = 3 Then
+    If mLastColumn = 2 Then
       ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
       ps.Bind(0, Val(mLastOldValue))
     Else
@@ -723,10 +943,8 @@ Sub Pressed()
     
     System.DebugLog("Video metadata change undone: video_id=" + Str(mLastVideoID))
     
-    ' Reload videos to show the undone change
     LoadCaseVideos
     
-    ' Disable undo button and clear tracking
     btnUndoVideoEdit.Enabled = False
     mLastVideoID = 0
     mLastColumn = 0
@@ -746,79 +964,53 @@ Sub Pressed()
 End Sub
 
 ' =============================================================================
-' wc_CaseDetails Complete Summary
+' Complete Summary with Tag-Based Group Selection
 ' =============================================================================
 ' 
-' This container is split into 3 parts:
+' TAG-BASED GROUP SELECTION:
 ' 
-' PART 1: 
-' - Properties (including mCaseInfoChanged and mAnswersChanged flags)
-' - Layout definitions (including WebFileUploader: uplVideo and btnStartUpload)
-' - Opening event (configures editable columns, initializes flags, disables btnStartUpload)
-' - LoadCaseDetails (loads case info and correct answers with indeterminate state)
-' - LoadCaseVideos (loads video list with 4 columns)
+' 1. Available Groups PopupMenu:
+'    - Pre-populated with common groups and existing groups from database
+'    - Admin selects from dropdown
 ' 
-' PART 2:
-' - TrackCaseInfoChange (monitors txtCaseLabel changes)
-' - TrackAnswerChange (monitors checkbox and conclusion changes)
-' - btnSaveAll (UNIFIED SAVE - saves description + answers in transaction)
-' - btnCancelChanges (reloads original values, resets flags)
-' - lstVideos.SelectionChanged (displays video preview)
-' - lstVideos.CellAction (handles inline editing AND saves to database)
+' 2. Add Group Button:
+'    - Adds selected group to "Currently Assigned" list
+'    - Prevents duplicate assignments
+'    - Tracks changes with mGroupsChanged flag
 ' 
-' PART 3 (THIS FILE):
-' - btnStartUpload.Pressed (calls uplVideo.StartUpload to begin upload)
-' - uplVideo.FileAdded (enables upload button when file selected)
-' - uplVideo.FileRemoved (disables upload button when file removed)
-' - uplVideo.UploadError (handles upload errors)
-' - uplVideo.UploadFinished (saves file to disk and database, clears uploader)
-' - btnDeleteVideo (with confirmation dialog)
-' - btnUndoVideoEdit (reverts last metadata change)
-' - btnBackToList (navigation)
+' 3. Currently Assigned Groups ListBox:
+'    - Shows all groups assigned to this case
+'    - Single-column display for clarity
+'    - Select and remove individual groups
 ' 
-' =============================================================================
-' Key Features:
-' =============================================================================
+' 4. Remove Group Button:
+'    - Removes selected group from list
+'    - Tracks changes with mGroupsChanged flag
 ' 
-' SINGLE SAVE BUTTON DESIGN:
-' - One "Save All Changes" button for description + correct answers
-' - Uses database transaction (atomic save)
-' - Only saves what changed (smart saving)
-' - Video metadata auto-saves on inline edit (immediate feedback)
+' 5. Save Behavior:
+'    - Groups saved as comma-separated string to cases.case_groups
+'    - Example: "Cardiology 2025 Q1,ICU 2025 Q1,ED 2025 Q1"
+'    - Students in ANY assigned group will see the case
 ' 
-' VIDEO UPLOAD WORKFLOW:
-' 1. User clicks WebFileUploader ("Choose File")
-' 2. FileAdded event enables "Upload Selected Video" button
-' 3. User clicks "Upload Selected Video" 
-' 4. btnStartUpload calls uplVideo.StartUpload()
-' 5. UploadFinished event saves file to disk and database
-' 6. Uploader cleared and button disabled (ready for next file)
+' VIDEO LISTBOX (3 COLUMNS):
+' - Column 0: Filename (fills remaining space, read-only)
+' - Column 1: View Description (150px, editable) - fits "parasternal LAX"
+' - Column 2: Order (50px, editable) - 3 digits
+' - Purpose column REMOVED - grouping is at case level now
 ' 
-' Case Info Section:
-' - Serial Number: Read-only (auto-generated)
-' - Description: Editable, tracked by mCaseInfoChanged flag
+' WORKFLOW:
+' 1. Admin opens case details
+' 2. Selects group from PopupMenu
+' 3. Clicks "Add Group" - appears in list below
+' 4. Repeats for multiple groups
+' 5. Can remove groups by selecting and clicking "Remove Selected"
+' 6. Clicks "Save All Changes" - groups saved to database
+' 7. Uploads videos - no per-video group assignment needed
+' 8. Edits view description and order inline
 ' 
-' Correct Answers Section:
-' - 12 checkboxes + conclusions + requires_full_echo
-' - Supports indeterminate state (NULL values)
-' - Changes tracked by mAnswersChanged flag
-' 
-' Video Management Section:
-' - 4-column listbox: Filename, View Description, Purpose, Order
-' - Inline editing for Description, Purpose, Order (auto-saves immediately)
-' - Purpose supports comma-separated groups (e.g., "Cardiology 2025 Q1,ICU 2025 Q1")
-' - Video preview with auto-loop
-' - Upload videos (two-step: select, then upload)
-' - Delete videos (with confirmation)
-' - Undo last metadata change
-' 
-' Save Strategy:
-' - Case description + Correct answers: Saved together via "Save All Changes"
-' - Video metadata: Auto-saved immediately on inline edit (better UX)
-' - Video upload: Two-step process (select file, then click upload)
-' - Video delete: Immediate (with confirmation dialog)
-' 
-' Navigation:
-' - Back button returns to wc_CaseList
+' DATABASE STRUCTURE:
+' - cases.case_groups (TEXT) stores comma-separated group names
+' - case_videos.video_purpose (TEXT) retained but not used in UI
+' - Students see cases where their user_group matches any value in case_groups
 ' 
 ' =============================================================================

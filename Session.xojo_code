@@ -64,49 +64,50 @@ Inherits WebSession
 		  '   Parameters: filename As String
 		  '   Return Type: WebFile
 		  ' *******************************************************************************
+		  Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		  System.DebugLog("Video folder path: " + videoFolder.NativePath)
+		  
+		  If Not videoFolder.Exists Then
+		    System.DebugLog("Video folder does not exist")
+		    Return Nil
+		  End If
+		  
+		  System.DebugLog("Video folder exists: YES")
+		  
+		  Var videoFile As FolderItem = videoFolder.Child(filename)
+		  System.DebugLog("Looking for video: " + videoFile.NativePath)
+		  
+		  If Not videoFile.Exists Then
+		    System.DebugLog("Video file does not exist")
+		    Return Nil
+		  End If
+		  
+		  System.DebugLog("Video file exists: YES")
+		  System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
 		  
 		  Try
-		    Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		    Var bs As BinaryStream = BinaryStream.Open(videoFile)
+		    Var fileSize As Int64 = videoFile.Length
+		    Var videoData As MemoryBlock = bs.Read(fileSize)
+		    bs.Close
 		    
-		    System.DebugLog("Video folder path: " + videoFolder.NativePath)
-		    System.DebugLog("Video folder exists: " + If(videoFolder.Exists, "YES", "NO"))
+		    ' Create WebFile and store it in Session to keep it alive
+		    CurrentVideoFile = New WebFile
+		    CurrentVideoFile.Data = videoData
+		    CurrentVideoFile.Filename = filename
+		    CurrentVideoFile.MIMEType = "video/mp4"
+		    CurrentVideoFile.ForceDownload = False
 		    
-		    If Not videoFolder.Exists Then
-		      System.DebugLog("CaseVideos folder does not exist")
-		      Return Nil
-		    End If
+		    System.DebugLog("WebFile URL: " + CurrentVideoFile.URL)
+		    System.DebugLog("WebFile data size: " + Str(CurrentVideoFile.Data.Size) + " bytes")
 		    
-		    Var videoFile As FolderItem = videoFolder.Child(filename)
-		    System.DebugLog("Looking for video: " + videoFile.NativePath)
-		    System.DebugLog("Video file exists: " + If(videoFile.Exists, "YES", "NO"))
-		    
-		    If Not videoFile.Exists Then
-		      System.DebugLog("Video file not found: " + filename)
-		      Return Nil
-		    End If
-		    
-		    System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
-		    
-		    ' Read file contents into MemoryBlock
-		    Var stream As BinaryStream = BinaryStream.Open(videoFile)
-		    Var videoData As MemoryBlock = stream.Read(stream.Length)
-		    stream.Close
-		    
-		    ' Create WebFile for streaming
-		    Var wf As New WebFile
-		    wf.Data = videoData 
-		    wf.MIMEType = "video/mp4"
-		    wf.Filename = filename
-		    wf.ForceDownload = False
-		    
-		    System.DebugLog("WebFile URL: " + wf.URL)
-		    
-		    Return wf
+		    Return CurrentVideoFile
 		    
 		  Catch e As IOException
-		    System.DebugLog("Error serving video: " + e.Message)
+		    System.DebugLog("Error reading video file: " + e.Message)
 		    Return Nil
 		  End Try
+		  
 		End Function
 	#tag EndMethod
 
@@ -121,6 +122,10 @@ Inherits WebSession
 
 	#tag Property, Flags = &h0
 		CurrentUserName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		CurrentVideoFile As WebFile
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -397,6 +402,14 @@ Inherits WebSession
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastCreatedCaseGroup"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

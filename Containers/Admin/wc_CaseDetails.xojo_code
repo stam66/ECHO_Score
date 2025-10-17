@@ -5,7 +5,7 @@ Begin wc_base wc_CaseDetails
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   788
+   Height          =   844
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,22 +21,67 @@ Begin wc_base wc_CaseDetails
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   1106
+   Width           =   1121
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
+   Begin WebListBox lstVideos
+      AllowRowReordering=   False
+      ColumnCount     =   3
+      ColumnWidths    =   "220,220,100"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      DefaultRowHeight=   49
+      Enabled         =   True
+      GridLineStyle   =   3
+      HasBorder       =   True
+      HasHeader       =   True
+      HeaderHeight    =   0
+      Height          =   471
+      HighlightSortedColumn=   True
+      Index           =   -2147483648
+      Indicator       =   0
+      InitialValue    =   "File	View	Order"
+      LastAddedRowIndex=   0
+      LastColumnIndex =   0
+      LastRowIndex    =   0
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      NoRowsMessage   =   ""
+      PanelIndex      =   0
+      ProcessingMessage=   ""
+      RowCount        =   0
+      RowSelectionType=   1
+      Scope           =   0
+      SearchCriteria  =   ""
+      SelectedRowColor=   &c0d6efd
+      SelectedRowIndex=   0
+      TabIndex        =   25
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   105
+      Visible         =   True
+      Width           =   542
+      _mPanelIndex    =   -1
+   End
    Begin WebLabel lblCaseInfo
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       FontName        =   ""
-      FontSize        =   0.0
+      FontSize        =   24.0
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   20
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -51,46 +96,12 @@ Begin wc_base wc_CaseDetails
       TabStop         =   True
       Text            =   "Case Information"
       TextAlignment   =   0
-      TextColor       =   &c000000FF
+      TextColor       =   &c0087FE00
       Tooltip         =   ""
-      Top             =   20
+      Top             =   0
       Underline       =   False
       Visible         =   True
-      Width           =   145
-      _mPanelIndex    =   -1
-   End
-   Begin WebLabel lblSerial
-      Bold            =   False
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   0.0
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Italic          =   False
-      Left            =   173
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   6
-      TabStop         =   True
-      Text            =   "Serial number"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   20
-      Underline       =   False
-      Visible         =   True
-      Width           =   108
+      Width           =   477
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtSerialNumber
@@ -105,7 +116,7 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   282
+      Left            =   560
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -115,16 +126,16 @@ Begin wc_base wc_CaseDetails
       LockVertical    =   False
       MaximumCharactersAllowed=   0
       PanelIndex      =   0
-      ReadOnly        =   False
+      ReadOnly        =   True
       Scope           =   0
       TabIndex        =   7
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   20
+      Top             =   105
       Visible         =   True
-      Width           =   136
+      Width           =   240
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblLabel
@@ -138,7 +149,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   444
+      Left            =   560
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -155,10 +166,10 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   20
+      Top             =   151
       Underline       =   False
       Visible         =   True
-      Width           =   82
+      Width           =   90
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtCaseLabel
@@ -173,7 +184,7 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   534
+      Left            =   560
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -190,327 +201,13 @@ Begin wc_base wc_CaseDetails
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   20
+      Top             =   190
       Visible         =   True
-      Width           =   294
-      _mPanelIndex    =   -1
-   End
-   Begin WebLabel lblCorrectAnswers
-      Bold            =   True
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   0.0
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   10
-      TabStop         =   True
-      Text            =   "Correct Answers"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   97
-      Underline       =   False
-      Visible         =   True
-      Width           =   145
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkLVSizeDilated
-      Caption         =   "LV Size - Dilated"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   11
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   126
-      Value           =   False
-      Visible         =   True
-      Width           =   156
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkLVFunctionImpaired
-      Caption         =   "LV Function - Significantly Impaired"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   12
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   162
-      Value           =   False
-      Visible         =   True
-      Width           =   298
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkRVSizeDilated
-      Caption         =   "RV Size - Dilated"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   13
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   198
-      Value           =   False
-      Visible         =   True
-      Width           =   163
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkRVFunctionImpaired
-      Caption         =   "RV Function - Significantly Impaired"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   14
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   234
-      Value           =   False
-      Visible         =   True
-      Width           =   298
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkAorticStenosis
-      Caption         =   "AoV - Significant Stenosis"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   15
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   270
-      Value           =   False
-      Visible         =   True
-      Width           =   226
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkAorticRegurgitation
-      Caption         =   "AoV - Significant Regurgitation"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   16
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   306
-      Value           =   False
-      Visible         =   True
-      Width           =   254
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkMitralStenosis
-      Caption         =   "MV - Significant Stenosis"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   17
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   342
-      Value           =   False
-      Visible         =   True
-      Width           =   226
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkMitralRegurgitation
-      Caption         =   "MV - Significant Regurgitation"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   34
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   18
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   378
-      Value           =   False
-      Visible         =   True
-      Width           =   254
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkTricuspidStenosis
-      Caption         =   "TV - Significant Stenosis"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   32
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   19
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   414
-      Value           =   False
-      Visible         =   True
-      Width           =   268
-      _mPanelIndex    =   -1
-   End
-   Begin WebCheckbox chkTricuspidRegurgitation
-      Caption         =   "TV- Significant Regurgitation"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   32
-      Indeterminate   =   True
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   20
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   448
-      Value           =   False
-      Visible         =   True
-      Width           =   268
+      Width           =   240
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkPericardialEffusion
-      Caption         =   "Significant Pericardial Effusion"
+      Caption         =   "Significant Effusion"
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
@@ -518,23 +215,23 @@ Begin wc_base wc_CaseDetails
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
+      Left            =   394
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   21
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   482
+      Top             =   743
       Value           =   False
       Visible         =   True
-      Width           =   268
+      Width           =   212
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkIVCHighPressure
@@ -546,23 +243,23 @@ Begin wc_base wc_CaseDetails
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
+      Left            =   394
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   22
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   516
+      Top             =   777
       Value           =   False
       Visible         =   True
-      Width           =   268
+      Width           =   212
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkRequiresFullEcho
@@ -574,23 +271,23 @@ Begin wc_base wc_CaseDetails
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
+      Left            =   0
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   23
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   606
+      Top             =   810
       Value           =   False
       Visible         =   True
-      Width           =   178
+      Width           =   212
       _mPanelIndex    =   -1
    End
    Begin WebTextArea txtCorrectConclusions
@@ -600,17 +297,17 @@ Begin wc_base wc_CaseDetails
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   53
+      Height          =   32
       Hint            =   "Correct conclusions"
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
+      Left            =   222
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
+      LockRight       =   True
+      LockTop         =   False
       LockVertical    =   False
       MaximumCharactersAllowed=   0
       PanelIndex      =   0
@@ -621,54 +318,9 @@ Begin wc_base wc_CaseDetails
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   552
+      Top             =   810
       Visible         =   True
-      Width           =   342
-      _mPanelIndex    =   -1
-   End
-   Begin WebListBox lstVideos
-      AllowRowReordering=   False
-      ColumnCount     =   4
-      ColumnWidths    =   ""
-      ControlID       =   ""
-      CSSClasses      =   ""
-      DefaultRowHeight=   49
-      Enabled         =   True
-      GridLineStyle   =   3
-      HasBorder       =   True
-      HasHeader       =   True
-      HeaderHeight    =   0
-      Height          =   263
-      HighlightSortedColumn=   True
-      Index           =   -2147483648
-      Indicator       =   0
-      InitialValue    =   "File	View	Purpose	Order"
-      LastAddedRowIndex=   0
-      LastColumnIndex =   0
-      LastRowIndex    =   0
-      Left            =   444
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      NoRowsMessage   =   ""
-      PanelIndex      =   0
-      ProcessingMessage=   ""
-      RowCount        =   0
-      RowSelectionType=   1
-      Scope           =   0
-      SearchCriteria  =   ""
-      SelectedRowColor=   &c0d6efd
-      SelectedRowIndex=   0
-      TabIndex        =   25
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   162
-      Visible         =   True
-      Width           =   642
+      Width           =   469
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblVideosTitle
@@ -682,12 +334,12 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   444
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
@@ -699,7 +351,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   97
+      Top             =   66
       Underline       =   False
       Visible         =   True
       Width           =   199
@@ -716,13 +368,13 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   444
-      LockBottom      =   True
+      Left            =   818
+      LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
       PanelIndex      =   0
@@ -733,55 +385,29 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   488
+      Top             =   66
       Underline       =   False
       Visible         =   True
       Width           =   122
       _mPanelIndex    =   -1
    End
-   Begin WebHTMLViewer htmlVideoPreview
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   249
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   444
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      LockVertical    =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   28
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   520
-      UseSandbox      =   False
-      Visible         =   True
-      Width           =   453
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnUploadVideo
+   Begin WebButton btnStartUpload
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Upload Video"
+      Caption         =   "Upload"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
-      Enabled         =   True
-      Height          =   38
+      Enabled         =   False
+      Height          =   41
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   800
+      Left            =   222
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   False
       LockVertical    =   False
       Outlined        =   False
@@ -790,28 +416,28 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   33
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   436
+      Top             =   584
       Visible         =   True
-      Width           =   139
+      Width           =   90
       _mPanelIndex    =   -1
    End
    Begin WebButton btnDeleteVideo
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Delete Video"
+      Caption         =   "Delete"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
       Enabled         =   True
-      Height          =   38
+      Height          =   41
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   947
+      Left            =   452
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   False
       LockVertical    =   False
       Outlined        =   False
@@ -820,15 +446,15 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   34
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   516
+      Top             =   584
       Visible         =   True
-      Width           =   139
+      Width           =   90
       _mPanelIndex    =   -1
    End
    Begin WebButton btnBack
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Back to Case List"
+      Caption         =   "Back"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -836,7 +462,7 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   905
+      Left            =   1003
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -850,9 +476,9 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   35
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   0
       Visible         =   True
-      Width           =   181
+      Width           =   118
       _mPanelIndex    =   -1
    End
    Begin WebButton btnSaveAll
@@ -866,12 +492,12 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   1
-      Left            =   128
+      Left            =   1003
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   False
       LockVertical    =   False
       Outlined        =   False
@@ -880,7 +506,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   36
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   730
+      Top             =   806
       Visible         =   True
       Width           =   118
       _mPanelIndex    =   -1
@@ -896,7 +522,519 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
+      Left            =   895
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   37
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   806
+      Visible         =   True
+      Width           =   100
+      _mPanelIndex    =   -1
+   End
+   Begin WebFileUploader uplVideo
+      Caption         =   "Select video"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Filter          =   "video/mp4,video/*"
+      HasFileNameField=   True
+      Height          =   41
+      Hint            =   ""
+      Index           =   -2147483648
+      Indicator       =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      MaximumBytes    =   0
+      MaximumFileCount=   1
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   40
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   584
+      UploadTimeout   =   0
+      Visible         =   True
+      Width           =   220
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblGroupAssignment
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   0.0
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Italic          =   False
+      Left            =   563
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   41
+      TabStop         =   True
+      Text            =   "Groups"
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   236
+      Underline       =   False
+      Visible         =   True
+      Width           =   64
+      _mPanelIndex    =   -1
+   End
+   Begin WebPopupMenu popAvailableGroups
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      InitialValue    =   ""
+      LastAddedRowIndex=   0
+      LastRowIndex    =   0
+      Left            =   563
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      RowCount        =   0
+      Scope           =   0
+      SelectedRowIndex=   0
+      SelectedRowText =   ""
+      TabIndex        =   43
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   358
+      Visible         =   True
+      Width           =   240
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnAddGroup
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Add Group"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   563
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   44
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   404
+      Visible         =   True
+      Width           =   109
+      _mPanelIndex    =   -1
+   End
+   Begin WebListBox lstAssignedGroups
+      AllowRowReordering=   False
+      ColumnCount     =   1
+      ColumnWidths    =   ""
+      ControlID       =   ""
+      CSSClasses      =   ""
+      DefaultRowHeight=   24
+      Enabled         =   True
+      GridLineStyle   =   1
+      HasBorder       =   True
+      HasHeader       =   False
+      HeaderHeight    =   0
+      Height          =   72
+      HighlightSortedColumn=   True
+      Index           =   -2147483648
+      Indicator       =   0
+      InitialValue    =   ""
+      LastAddedRowIndex=   0
+      LastColumnIndex =   0
+      LastRowIndex    =   0
+      Left            =   563
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      NoRowsMessage   =   ""
+      PanelIndex      =   0
+      ProcessingMessage=   ""
+      RowCount        =   0
+      RowSelectionType=   1
+      Scope           =   0
+      SearchCriteria  =   ""
+      SelectedRowColor=   &c0d6efd
+      SelectedRowIndex=   0
+      TabIndex        =   46
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   273
+      Visible         =   True
+      Width           =   240
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnRemoveGroup
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Remove"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   694
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   47
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   404
+      Visible         =   True
+      Width           =   109
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkLVSizeDilated
+      Caption         =   "LV significantly dilated"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   11
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   675
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkLVFunctionImpaired
+      Caption         =   "LV significantly Impaired"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   12
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   709
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkRVSizeDilated
+      Caption         =   "RV significantly dilated"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   13
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   743
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkRVFunctionImpaired
+      Caption         =   "RV significantly Impaired"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   14
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   777
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkAorticStenosis
+      Caption         =   "Significant AS"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   230
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   15
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   675
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkAorticRegurgitation
+      Caption         =   "Significant AR"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   230
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   16
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   709
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkMitralStenosis
+      Caption         =   "Significant MS"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   230
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   17
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   743
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkMitralRegurgitation
+      Caption         =   "Significant MR"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   230
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   18
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   777
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkTricuspidStenosis
+      Caption         =   "Significant TS"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   32
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   394
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   19
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   675
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkTricuspidRegurgitation
+      Caption         =   "Significant TR"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   32
+      Indeterminate   =   True
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   394
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   20
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   709
+      Value           =   False
+      Visible         =   True
+      Width           =   212
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnUndoVideoEdit
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Undo edit"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   False
+      Height          =   41
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   320
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -906,109 +1044,114 @@ Begin wc_base wc_CaseDetails
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   37
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   730
-      Visible         =   True
-      Width           =   100
-      _mPanelIndex    =   -1
-   End
-   Begin WebLabel lblVideoInstructions
-      Bold            =   False
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   12.0
-      Height          =   45
-      Index           =   -2147483648
-      Indicator       =   0
-      Italic          =   False
-      Left            =   444
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   True
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   38
-      TabStop         =   True
-      Text            =   "Double-click cells to edit. Use commas to separate multiple groups (e.g., 'Cardiology 2025 Q1,ICU 2025 Q1')"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   128
-      Underline       =   False
-      Visible         =   True
-      Width           =   623
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnUndoVideoEdit
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Undo last edit"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   False
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   947
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   39
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   433
+      Top             =   584
       Visible         =   True
-      Width           =   139
+      Width           =   112
       _mPanelIndex    =   -1
    End
-   Begin WebFileUploader uplVideo
-      Caption         =   "Select file"
+   Begin WebLabel lblVideoPreview1
+      Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Filter          =   ""
-      HasFileNameField=   True
+      FontName        =   ""
+      FontSize        =   0.0
       Height          =   38
-      Hint            =   ""
       Index           =   -2147483648
-      Indicator       =   ""
-      Left            =   444
+      Indicator       =   0
+      Italic          =   False
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   False
       LockVertical    =   False
-      MaximumBytes    =   0
-      MaximumFileCount=   0
+      Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   40
+      TabIndex        =   48
+      TabStop         =   True
+      Text            =   "Correct Answers"
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   643
+      Underline       =   False
+      Visible         =   True
+      Width           =   167
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblVideosTitle1
+      Bold            =   True
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   0.0
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Italic          =   False
+      Left            =   560
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   49
+      TabStop         =   True
+      Text            =   "Case Details"
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   66
+      Underline       =   False
+      Visible         =   True
+      Width           =   199
+      _mPanelIndex    =   -1
+   End
+   Begin WebMoviePlayer videoPreview
+      AllowAutoPlay   =   True
+      AllowFullScreen =   True
+      AllowLooping    =   True
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Duration        =   0.0
+      Enabled         =   True
+      HasController   =   True
+      Height          =   200
+      Index           =   -2147483648
+      indicator       =   0
+      Left            =   818
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      MovieURL        =   ""
+      PanelIndex      =   0
+      Position        =   0.0
+      PosterURL       =   ""
+      Scope           =   2
+      TabIndex        =   50
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   436
-      UploadTimeout   =   0
+      Top             =   105
       Visible         =   True
-      Width           =   336
+      Width           =   300
       _mPanelIndex    =   -1
    End
 End
@@ -1020,17 +1163,83 @@ End
 		  ' ******************************************************************
 		  ' wc_CaseDetails.Opening Event
 		  ' ******************************************************************
-		  ' Configure editable columns in video listbox
+		  ' Configure listbox columns (3 columns: Filename, View Description, Order)
+		  ' Note: Column spacing is large in WebListBox, so widths need to be generous
+		  
+		  
+		  ' Set editable columns
 		  lstVideos.ColumnTypeAt(1) = WebListBox.CellTypes.TextField
 		  lstVideos.ColumnTypeAt(2) = WebListBox.CellTypes.TextField
-		  lstVideos.ColumnTypeAt(3) = WebListBox.CellTypes.TextField
 		  
+		  LoadAvailableGroups
 		  LoadCaseDetails
 		  LoadCaseVideos
 		  mCaseInfoChanged = False
 		  mAnswersChanged = False
+		  mGroupsChanged = False
 		  btnUndoVideoEdit.Enabled = False
-		  btnUploadVideo.Enabled = False  ' Disabled until file is selected
+		  btnStartUpload.Enabled = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  // Get video's aspect ratio (get fresh ratio each time)
+		  Var ratio As Double
+		  If videoPreview.Height > 0 Then
+		    ratio = videoPreview.Width / videoPreview.Height
+		  Else
+		    ratio = 4.0 / 3.0  // Default aspect ratio
+		  End If
+		  
+		  // Fixed position (don't change these)
+		  Var currentTop As Integer = 105
+		  Var currentLeft As Integer = 818
+		  
+		  // Calculate width - fill from left position to right edge
+		  Var calculatedWidth As Integer = Self.Width - currentLeft - 10  // 10px right margin
+		  
+		  // Calculate height from width maintaining aspect ratio
+		  Var calculatedHeight As Integer = calculatedWidth / ratio
+		  
+		  // Check if this would cover the buttons at bottom
+		  Var maxHeight As Integer = Self.Height - currentTop - 80  // 80px for buttons
+		  
+		  // Only constrain if it exceeds available height
+		  If calculatedHeight > maxHeight Then
+		    calculatedHeight = maxHeight
+		    calculatedWidth = calculatedHeight * ratio  // Recalculate width from constrained height
+		  End If
+		  
+		  // Only apply if dimensions are reasonable
+		  If calculatedWidth > 100 And calculatedHeight > 100 Then
+		    videoPreview.Width = calculatedWidth
+		    videoPreview.Height = calculatedHeight
+		    videoPreview.Top = currentTop
+		    videoPreview.Left = currentLeft
+		    System.DebugLog("Video resized to: " + Str(calculatedWidth) + "x" + Str(calculatedHeight))
+		  End If
+		  
+		  
+		  
+		  ' var currentTop  as integer = 105
+		  ' var currentLeft as integer = 818
+		  ' var currentWIdth as integer = videoPreview.width
+		  ' var currentHeight as integer = videoPreview.height
+		  ' 
+		  ' var calculatedWidth as Integer = self.width - currentLeft - 10
+		  ' var ratio As Double = videoPreview.Width / videoPreview.Height
+		  ' var calculatedHeight as integer = currentWIdth / (4/3)
+		  ' 
+		  ' // Set explicit size
+		  ' 
+		  ' videoPreview.Width = calculatedWidth
+		  ' videoPreview.Height = calculatedHeight
+		  ' videoPreview.Top = currentTop
+		  ' videoPreview.left = currentLeft
+		  ' 
+		  ' System.DebugLog("Video resized to: " + Str(calculatedWidth) + "x" + Str(calculatedHeight) + " from " + str(currentWidth) + "x" + str(currentHeight))
+		  
 		End Sub
 	#tag EndEvent
 
@@ -1059,12 +1268,27 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GetCurrentGroups() As String
+		  ' ******************************************************************
+		  ' GetCurrentGroups Method
+		  '   Returns: String
+		  ' ******************************************************************
+		  Var groups() As String
+		  
+		  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+		    groups.Add(lstAssignedGroups.CellTextAt(i, 0))
+		  Next
+		  
+		  Return String.FromArray(groups, ",")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub HandleDeleteVideoConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
 		  ' ******************************************************************
 		  ' HandleDeleteVideoConfirm Method
 		  ' ******************************************************************
-		  
 		  Select Case button
 		  Case dialog.ActionButton
 		    Var videoID As Integer = lstVideos.RowTagAt(lstVideos.SelectedRowIndex)
@@ -1079,12 +1303,111 @@ End
 		      
 		      MessageBox("Video deleted successfully!")
 		      LoadCaseVideos
-		      htmlVideoPreview.LoadHTML("")
-		      
+		      videoPreview.MovieURL = ""
 		    Catch e As DatabaseException
 		      MessageBox("Error deleting video: " + e.Message)
 		    End Try
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadAssignedGroups(caseGroups As String)
+		  ' ******************************************************************
+		  ' LoadAssignedGroups Method
+		  '   Parameters: caseGroups as String
+		  ' ******************************************************************
+		  lstAssignedGroups.RemoveAllRows
+		  Redim mOriginalGroups(-1)
+		  
+		  If caseGroups.Trim <> "" Then
+		    Var groups() As String = caseGroups.Split(",")
+		    For Each group As String In groups
+		      Var cleanGroup As String = group.Trim
+		      If cleanGroup <> "" Then
+		        lstAssignedGroups.AddRow(cleanGroup)
+		        mOriginalGroups.Add(cleanGroup)
+		      End If
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadAvailableGroups()
+		  ' ******************************************************************
+		  ' LoadAvailableGroups Method
+		  ' ******************************************************************
+		  popAvailableGroups.RemoveAllRows
+		  
+		  ' Add common groups
+		  Var currentYear As Integer = DateTime.Now.Year
+		  Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
+		  Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+		  
+		  For Each specialty As String In specialties
+		    For Each quarter As String In quarters
+		      popAvailableGroups.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
+		    Next
+		  Next
+		  
+		  ' Load existing groups from database (from both user_group and case_groups)
+		  Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL AND user_group <> '' UNION SELECT DISTINCT case_groups FROM cases WHERE case_groups IS NOT NULL AND case_groups <> '' ORDER BY 1"
+		  
+		  Try
+		    Var rs As RowSet = Session.DB.SelectSQL(sql)
+		    Var uniqueGroups() As String
+		    
+		    While Not rs.AfterLastRow
+		      Var groupText As String = rs.ColumnAt(0).StringValue
+		      
+		      ' Split comma-separated groups
+		      If groupText.Trim <> "" Then
+		        Var groups() As String = groupText.Split(",")
+		        For Each group As String In groups
+		          Var cleanGroup As String = group.Trim
+		          If cleanGroup <> "" Then
+		            ' Add if not already in list
+		            Var found As Boolean = False
+		            For Each existing As String In uniqueGroups
+		              If existing = cleanGroup Then
+		                found = True
+		                Exit For existing
+		              End If
+		            Next
+		            If Not found Then
+		              uniqueGroups.Add(cleanGroup)
+		            End If
+		          End If
+		        Next
+		      End If
+		      
+		      rs.MoveToNextRow
+		    Wend
+		    
+		    ' Add unique groups to popup
+		    For Each group As String In uniqueGroups
+		      ' Check if already in popup
+		      Var alreadyExists As Boolean = False
+		      For i As Integer = 0 To popAvailableGroups.RowCount - 1
+		        If popAvailableGroups.RowTextAt(i) = group Then
+		          alreadyExists = True
+		          Exit For i
+		        End If
+		      Next
+		      
+		      If Not alreadyExists Then
+		        popAvailableGroups.AddRow(group)
+		      End If
+		    Next
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error loading groups: " + e.Message)
+		  End Try
+		  
+		  If popAvailableGroups.RowCount > 0 Then
+		    popAvailableGroups.SelectedRowIndex = 0
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1105,6 +1428,10 @@ End
 		    If rs <> Nil And Not rs.AfterLastRow Then
 		      txtSerialNumber.Text = rs.Column("serial_number").StringValue
 		      txtCaseLabel.Text = rs.Column("case_label").StringValue
+		      
+		      ' Load assigned groups
+		      Var caseGroups As String = rs.Column("case_groups").StringValue
+		      LoadAssignedGroups(caseGroups)
 		      
 		      ' Load checkbox values (may be NULL/indeterminate)
 		      If rs.Column("lv_size_dilated").Value = Nil Then
@@ -1209,11 +1536,11 @@ End
 	#tag Method, Flags = &h0
 		Sub LoadCaseVideos()
 		  ' ******************************************************************
-		  ' LoadCaseVideos Method (WITH PURPOSE COLUMN)
+		  ' LoadCaseVideos Method
 		  ' ******************************************************************
 		  lstVideos.RemoveAllRows
 		  
-		  Var sql As String = "SELECT video_id, video_filename, view_description, video_purpose, video_order FROM case_videos WHERE case_id = ? ORDER BY video_order"
+		  Var sql As String = "SELECT video_id, video_filename, view_description, video_order FROM case_videos WHERE case_id = ? ORDER BY video_order"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -1222,18 +1549,123 @@ End
 		    
 		    Var rs As RowSet = ps.SelectSQL
 		    
+		    ' Create centered style once (reuse for all rows)
+		    Var centeredStyle As New WebStyle
+		    centeredStyle.Value("text-align") = "center"
+		    
 		    While Not rs.AfterLastRow
 		      lstVideos.AddRow(rs.Column("video_filename").StringValue)
 		      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 1) = rs.Column("view_description").StringValue
-		      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 2) = rs.Column("video_purpose").StringValue
-		      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 3) = Str(rs.Column("video_order").IntegerValue)
+		      
+		      ' Center the order column - use CellValueAt with WebListBoxStyleRenderer
+		      Var row As Integer = lstVideos.LastAddedRowIndex
+		      Var orderValue As String = Str(rs.Column("video_order").IntegerValue)
+		      lstVideos.CellValueAt(row, 2) = New WebListBoxStyleRenderer(centeredStyle, orderValue)
+		      
+		      ' Store video_id in rowtag
 		      lstVideos.RowTagAt(lstVideos.LastAddedRowIndex) = rs.Column("video_id").IntegerValue
 		      
 		      rs.MoveToNextRow
 		    Wend
+		    
+		    ' Select first row and manually load video
+		    If lstVideos.RowCount > 0 Then
+		      lstVideos.SelectedRowIndex = 0
+		      ' Manually trigger video load since SelectionChanged doesn't fire programmatically
+		      LoadVideoPreview(0)
+		    End If
+		    
 		  Catch e As DatabaseException
 		    MessageBox("Error loading videos: " + e.Message)
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadVideoPreview(rowIndex As Integer)
+		  If rowIndex < 0 Then
+		    videoPreview.MovieURL = ""
+		    Return
+		  End If
+		  
+		  Var videoFilename As String = lstVideos.CellTextAt(rowIndex, 0)
+		  Var wf As WebFile = Session.ServeVideo(videoFilename)
+		  
+		  If wf <> Nil Then
+		    videoPreview.MovieURL = wf.URL
+		    System.DebugLog("Loading video in preview: " + wf.URL)
+		  Else
+		    videoPreview.MovieURL = ""
+		    MessageBox("Video file not found: " + videoFilename)
+		  End If
+		  
+		  ' If rowIndex < 0 Then
+		  ' htmlVideoPreview.LoadHTML("")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var videoFilename As String = lstVideos.CellTextAt(rowIndex, 0)
+		  ' 
+		  ' Var wf As WebFile = Session.ServeVideo(videoFilename)
+		  ' 
+		  ' If wf = Nil Then
+		  ' Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		  ' errorHTML = errorHTML + "body{margin:0;padding:20px;background:transparent;color:#e74c3c;font-family:Arial,sans-serif;}"
+		  ' errorHTML = errorHTML + ".error{background:#2c2c2c;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
+		  ' errorHTML = errorHTML + "</style></head><body><div class='error'>"
+		  ' errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+		  ' errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+		  ' errorHTML = errorHTML + "</div></body></html>"
+		  ' 
+		  ' htmlVideoPreview.LoadHTML(errorHTML)
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var videoURL As String = wf.URL
+		  ' System.DebugLog("Loading video in preview: " + videoURL)
+		  ' 
+		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		  ' html = html + "*{margin:0;padding:0;box-sizing:border-box;}"
+		  ' html = html + "html,body{width:100%;height:100%;overflow:hidden;background:transparent;}"
+		  ' html = html + ".video-wrapper{position:absolute;top:0;left:0;right:0;bottom:40px;display:flex;align-items:center;justify-content:center;background:#000;}"
+		  ' html = html + "video{width:100%;height:100%;object-fit:contain;background:#000;}"
+		  ' html = html + ".info-bar{position:absolute;bottom:0;left:0;right:0;height:40px;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px;background:rgba(0,0,0,0.5);font-family:Arial,sans-serif;}"
+		  ' html = html + ".error{color:#e74c3c;background:#2c2c2c;padding:15px;border-radius:8px;margin:10px;}"
+		  ' html = html + "</style></head><body>"
+		  ' html = html + "<div class='video-wrapper'>"
+		  ' html = html + "<video id='videoPlayer' controls loop autoplay playsinline preload='metadata'>"
+		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+		  ' html = html + "Your browser does not support the video tag.</video></div>"
+		  ' html = html + "<div class='info-bar'><span id='debugInfo'></span></div>"
+		  ' html = html + "<div id='errorMsg' class='error' style='display:none;'></div>"
+		  ' html = html + "<script>"
+		  ' html = html + "var v=document.getElementById('videoPlayer');"
+		  ' html = html + "var err=document.getElementById('errorMsg');"
+		  ' html = html + "var dbg=document.getElementById('debugInfo');"
+		  ' html = html + "dbg.textContent='" + videoFilename + "';"
+		  ' html = html + "v.addEventListener('loadedmetadata',function(){"
+		  ' html = html + "  console.log('Video metadata loaded');"
+		  ' html = html + "  dbg.textContent+=(' | '+v.duration.toFixed(1)+'s');"
+		  ' html = html + "});"
+		  ' html = html + "v.addEventListener('canplay',function(){"
+		  ' html = html + "  console.log('Video can play');"
+		  ' html = html + "  v.play().catch(function(e){console.log('Autoplay prevented:',e);});"
+		  ' html = html + "});"
+		  ' html = html + "v.addEventListener('error',function(e){"
+		  ' html = html + "  console.error('Video error:',e);"
+		  ' html = html + "  var errCode=v.error?v.error.code:'unknown';"
+		  ' html = html + "  var errMsg='Error loading video (code: '+errCode+')';"
+		  ' html = html + "  if(errCode==1)errMsg='Video loading aborted';"
+		  ' html = html + "  if(errCode==2)errMsg='Network error loading video';"
+		  ' html = html + "  if(errCode==3)errMsg='Video decoding failed - codec not supported';"
+		  ' html = html + "  if(errCode==4)errMsg='Video format not supported';"
+		  ' html = html + "  err.textContent=errMsg;"
+		  ' html = html + "  err.style.display='block';"
+		  ' html = html + "});"
+		  ' html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});"
+		  ' html = html + "</script></body></html>"
+		  ' 
+		  ' htmlVideoPreview.LoadHTML(html)
 		End Sub
 	#tag EndMethod
 
@@ -1269,6 +1701,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGroupsChanged As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLastColumn As Integer
 	#tag EndProperty
 
@@ -1288,83 +1724,122 @@ End
 		Private mOriginalCellValue As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mOriginalGroups() As String
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
+#tag Events lstVideos
+	#tag Event
+		Sub SelectionChanged(rows() As Integer)
+		  ' ******************************************************************
+		  ' lstVideos.SelectionChanged Event (WITH WEBFILE AND PURPOSE)
+		  ' ******************************************************************
+		  #Pragma Unused rows
+		  
+		  LoadVideoPreview(Me.SelectedRowIndex)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer, value As Variant)
+		  ' ******************************************************************
+		  ' lstVideos.CellAction Event - Handle inline editing
+		  ' ******************************************************************
+		  System.DebugLog("CellAction fired - Row: " + Str(row) + ", Column: " + Str(column) + ", Value: " + value.StringValue)
+		  
+		  If column >= 1 And column <= 2 Then
+		    Var videoID As Integer = Me.RowTagAt(row)
+		    Var newValue As String = value.StringValue.Trim
+		    
+		    ' Get old value from database for undo functionality
+		    Var oldValue As String = ""
+		    Var getOldSQL As String
+		    Select Case column
+		    Case 1
+		      getOldSQL = "SELECT view_description FROM case_videos WHERE video_id = ?"
+		    Case 2
+		      getOldSQL = "SELECT video_order FROM case_videos WHERE video_id = ?"
+		    Else
+		      Return
+		    End Select
+		    
+		    Try
+		      Var getOldPS As MySQLPreparedStatement = Session.DB.Prepare(getOldSQL)
+		      getOldPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      getOldPS.Bind(0, videoID)
+		      Var oldRS As RowSet = getOldPS.SelectSQL
+		      
+		      If oldRS <> Nil And Not oldRS.AfterLastRow Then
+		        If column = 1 Then
+		          oldValue = oldRS.Column("view_description").StringValue
+		        Else
+		          oldValue = Str(oldRS.Column("video_order").IntegerValue)
+		        End If
+		      End If
+		    Catch e As DatabaseException
+		      System.DebugLog("Error getting old value: " + e.Message)
+		    End Try
+		    
+		    ' Store for undo functionality
+		    mLastVideoID = videoID
+		    mLastColumn = column
+		    mLastOldValue = oldValue
+		    mLastNewValue = newValue
+		    
+		    System.DebugLog("Old value from DB: '" + oldValue + "', New value: '" + newValue + "'")
+		    
+		    ' Update the database
+		    Var sql As String
+		    Select Case column
+		    Case 1
+		      sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
+		    Case 2
+		      sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
+		    Else
+		      Return
+		    End Select
+		    
+		    Try
+		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		      
+		      If column = 2 Then
+		        ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        Var orderValue As Integer = Val(newValue)
+		        If orderValue < 0 Then orderValue = 0
+		        ps.Bind(0, orderValue)
+		      Else
+		        ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		        ps.Bind(0, newValue)
+		      End If
+		      
+		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      ps.Bind(1, videoID)
+		      
+		      ps.ExecuteSQL
+		      
+		      System.DebugLog("Video metadata updated in database: video_id=" + Str(videoID) + ", new value: '" + newValue + "'")
+		      btnUndoVideoEdit.Enabled = True
+		      
+		      ' If order was changed, reload to re-sort
+		      If column = 2 Then
+		        System.DebugLog("Reloading videos to re-sort by order")
+		        LoadCaseVideos()
+		      End If
+		      
+		    Catch e As DatabaseException
+		      MessageBox("Error updating video: " + e.Message)
+		      System.DebugLog("Database error: " + e.Message)
+		    End Try
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events txtCaseLabel
 	#tag Event
 		Sub TextChanged()
 		  TrackCaseInfoChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkLVSizeDilated
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkLVFunctionImpaired
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkRVSizeDilated
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkRVFunctionImpaired
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkAorticStenosis
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkAorticRegurgitation
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkMitralStenosis
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkMitralRegurgitation
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkTricuspidStenosis
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events chkTricuspidRegurgitation
-	#tag Event
-		Sub ValueChanged()
-		  TrackAnswerChange
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1396,131 +1871,12 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events lstVideos
-	#tag Event
-		Sub SelectionChanged(rows() As Integer)
-		  ' ******************************************************************
-		  ' lstVideos.SelectionChanged Event (WITH WEBFILE AND PURPOSE)
-		  ' ******************************************************************
-		  #Pragma Unused rows
-		  
-		  If Me.SelectedRowIndex < 0 Then
-		    htmlVideoPreview.LoadHTML("")
-		    Return
-		  End If
-		  
-		  Var videoFilename As String = Me.CellTextAt(Me.SelectedRowIndex, 0)
-		  
-		  ' Get WebFile URL for the video
-		  Var wf As WebFile = Session.ServeVideo(videoFilename)
-		  
-		  If wf = Nil Then
-		    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		    errorHTML = errorHTML + "body{margin:0;padding:20px;background:#1a1a1a;color:#e74c3c;font-family:Arial,sans-serif;}"
-		    errorHTML = errorHTML + ".error{background:#2c2c2c;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
-		    errorHTML = errorHTML + "</style></head><body><div class='error'>"
-		    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
-		    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
-		    errorHTML = errorHTML + "</div></body></html>"
-		    
-		    htmlVideoPreview.LoadHTML(errorHTML)
-		    Return
-		  End If
-		  
-		  Var videoURL As String = wf.URL
-		  
-		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		  html = html + "body{margin:0;padding:10px;background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100%;}"
-		  html = html + ".video-container{width:100%;max-width:600px;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.5);}"
-		  html = html + "video{width:100%;height:auto;display:block;background:#000;}"
-		  html = html + ".info{color:#888;font-size:12px;margin-top:10px;text-align:center;}"
-		  html = html + "</style></head><body><div class='video-container'>"
-		  html = html + "<video controls loop autoplay playsinline>"
-		  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
-		  html = html + "Your browser does not support the video tag.</video></div>"
-		  html = html + "<div class='info'>" + videoFilename + "</div>"
-		  html = html + "<script>var v=document.querySelector('video');"
-		  html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});</script>"
-		  html = html + "</body></html>"
-		  
-		  htmlVideoPreview.LoadHTML(html)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer, value As Variant)
-		  ' ******************************************************************
-		  ' lstVideos.CellAction Event - Handle inline editing
-		  ' ******************************************************************
-		  If column >= 1 And column <= 3 Then
-		    ' Store original value before editing
-		    mOriginalCellValue = Me.CellTextAt(row, column)
-		    
-		    ' Get the new value from the edit
-		    Var newValue As String = value.StringValue
-		    
-		    ' If value actually changed, save it
-		    If newValue <> mOriginalCellValue Then
-		      Var videoID As Integer = Me.RowTagAt(row)
-		      
-		      ' Store for undo
-		      mLastVideoID = videoID
-		      mLastColumn = column
-		      mLastOldValue = mOriginalCellValue
-		      mLastNewValue = newValue
-		      
-		      ' Update the cell display
-		      Me.CellTextAt(row, column) = newValue
-		      
-		      ' Save to database
-		      Var sql As String
-		      Select Case column
-		      Case 1
-		        sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
-		      Case 2
-		        sql = "UPDATE case_videos SET video_purpose = ? WHERE video_id = ?"
-		      Case 3
-		        sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
-		      Else
-		        Return
-		      End Select
-		      
-		      Try
-		        Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		        
-		        If column = 3 Then
-		          ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		          Var orderValue As Integer = Val(newValue)
-		          If orderValue < 0 Then orderValue = 0
-		          ps.Bind(0, orderValue)
-		        Else
-		          ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		          ps.Bind(0, newValue)
-		        End If
-		        
-		        ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		        ps.Bind(1, videoID)
-		        
-		        ps.ExecuteSQL
-		        
-		        System.DebugLog("Video metadata updated: video_id=" + Str(videoID))
-		        btnUndoVideoEdit.Enabled = True
-		        
-		      Catch e As DatabaseException
-		        MessageBox("Error updating video: " + e.Message)
-		        Me.CellTextAt(row, column) = mOriginalCellValue
-		      End Try
-		    End If
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events btnUploadVideo
+#tag Events btnStartUpload
 	#tag Event
 		Sub Pressed()
 		  ' ******************************************************************
 		  ' btnStartUpload.Pressed Event
 		  ' ******************************************************************
-		  ' Start the upload process for selected file(s)
 		  uplVideo.StartUpload
 		End Sub
 	#tag EndEvent
@@ -1562,7 +1918,6 @@ End
 		  ' btnSaveAll.Pressed Event
 		  ' ******************************************************************
 		  Var changesMade As Boolean = False
-		  Var errors As String = ""
 		  
 		  ' Validate case label
 		  If txtCaseLabel.Text.Trim = "" Then
@@ -1573,14 +1928,16 @@ End
 		  Try
 		    Session.DB.BeginTransaction
 		    
-		    ' Save case description if changed
-		    If mCaseInfoChanged Then
-		      Var sqlCase As String = "UPDATE cases SET case_label = ? WHERE case_id = ?"
+		    ' Save case info (description and groups)
+		    If mCaseInfoChanged Or mGroupsChanged Then
+		      Var sqlCase As String = "UPDATE cases SET case_label = ?, case_groups = ? WHERE case_id = ?"
 		      Var psCase As MySQLPreparedStatement = Session.DB.Prepare(sqlCase)
 		      psCase.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      psCase.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      psCase.Bind(0, txtCaseLabel.Text.Trim)
-		      psCase.Bind(1, CaseID)
+		      psCase.Bind(1, GetCurrentGroups())
+		      psCase.Bind(2, CaseID)
 		      psCase.ExecuteSQL
 		      changesMade = True
 		    End If
@@ -1698,6 +2055,13 @@ End
 		      MessageBox("All changes saved successfully!")
 		      mCaseInfoChanged = False
 		      mAnswersChanged = False
+		      mGroupsChanged = False
+		      
+		      ' Update original groups
+		      Redim mOriginalGroups(-1)
+		      For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+		        mOriginalGroups.Add(lstAssignedGroups.CellTextAt(i, 0))
+		      Next
 		    Else
 		      MessageBox("No changes to save")
 		    End If
@@ -1719,6 +2083,322 @@ End
 		  LoadCaseDetails
 		  mCaseInfoChanged = False
 		  mAnswersChanged = False
+		  mGroupsChanged = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events uplVideo
+	#tag Event
+		Sub FileAdded(filename As String, bytes As UInt64, mimeType As String)
+		  ' ******************************************************************
+		  ' uplVideo.FileAdded Event
+		  ' ******************************************************************
+		  ' Enable upload button when file is selected
+		  btnStartUpload.Enabled = True
+		  System.DebugLog("File selected: " + filename + " (" + Str(bytes) + " bytes)")
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub FileRemoved(filename As String)
+		  ' ******************************************************************
+		  ' uplVideo.FileRemoved Event
+		  ' ******************************************************************
+		  ' Disable upload button when file is removed
+		  btnStartUpload.Enabled = False
+		  System.DebugLog("File removed: " + filename)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UploadError(error As RuntimeException)
+		  ' ******************************************************************
+		  ' uplVideo.UploadError Event
+		  ' ******************************************************************
+		  MessageBox("Upload error: " + error.Message)
+		  btnStartUpload.Enabled = True  ' Re-enable for retry
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UploadFinished(files() As WebUploadedFile)
+		  ' ******************************************************************
+		  ' uplVideo.UploadFinished Event
+		  '    Get the first (and only, since AllowMultipleFiles = False) file
+		  ' ******************************************************************
+		  Var uploadedFile As WebUploadedFile = files(0)
+		  
+		  Try
+		    ' Get or create the CaseVideos folder
+		    Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		    If Not targetFolder.Exists Then
+		      targetFolder.CreateFolder
+		      System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
+		    End If
+		    
+		    System.DebugLog("Target folder: " + targetFolder.NativePath)
+		    
+		    ' Create the target file
+		    Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+		    
+		    ' If file already exists, delete it first
+		    If targetFile.Exists Then
+		      System.DebugLog("File already exists, deleting: " + targetFile.NativePath)
+		      Try
+		        targetFile.Remove
+		      Catch deleteError As IOException
+		        MessageBox("Error: Cannot overwrite existing file. " + deleteError.Message)
+		        Return
+		      End Try
+		    End If
+		    
+		    System.DebugLog("Writing file: " + targetFile.NativePath)
+		    
+		    ' Create and write to the file
+		    Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
+		    If outputStream = Nil Then
+		      MessageBox("Error: Could not create output stream for " + uploadedFile.Name)
+		      Return
+		    End If
+		    
+		    outputStream.Write(uploadedFile.Data)
+		    outputStream.Close
+		    
+		    System.DebugLog("Video saved successfully: " + targetFile.NativePath)
+		    
+		    ' Get next order number
+		    Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
+		    Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
+		    orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    orderPS.Bind(0, CaseID)
+		    Var orderRS As RowSet = orderPS.SelectSQL
+		    Var videoOrder As Integer = 0
+		    If orderRS <> Nil And Not orderRS.AfterLastRow Then
+		      videoOrder = orderRS.Column("next_order").IntegerValue
+		    End If
+		    
+		    ' Insert into database (video_purpose can be empty or used for other purposes)
+		    Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    
+		    ps.Bind(0, CaseID)
+		    ps.Bind(1, uploadedFile.Name)
+		    ps.Bind(2, "")
+		    ps.Bind(3, "")  ' video_purpose left empty (reserved for future use)
+		    ps.Bind(4, videoOrder)
+		    
+		    ps.ExecuteSQL
+		    
+		    MessageBox("Video uploaded successfully!")
+		    LoadCaseVideos
+		    
+		    uplVideo.RemoveAllFiles
+		    btnStartUpload.Enabled = False
+		    
+		  Catch e As IOException
+		    System.DebugLog("IOException: " + e.Message)
+		    MessageBox("Error saving video file: " + e.Message + EndOfLine + EndOfLine + _
+		    "This may be a permissions issue. Check the console for details.")
+		  Catch e As DatabaseException
+		    MessageBox("Error saving video to database: " + e.Message)
+		  End Try
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnAddGroup
+	#tag Event
+		Sub Pressed()
+		  ' ******************************************************************
+		  ' btnAddGroup.Pressed Event
+		  ' ******************************************************************
+		  If popAvailableGroups.SelectedRowIndex < 0 Then
+		    MessageBox("Please select a group to add")
+		    Return
+		  End If
+		  
+		  Var selectedGroup As String = popAvailableGroups.RowTextAt(popAvailableGroups.SelectedRowIndex)
+		  
+		  ' Check if already assigned
+		  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+		    If lstAssignedGroups.CellTextAt(i, 0) = selectedGroup Then
+		      MessageBox("This group is already assigned")
+		      Return
+		    End If
+		  Next
+		  
+		  ' Add to list
+		  lstAssignedGroups.AddRow(selectedGroup)
+		  mGroupsChanged = True
+		  
+		  TrackCaseInfoChange
+		  System.DebugLog("Group added: " + selectedGroup)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events lstAssignedGroups
+	#tag Event
+		Sub SelectionChanged(rows() As Integer)
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer, value As Variant)
+		  ' ******************************************************************
+		  ' lstVideos.CellAction Event - Handle inline editing
+		  ' ******************************************************************
+		  If column >= 1 And column <= 3 Then
+		    ' Store original value before editing
+		    mOriginalCellValue = Me.CellTextAt(row, column)
+		    
+		    ' Get the new value from the edit
+		    Var newValue As String = value.StringValue
+		    
+		    ' If value actually changed, save it
+		    If newValue <> mOriginalCellValue Then
+		      Var videoID As Integer = Me.RowTagAt(row)
+		      
+		      ' Store for undo
+		      mLastVideoID = videoID
+		      mLastColumn = column
+		      mLastOldValue = mOriginalCellValue
+		      mLastNewValue = newValue
+		      
+		      ' Update the cell display
+		      Me.CellTextAt(row, column) = newValue
+		      
+		      ' Save to database
+		      Var sql As String
+		      Select Case column
+		      Case 1
+		        sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
+		      Case 2
+		        sql = "UPDATE case_videos SET video_purpose = ? WHERE video_id = ?"
+		      Case 3
+		        sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
+		      Else
+		        Return
+		      End Select
+		      
+		      Try
+		        Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		        
+		        If column = 3 Then
+		          ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		          Var orderValue As Integer = Val(newValue)
+		          If orderValue < 0 Then orderValue = 0
+		          ps.Bind(0, orderValue)
+		        Else
+		          ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		          ps.Bind(0, newValue)
+		        End If
+		        
+		        ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        ps.Bind(1, videoID)
+		        
+		        ps.ExecuteSQL
+		        
+		        System.DebugLog("Video metadata updated: video_id=" + Str(videoID))
+		        btnUndoVideoEdit.Enabled = True
+		        
+		      Catch e As DatabaseException
+		        MessageBox("Error updating video: " + e.Message)
+		        Me.CellTextAt(row, column) = mOriginalCellValue
+		      End Try
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnRemoveGroup
+	#tag Event
+		Sub Pressed()
+		  ' ******************************************************************
+		  ' btnRemoveGroup.Pressed Event
+		  ' ******************************************************************
+		  If lstAssignedGroups.SelectedRowIndex < 0 Then
+		    MessageBox("Please select a group to remove")
+		    Return
+		  End If
+		  
+		  Var selectedGroup As String = lstAssignedGroups.CellTextAt(lstAssignedGroups.SelectedRowIndex, 0)
+		  lstAssignedGroups.RemoveRowAt(lstAssignedGroups.SelectedRowIndex)
+		  mGroupsChanged = True
+		  
+		  TrackCaseInfoChange
+		  System.DebugLog("Group removed: " + selectedGroup)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkLVSizeDilated
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkLVFunctionImpaired
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkRVSizeDilated
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkRVFunctionImpaired
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkAorticStenosis
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkAorticRegurgitation
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkMitralStenosis
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkMitralRegurgitation
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkTricuspidStenosis
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkTricuspidRegurgitation
+	#tag Event
+		Sub ValueChanged()
+		  TrackAnswerChange
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1738,8 +2418,6 @@ End
 		  Case 1
 		    sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
 		  Case 2
-		    sql = "UPDATE case_videos SET video_purpose = ? WHERE video_id = ?"
-		  Case 3
 		    sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
 		  Else
 		    Return
@@ -1748,9 +2426,11 @@ End
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    
-		    If mLastColumn = 3 Then
+		    If mLastColumn = 2 Then
 		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		      ps.Bind(0, Val(mLastOldValue))
+		      Var orderValue As Integer = Val(mLastOldValue)
+		      If orderValue < 0 Then orderValue = 0
+		      ps.Bind(0, orderValue)
 		    Else
 		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.Bind(0, mLastOldValue)
@@ -1761,12 +2441,11 @@ End
 		    
 		    ps.ExecuteSQL
 		    
-		    System.DebugLog("Video metadata change undone: video_id=" + Str(mLastVideoID))
+		    System.DebugLog("Video metadata change undone: video_id=" + Str(mLastVideoID) + ", restored to: '" + mLastOldValue + "'")
 		    
-		    ' Reload videos to show the undone change
-		    LoadCaseVideos
+		    ' Always reload to refresh the display (especially important for order changes)
+		    LoadCaseVideos()
 		    
-		    ' Disable undo button and clear tracking
 		    btnUndoVideoEdit.Enabled = False
 		    mLastVideoID = 0
 		    mLastColumn = 0
@@ -1775,105 +2454,6 @@ End
 		    
 		  Catch e As DatabaseException
 		    MessageBox("Error undoing change: " + e.Message)
-		  End Try
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events uplVideo
-	#tag Event
-		Sub FileAdded(filename As String, bytes As UInt64, mimeType As String)
-		  ' ******************************************************************
-		  ' uplVideo.FileAdded Event
-		  ' ******************************************************************
-		  ' Enable upload button when file is selected
-		  btnUploadVideo.Enabled = True
-		  System.DebugLog("File selected: " + filename + " (" + Str(bytes) + " bytes)")
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub FileRemoved(filename As String)
-		  ' ******************************************************************
-		  ' uplVideo.FileRemoved Event
-		  ' ******************************************************************
-		  ' Disable upload button when file is removed
-		  btnUploadVideo.Enabled = False
-		  System.DebugLog("File removed: " + filename)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub UploadError(error As RuntimeException)
-		  ' ******************************************************************
-		  ' uplVideo.UploadError Event
-		  ' ******************************************************************
-		  MessageBox("Upload error: " + error.Message)
-		  btnUploadVideo.Enabled = True  ' Re-enable for retry
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub UploadFinished(files() As WebUploadedFile)
-		  ' ******************************************************************
-		  ' uplVideo.UploadFinished Event
-		  '    Get the first (and only, since AllowMultipleFiles = False) file
-		  ' ******************************************************************
-		  Var uploadedFile As WebUploadedFile = files(0)
-		  
-		  Try
-		    Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
-		    If Not targetFolder.Exists Then
-		      targetFolder.CreateFolder
-		      System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
-		    End If
-		    
-		    ' Create target file with the original filename
-		    Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
-		    
-		    ' Save the uploaded file data to disk
-		    Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
-		    outputStream.Write(uploadedFile.Data)
-		    outputStream.Close
-		    
-		    System.DebugLog("Video saved to: " + targetFile.NativePath)
-		    
-		    ' Get next order number
-		    Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
-		    Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
-		    orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		    orderPS.Bind(0, CaseID)
-		    Var orderRS As RowSet = orderPS.SelectSQL
-		    Var videoOrder As Integer = 0
-		    If orderRS <> Nil And Not orderRS.AfterLastRow Then
-		      videoOrder = orderRS.Column("next_order").IntegerValue
-		    End If
-		    
-		    ' Insert into database
-		    Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
-		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		    
-		    ps.Bind(0, CaseID)
-		    ps.Bind(1, uploadedFile.Name)
-		    ps.Bind(2, "")  ' Empty, user can edit inline
-		    ps.Bind(3, "")  ' Empty, user can edit inline
-		    ps.Bind(4, videoOrder)
-		    
-		    ps.ExecuteSQL
-		    
-		    MessageBox("Video uploaded successfully!")
-		    LoadCaseVideos
-		    
-		    ' Clear the uploader for next file and disable upload button
-		    uplVideo.RemoveAllFiles
-		    btnUploadVideo.Enabled = False
-		    
-		  Catch e As IOException
-		    MessageBox("Error saving video file: " + e.Message)
-		  Catch e As DatabaseException
-		    MessageBox("Error saving video: " + e.Message)
 		  End Try
 		End Sub
 	#tag EndEvent
