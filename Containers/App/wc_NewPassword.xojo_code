@@ -372,6 +372,12 @@ End
 		  lblMessage.Text = ""
 		  lblMessage.Visible = False
 		  txtNewPassword.SetFocus
+		  
+		  Self.EnableBackButton = False
+		  Self.EnableLogoutButton = True
+		  Self.SectionTitle = "Enter new password"
+		  
+		  UpdateNavigation // update shell page data
 		End Sub
 	#tag EndEvent
 
@@ -481,6 +487,30 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableBackButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableLogoutButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ContainerID"
 		Visible=false

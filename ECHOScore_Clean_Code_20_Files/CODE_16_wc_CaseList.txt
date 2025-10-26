@@ -1,0 +1,352 @@
+' ═══════════════════════════════════════════════════════════════════
+' wc_CaseList
+' Extracted Code and Properties
+' ═══════════════════════════════════════════════════════════════════
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Opening()
+  ' *******************************************************************************
+  ' wc_CaseList.opening event
+  ' *******************************************************************************
+  LoadGroupFilter
+  LoadCases
+  
+  Self.EnableBackButton = True
+  Self.EnableLogoutButton = True
+  UpdateNavigation ' update status of back/login buttons & logged in user
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Private Sub HandleAddCaseDialogClosed(sender As dlg_AddCase)
+  ' ******************************************************************
+  ' HandleAddCaseDialogClosed Method
+  ' ******************************************************************
+  #Pragma Unused sender
+  ' Reload cases and groups after dialog closes
+  LoadGroupFilter
+  LoadCases
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Private Sub HandleDeleteCaseConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
+  ' ******************************************************************
+  ' HandleDeleteCaseConfirm Method
+  ' ******************************************************************
+  Select Case button
+  Case dialog.ActionButton
+    Var caseID As Integer = mSelectedCaseID
+    Var sql As String = "DELETE FROM cases WHERE case_id = ?"
+    
+    Try
+      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      ps.Bind(0, caseID)
+      
+      ps.ExecuteSQL
+      
+      MessageBox("Case deleted successfully!")
+      mSelectedCaseID = 0  ' Clear stored ID
+      LoadGroupFilter  ' Refresh group list in case groups were removed
+      LoadCases
+      
+    Catch e As DatabaseException
+      MessageBox("Error deleting case: " + e.Message)
+    End Try
+  End Select
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Sub LoadCases()
+  ' ******************************************************************
+  ' LoadCases Method - FIXED to use case_groups instead of video_purpose
+  ' ******************************************************************
+  
+  ' Store currently selected case ID (if any)
+  Var selectedCaseID As Integer = mSelectedCaseID
+  
+  lstCases.RemoveAllRows
+  
+  Var selectedGroup As String = ""
+  If popFilterGroup.SelectedRowIndex > 0 Then
+    selectedGroup = popFilterGroup.RowTagAt(popFilterGroup.SelectedRowIndex)
+    If selectedGroup = "" Then
+      selectedGroup = popFilterGroup.RowTextAt(popFilterGroup.SelectedRowIndex)
+    End If
+  End If
+  
+  Var searchTerm As String = txtSearch.Text.Trim
+  
+  ' FIXED: Use case_groups instead of video_purpose
+  Var sql As String = _
+  "SELECT c.case_id, c.serial_number, c.case_label, c.case_groups, " + _
+  "COUNT(cv.video_id) AS video_count " + _
+  "FROM cases c " + _
+  "LEFT JOIN case_videos cv ON c.case_id = cv.case_id "
+  
+  Var whereConditions() As String
+  
+  ' Add group filter - check case_groups field
+  If selectedGroup <> "" Then
+    whereConditions.Add("(c.case_groups LIKE ? OR FIND_IN_SET(?, REPLACE(c.case_groups, ' ', '')) > 0)")
+  End If
+  
+  ' Add search filter
+  If searchTerm <> "" Then
+    whereConditions.Add("(c.serial_number LIKE ? OR c.case_label LIKE ?)")
+  End If
+  
+  ' Combine WHERE conditions
+  If whereConditions.Count > 0 Then
+    sql = sql + "WHERE " + String.FromArray(whereConditions, " AND ")
+  End If
+  
+  ' Use NUMERICAL sorting instead of alphabetical
+  sql = sql + " GROUP BY c.case_id, c.serial_number, c.case_label, c.case_groups ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    Var paramIndex As Integer = 0
+    
+    ' Bind group filter parameters
+    If selectedGroup <> "" Then
+      ps.BindType(paramIndex, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      ps.Bind(paramIndex, "%" + selectedGroup + "%")
+      paramIndex = paramIndex + 1
+      
+      Var cleanGroup As String = selectedGroup.ReplaceAll(" ", "")
+      ps.BindType(paramIndex, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      ps.Bind(paramIndex, cleanGroup)
+      paramIndex = paramIndex + 1
+    End If
+    
+    ' Bind search parameters
+    If searchTerm <> "" Then
+      ps.BindType(paramIndex, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      ps.Bind(paramIndex, "%" + searchTerm + "%")
+      paramIndex = paramIndex + 1
+      ps.BindType(paramIndex, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      ps.Bind(paramIndex, "%" + searchTerm + "%")
+      paramIndex = paramIndex + 1
+    End If
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    While Not rs.AfterLastRow
+      lstCases.AddRow(rs.Column("serial_number").StringValue)
+      lstCases.CellTextAt(lstCases.LastAddedRowIndex, 1) = rs.Column("case_label").StringValue
+      
+      ' Display groups from case_groups field
+      Var groupsText As String = rs.Column("case_groups").StringValue
+      If groupsText.Trim = "" Then
+        groupsText = "(No groups)"
+      End If
+      lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = groupsText
+      
+      ' Display video count
+      ' lstCases.CellTextAt(lstCases.LastAddedRowIndex, 3) = Str(rs.Column("video_count").IntegerValue)
+      
+      ' Center the video_count column - use CellValueAt with WebListBoxStyleRenderer
+      Var row As Integer = lstCases.LastAddedRowIndex
+      Var video_count As String = Str(rs.Column("video_count").IntegerValue)
+      Var centeredStyle As New WebStyle
+      centeredStyle.Value("text-align") = "center"
+      lstCases.CellValueAt(row, 3) = New WebListBoxStyleRenderer(centeredStyle, video_count)
+      
+      lstCases.RowTagAt(lstCases.LastAddedRowIndex) = rs.Column("case_id").IntegerValue
+      
+      rs.MoveToNextRow
+    Wend
+    
+    ' Restore selection after reload
+    If selectedCaseID > 0 Then
+      For i As Integer = 0 To lstCases.RowCount - 1
+        If lstCases.RowTagAt(i) = selectedCaseID Then
+          lstCases.SelectedRowIndex = i
+          Exit For i
+        End If
+      Next
+    End If
+    
+  Catch e As DatabaseException
+    MessageBox("Error loading cases: " + e.Message)
+  End Try
+  
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Sub LoadGroupFilter()
+  ' ******************************************************************
+  ' LoadGroupFilter Method - FIXED to use case_groups
+  ' ******************************************************************
+  popFilterGroup.RemoveAllRows
+  popFilterGroup.AddRow("All Groups")
+  popFilterGroup.SelectedRowIndex = 0
+  
+  ' Load unique groups from case_groups field
+  Var sql As String = "SELECT DISTINCT case_groups FROM cases WHERE case_groups IS NOT NULL AND case_groups <> '' ORDER BY case_groups"
+  
+  Try
+    Var rs As RowSet = Session.DB.SelectSQL(sql)
+    Var uniqueGroups() As String
+    
+    While Not rs.AfterLastRow
+      Var groupsText As String = rs.Column("case_groups").StringValue
+      
+      ' Split comma-separated groups
+      If groupsText.Trim <> "" Then
+        Var groups() As String = groupsText.Split(",")
+        For Each group As String In groups
+          Var cleanGroup As String = group.Trim
+          If cleanGroup <> "" Then
+            ' Add if not already in list
+            Var found As Boolean = False
+            For Each existing As String In uniqueGroups
+              If existing = cleanGroup Then
+                found = True
+                Exit For existing
+              End If
+            Next
+            If Not found Then
+              uniqueGroups.Add(cleanGroup)
+            End If
+          End If
+        Next
+      End If
+      
+      rs.MoveToNextRow
+    Wend
+    
+    ' Sort and add to popup
+    uniqueGroups.Sort
+    For Each group As String In uniqueGroups
+      popFilterGroup.AddRow(group)
+    Next
+    
+  Catch e As DatabaseException
+    System.DebugLog("Error loading groups: " + e.Message)
+  End Try
+  
+End Sub
+
+' ═══════════════════════════════════════════════════════════════════
+' Properties
+' ═══════════════════════════════════════════════════════════════════
+Private mSelectedCaseID As Integer = 0
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub SelectionChanged(rows() As Integer)
+  ' ******************************************************************
+  ' lstCases.SelectionChanged Event
+  ' ******************************************************************
+  #Pragma Unused rows
+  
+  ' Store selected case ID - DO NOT call LoadCases here!
+  If Me.SelectedRowIndex >= 0 Then
+    mSelectedCaseID = Me.RowTagAt(Me.SelectedRowIndex)
+  Else
+    mSelectedCaseID = 0
+  End If
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub DoublePressed(row As Integer, column As Integer)
+  ' ******************************************************************
+  ' lstCases.DoublePressed Event
+  ' ******************************************************************
+  If mSelectedCaseID = 0 Then Return
+  
+  Var caseDetails As New wc_CaseDetails
+  caseDetails.ContainerID = "CaseDetails"
+  caseDetails.Position = wc_Base.PositionEnum.TopLeft
+  caseDetails.CaseID = mSelectedCaseID
+  Session.Navigation.NavigateTo(caseDetails)
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Pressed()
+  ' ******************************************************************
+  ' btnNewCase.Pressed Event
+  ' ******************************************************************
+  Var dlg As New dlg_AddCase
+  AddHandler dlg.Dismissed, AddressOf HandleAddCaseDialogClosed
+  dlg.Show
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Pressed()
+  ' ******************************************************************
+  ' btnDeleteCase.Pressed Event
+  ' ******************************************************************
+  If mSelectedCaseID = 0 Then
+    MessageBox("Please select a case to delete")
+    Return
+  End If
+  
+  Var d As New WebMessageDialog
+  d.Title = "Confirm Delete"
+  d.Message = "Are you sure you want to delete this case? This will also delete all associated videos and user responses. This action cannot be undone."
+  d.ActionButton.Caption = "Delete"
+  d.CancelButton.Caption = "Cancel"
+  d.CancelButton.Visible = True
+  
+  AddHandler d.ButtonPressed, AddressOf HandleDeleteCaseConfirm
+  d.Show
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Pressed()
+  Session.Navigation.NavigateBack
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub SelectionChanged(item As WebMenuItem)
+  ' ******************************************************************
+  ' popFilterGroup.SelectionChanged Event
+  ' ******************************************************************
+  #Pragma Unused item
+  LoadCases
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub TextChanged()
+  ' ******************************************************************
+  ' txtSearch.TextChanged Event
+  ' Real-time filtering as user types
+  ' ******************************************************************
+  LoadCases
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Pressed()
+  ' ******************************************************************
+  ' btnClearFilters.Pressed Event
+  ' ******************************************************************
+  popFilterGroup.SelectedRowIndex = 0
+  txtSearch.Text = ""
+  LoadCases
+End Sub

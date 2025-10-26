@@ -1,0 +1,261 @@
+' =============================================================================
+' wc_CaseReview WebContainer - Complete Updated Version (ALL 3 PARTS)
+' Student case review and assessment with NULL checkbox support
+' CRITICAL: Uses MYSQL_TYPE_NULL when binding Nil for indeterminate checkboxes
+' =============================================================================
+
+' Insert → WebContainer
+' Name: wc_CaseReview
+' Super: wc_Base
+
+' Properties:
+Public CaseID As Integer
+Private CurrentVideoIndex As Integer = 0
+Private TotalVideos As Integer = 0
+Private VideoFilenames() As String
+Private IsReviewMode As Boolean = False
+
+' VIDEO SECTION CONTROLS:
+' Label: lblCaseTitle (Bold, Large)
+' HTMLViewer: htmlVideoPlayer (Large area - at least 800px wide)
+' Label: lblVideoCounter (text: "")
+' PushButton: btnPreviousVideo (text: "← Previous")
+' PushButton: btnNextVideo (text: "Next →")
+' PushButton: btnReplayVideo (text: "⟳ Replay")
+
+' ASSESSMENT SECTION CONTROLS (12 checkboxes):
+' Label: lblAssessment (text: "ASSESSMENT:", Bold)
+' CheckBox: chkLVSizeDilated (text: "LV Size - Dilated", AllowIndeterminate = True)
+' CheckBox: chkLVFunctionImpaired (text: "LV Function - Significantly Impaired", AllowIndeterminate = True)
+' CheckBox: chkRVSizeDilated (text: "RV Size - Dilated", AllowIndeterminate = True)
+' CheckBox: chkRVFunctionImpaired (text: "RV Function - Significantly Impaired", AllowIndeterminate = True)
+' CheckBox: chkAorticStenosis (text: "Aortic Valve - Significant Stenosis", AllowIndeterminate = True)
+' CheckBox: chkAorticRegurgitation (text: "Aortic Valve - Significant Regurgitation", AllowIndeterminate = True)
+' CheckBox: chkMitralStenosis (text: "Mitral Valve - Significant Stenosis", AllowIndeterminate = True)
+' CheckBox: chkMitralRegurgitation (text: "Mitral Valve - Significant Regurgitation", AllowIndeterminate = True)
+' CheckBox: chkTricuspidStenosis (text: "Tricuspid Valve - Significant Stenosis", AllowIndeterminate = True)
+' CheckBox: chkTricuspidRegurgitation (text: "Tricuspid Valve - Significant Regurgitation", AllowIndeterminate = True)
+' CheckBox: chkPericardialEffusion (text: "Pericardium - Significant Effusion", AllowIndeterminate = True)
+' CheckBox: chkIVCHighPressure (text: "IVC - High RA Pressure", AllowIndeterminate = True)
+
+' CONCLUSIONS SECTION CONTROLS:
+' Label: lblConclusions (text: "Your Conclusions:")
+' TextArea: txtConclusions
+' CheckBox: chkRequiresFullEcho (text: "Requires Full ECHO?", AllowIndeterminate = True)
+
+' ACTION BUTTONS CONTROLS:
+' PushButton: btnSave (text: "Save Draft")
+' PushButton: btnSubmit (text: "Submit")
+
+' RESULTS SECTION (Initially Hidden) CONTROLS:
+' Label: lblCorrectConclusionsTitle (text: "Expert Conclusions:", Bold, Visible = False)
+' Label: lblCorrectConclusions (text: "", Visible = False)
+' Label: lblScore (text: "", Bold, Visible = False)
+
+' =============================================================================
+' PART 1: Opening, LoadCase, LoadExistingResponse, LoadVideos
+' =============================================================================
+
+' wc_CaseReview.Opening Event
+Sub Opening()
+  ContainerID = "CaseReview"
+  LoadCase()
+  LoadExistingResponse()
+  LoadVideos()
+  UpdateVideoNavigation()
+End Sub
+
+' LoadCase Method
+Sub LoadCase()
+  Var sql As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(0, CaseID)
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    If rs <> Nil And Not rs.AfterLastRow Then
+      Var serialNumber As String = rs.Column("serial_number").StringValue
+      Var caseLabel As String = rs.Column("case_label").StringValue
+      
+      ' Check if already completed
+      Var checkSQL As String = "SELECT is_completed FROM user_responses WHERE user_id = ? AND case_id = ?"
+      Var checkPS As MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
+      checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      checkPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      checkPS.Bind(0, Session.CurrentUserID)
+      checkPS.Bind(1, CaseID)
+      
+      Var checkRS As RowSet = checkPS.SelectSQL
+      If checkRS <> Nil And Not checkRS.AfterLastRow Then
+        IsReviewMode = checkRS.Column("is_completed").BooleanValue
+      End If
+      
+      ' Show full label if completed or admin
+      If IsReviewMode Or Session.IsAdmin Then
+        lblCaseTitle.Text = caseLabel + " (" + serialNumber + ")"
+      Else
+        lblCaseTitle.Text = "Case " + serialNumber
+      End If
+    End If
+  Catch e As DatabaseException
+    MessageBox("Error loading case: " + e.Message)
+  End Try
+End Sub
+
+' LoadExistingResponse Method (WITH NULL SUPPORT)
+Sub LoadExistingResponse()
+  Var sql As String = "SELECT * FROM user_responses WHERE user_id = ? AND case_id = ?"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(0, Session.CurrentUserID)
+    ps.Bind(1, CaseID)
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    If rs <> Nil And Not rs.AfterLastRow Then
+      ' Load checkbox values with NULL/indeterminate support
+      If rs.Column("lv_size_dilated").Value = Nil Then
+        chkLVSizeDilated.Indeterminate = True
+      Else
+        chkLVSizeDilated.Value = rs.Column("lv_size_dilated").BooleanValue
+        chkLVSizeDilated.Indeterminate = False
+      End If
+      
+      If rs.Column("lv_function_impaired").Value = Nil Then
+        chkLVFunctionImpaired.Indeterminate = True
+      Else
+        chkLVFunctionImpaired.Value = rs.Column("lv_function_impaired").BooleanValue
+        chkLVFunctionImpaired.Indeterminate = False
+      End If
+      
+      If rs.Column("rv_size_dilated").Value = Nil Then
+        chkRVSizeDilated.Indeterminate = True
+      Else
+        chkRVSizeDilated.Value = rs.Column("rv_size_dilated").BooleanValue
+        chkRVSizeDilated.Indeterminate = False
+      End If
+      
+      If rs.Column("rv_function_impaired").Value = Nil Then
+        chkRVFunctionImpaired.Indeterminate = True
+      Else
+        chkRVFunctionImpaired.Value = rs.Column("rv_function_impaired").BooleanValue
+        chkRVFunctionImpaired.Indeterminate = False
+      End If
+      
+      If rs.Column("aortic_stenosis_significant").Value = Nil Then
+        chkAorticStenosis.Indeterminate = True
+      Else
+        chkAorticStenosis.Value = rs.Column("aortic_stenosis_significant").BooleanValue
+        chkAorticStenosis.Indeterminate = False
+      End If
+      
+      If rs.Column("aortic_regurgitation_significant").Value = Nil Then
+        chkAorticRegurgitation.Indeterminate = True
+      Else
+        chkAorticRegurgitation.Value = rs.Column("aortic_regurgitation_significant").BooleanValue
+        chkAorticRegurgitation.Indeterminate = False
+      End If
+      
+      If rs.Column("mitral_stenosis_significant").Value = Nil Then
+        chkMitralStenosis.Indeterminate = True
+      Else
+        chkMitralStenosis.Value = rs.Column("mitral_stenosis_significant").BooleanValue
+        chkMitralStenosis.Indeterminate = False
+      End If
+      
+      If rs.Column("mitral_regurgitation_significant").Value = Nil Then
+        chkMitralRegurgitation.Indeterminate = True
+      Else
+        chkMitralRegurgitation.Value = rs.Column("mitral_regurgitation_significant").BooleanValue
+        chkMitralRegurgitation.Indeterminate = False
+      End If
+      
+      If rs.Column("tricuspid_stenosis_significant").Value = Nil Then
+        chkTricuspidStenosis.Indeterminate = True
+      Else
+        chkTricuspidStenosis.Value = rs.Column("tricuspid_stenosis_significant").BooleanValue
+        chkTricuspidStenosis.Indeterminate = False
+      End If
+      
+      If rs.Column("tricuspid_regurgitation_significant").Value = Nil Then
+        chkTricuspidRegurgitation.Indeterminate = True
+      Else
+        chkTricuspidRegurgitation.Value = rs.Column("tricuspid_regurgitation_significant").BooleanValue
+        chkTricuspidRegurgitation.Indeterminate = False
+      End If
+      
+      If rs.Column("pericardial_effusion_significant").Value = Nil Then
+        chkPericardialEffusion.Indeterminate = True
+      Else
+        chkPericardialEffusion.Value = rs.Column("pericardial_effusion_significant").BooleanValue
+        chkPericardialEffusion.Indeterminate = False
+      End If
+      
+      If rs.Column("ivc_high_ra_pressure").Value = Nil Then
+        chkIVCHighPressure.Indeterminate = True
+      Else
+        chkIVCHighPressure.Value = rs.Column("ivc_high_ra_pressure").BooleanValue
+        chkIVCHighPressure.Indeterminate = False
+      End If
+      
+      ' Load text conclusions
+      txtConclusions.Text = rs.Column("user_conclusions").StringValue
+      
+      ' Load requires_full_echo checkbox (13th checkbox)
+      If rs.Column("requires_full_echo").Value = Nil Then
+        chkRequiresFullEcho.Indeterminate = True
+      Else
+        chkRequiresFullEcho.Value = rs.Column("requires_full_echo").BooleanValue
+        chkRequiresFullEcho.Indeterminate = False
+      End If
+      
+      ' If completed, show results
+      If rs.Column("is_completed").BooleanValue Then
+        ShowCorrectAnswers()
+        btnSubmit.Enabled = False
+      End If
+    End If
+  Catch e As DatabaseException
+    MessageBox("Error loading response: " + e.Message)
+  End Try
+End Sub
+
+' LoadVideos Method
+Sub LoadVideos()
+  Var sql As String = "SELECT video_filename FROM case_videos WHERE case_id = ? ORDER BY video_order, video_id"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(0, CaseID)
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    VideoFilenames.RemoveAll
+    While rs <> Nil And Not rs.AfterLastRow
+      VideoFilenames.Add(rs.Column("video_filename").StringValue)
+      rs.MoveToNextRow
+    Wend
+    
+    TotalVideos = VideoFilenames.Count
+    
+    If TotalVideos > 0 Then
+      CurrentVideoIndex = 0
+      DisplayCurrentVideo()
+    Else
+      htmlVideoPlayer.LoadHTML("<html><body style='background:#1a1a1a;color:#ccc;text-align:center;padding:50px;font-family:Arial;'><h3>No videos available for this case</h3></body></html>")
+    End If
+    
+  Catch e As DatabaseException
+    MessageBox("Error loading videos: " + e.Message)
+  End Try
+End Sub
+
+' Continue in comment...
+' =============================================================================

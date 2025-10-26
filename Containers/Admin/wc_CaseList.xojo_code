@@ -164,36 +164,6 @@ Begin wc_base wc_CaseList
       Width           =   125
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnBack
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Back"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   899
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   14
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   20
-      Visible         =   True
-      Width           =   125
-      _mPanelIndex    =   -1
-   End
    Begin WebLabel lblInstructions
       Bold            =   False
       ControlID       =   ""
@@ -402,6 +372,12 @@ End
 		  ' *******************************************************************************
 		  LoadGroupFilter
 		  LoadCases
+		  
+		  Self.EnableBackButton = True
+		  Self.EnableLogoutButton = True
+		  Self.SectionTitle = "Manage Cases"
+		  
+		  UpdateNavigation // update shell page data
 		End Sub
 	#tag EndEvent
 
@@ -450,8 +426,9 @@ End
 	#tag Method, Flags = &h0
 		Sub LoadCases()
 		  ' ******************************************************************
-		  ' LoadCases Method (WITH NUMERICAL SORTING, FILTERING, SEARCH, AND SELECTION PRESERVATION)
+		  ' LoadCases Method - FIXED to use case_groups instead of video_purpose
 		  ' ******************************************************************
+		  
 		  ' Store currently selected case ID (if any)
 		  Var selectedCaseID As Integer = mSelectedCaseID
 		  
@@ -467,19 +444,18 @@ End
 		  
 		  Var searchTerm As String = txtSearch.Text.Trim
 		  
-		  ' Build SQL with filtering and NUMERICAL SORTING
+		  ' FIXED: Use case_groups instead of video_purpose
 		  Var sql As String = _
-		  "SELECT c.case_id, c.serial_number, c.case_label, " + _
-		  "GROUP_CONCAT(DISTINCT cv.video_purpose ORDER BY cv.video_purpose SEPARATOR ', ') AS all_groups, " + _
+		  "SELECT c.case_id, c.serial_number, c.case_label, c.case_groups, " + _
 		  "COUNT(cv.video_id) AS video_count " + _
 		  "FROM cases c " + _
 		  "LEFT JOIN case_videos cv ON c.case_id = cv.case_id "
 		  
 		  Var whereConditions() As String
 		  
-		  ' Add group filter
+		  ' Add group filter - check case_groups field
 		  If selectedGroup <> "" Then
-		    whereConditions.Add("(cv.video_purpose LIKE ? OR FIND_IN_SET(?, REPLACE(cv.video_purpose, ' ', '')) > 0)")
+		    whereConditions.Add("(c.case_groups LIKE ? OR FIND_IN_SET(?, REPLACE(c.case_groups, ' ', '')) > 0)")
 		  End If
 		  
 		  ' Add search filter
@@ -493,7 +469,7 @@ End
 		  End If
 		  
 		  ' Use NUMERICAL sorting instead of alphabetical
-		  sql = sql + " GROUP BY c.case_id, c.serial_number, c.case_label ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
+		  sql = sql + " GROUP BY c.case_id, c.serial_number, c.case_label, c.case_groups ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -527,15 +503,22 @@ End
 		      lstCases.AddRow(rs.Column("serial_number").StringValue)
 		      lstCases.CellTextAt(lstCases.LastAddedRowIndex, 1) = rs.Column("case_label").StringValue
 		      
-		      ' Display groups (or "No groups" if empty)
-		      Var groupsText As String = rs.Column("all_groups").StringValue
+		      ' Display groups from case_groups field
+		      Var groupsText As String = rs.Column("case_groups").StringValue
 		      If groupsText.Trim = "" Then
 		        groupsText = "(No groups)"
 		      End If
 		      lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = groupsText
 		      
 		      ' Display video count
-		      lstCases.CellTextAt(lstCases.LastAddedRowIndex, 3) = Str(rs.Column("video_count").IntegerValue)
+		      ' lstCases.CellTextAt(lstCases.LastAddedRowIndex, 3) = Str(rs.Column("video_count").IntegerValue)
+		      
+		      ' Center the video_count column - use CellValueAt with WebListBoxStyleRenderer
+		      Var row As Integer = lstCases.LastAddedRowIndex
+		      Var video_count As String = Str(rs.Column("video_count").IntegerValue)
+		      Var centeredStyle As New WebStyle
+		      centeredStyle.Value("text-align") = "center"
+		      lstCases.CellValueAt(row, 3) = New WebListBoxStyleRenderer(centeredStyle, video_count)
 		      
 		      lstCases.RowTagAt(lstCases.LastAddedRowIndex) = rs.Column("case_id").IntegerValue
 		      
@@ -555,31 +538,32 @@ End
 		  Catch e As DatabaseException
 		    MessageBox("Error loading cases: " + e.Message)
 		  End Try
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub LoadGroupFilter()
 		  ' ******************************************************************
-		  ' LoadGroupFilter Method
+		  ' LoadGroupFilter Method - FIXED to use case_groups
 		  ' ******************************************************************
 		  popFilterGroup.RemoveAllRows
 		  popFilterGroup.AddRow("All Groups")
 		  popFilterGroup.SelectedRowIndex = 0
 		  
-		  ' Load unique groups from video_purpose field
-		  Var sql As String = "SELECT DISTINCT video_purpose FROM case_videos WHERE video_purpose IS NOT NULL AND video_purpose <> '' ORDER BY video_purpose"
+		  ' Load unique groups from case_groups field
+		  Var sql As String = "SELECT DISTINCT case_groups FROM cases WHERE case_groups IS NOT NULL AND case_groups <> '' ORDER BY case_groups"
 		  
 		  Try
 		    Var rs As RowSet = Session.DB.SelectSQL(sql)
 		    Var uniqueGroups() As String
 		    
 		    While Not rs.AfterLastRow
-		      Var purposeText As String = rs.Column("video_purpose").StringValue
+		      Var groupsText As String = rs.Column("case_groups").StringValue
 		      
 		      ' Split comma-separated groups
-		      If purposeText.Trim <> "" Then
-		        Var groups() As String = purposeText.Split(",")
+		      If groupsText.Trim <> "" Then
+		        Var groups() As String = groupsText.Split(",")
 		        For Each group As String In groups
 		          Var cleanGroup As String = group.Trim
 		          If cleanGroup <> "" Then
@@ -610,6 +594,7 @@ End
 		  Catch e As DatabaseException
 		    System.DebugLog("Error loading groups: " + e.Message)
 		  End Try
+		  
 		End Sub
 	#tag EndMethod
 
@@ -687,13 +672,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnBack
-	#tag Event
-		Sub Pressed()
-		  Session.Navigation.NavigateBack
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events popFilterGroup
 	#tag Event
 		Sub SelectionChanged(item As WebMenuItem)
@@ -729,6 +707,30 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableBackButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableLogoutButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

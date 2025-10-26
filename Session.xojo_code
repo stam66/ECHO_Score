@@ -20,8 +20,13 @@ Inherits WebSession
 		  DB.Host = "127.0.0.1"
 		  DB.Port = 3306
 		  DB.DatabaseName = "echoscore"
-		  DB.UserName = "admin"
-		  DB.Password = "reject66"  ' UPDATE THIS
+		  if DebugBuild then
+		    DB.UserName = "admin"
+		    DB.Password = "reject66"
+		  else
+		    DB.UserName = "dbadmin" 
+		    DB.Password = "tDw3pbEcBEfec7fc" 
+		  end If
 		  
 		  Try
 		    If Not DB.Connect Then
@@ -111,6 +116,10 @@ Inherits WebSession
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h0
+		CurrentSection As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		CurrentUserEmail As String

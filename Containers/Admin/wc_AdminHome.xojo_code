@@ -21,7 +21,7 @@ Begin wc_base wc_AdminHome
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   382
+   Width           =   590
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
@@ -36,12 +36,12 @@ Begin wc_base wc_AdminHome
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   20
+      Left            =   10
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
@@ -49,14 +49,14 @@ Begin wc_base wc_AdminHome
       Scope           =   0
       TabIndex        =   0
       TabStop         =   True
-      Text            =   "Welcome"
-      TextAlignment   =   0
+      Text            =   "Admin panel"
+      TextAlignment   =   2
       TextColor       =   &c000000FF
       Tooltip         =   ""
       Top             =   20
       Underline       =   False
       Visible         =   True
-      Width           =   342
+      Width           =   572
       _mPanelIndex    =   -1
    End
    Begin WebButton btnManageUsers
@@ -70,11 +70,11 @@ Begin wc_base wc_AdminHome
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   93
+      Left            =   197
       LockBottom      =   False
       LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
+      LockHorizontal  =   True
+      LockLeft        =   False
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
@@ -100,11 +100,11 @@ Begin wc_base wc_AdminHome
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   93
+      Left            =   197
       LockBottom      =   False
       LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
+      LockHorizontal  =   True
+      LockLeft        =   False
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
@@ -130,11 +130,11 @@ Begin wc_base wc_AdminHome
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   93
+      Left            =   197
       LockBottom      =   False
       LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
+      LockHorizontal  =   True
+      LockLeft        =   False
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
@@ -149,43 +149,20 @@ Begin wc_base wc_AdminHome
       Width           =   195
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnLogout
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Log out"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   93
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   4
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   367
-      Visible         =   True
-      Width           =   195
-      _mPanelIndex    =   -1
-   End
 End
 #tag EndWebContainerControl
 
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		    lblWelcome.Text = "Admin Dashboard - Welcome, " + Session.CurrentUserName
+		  lblWelcome.Text = "Admin Dashboard - Welcome, " + Session.CurrentUserName
+		  
+		  
+		  Self.EnableBackButton = False
+		  Self.EnableLogoutButton = True
+		  Self.SectionTitle = "Administrator Page"
+		  
+		  UpdateNavigation // update shell page data
 		End Sub
 	#tag EndEvent
 
@@ -226,29 +203,36 @@ End
 		  ' *******************************************************************************
 		  Var emailConfig As New wc_EmailConfig
 		  emailConfig.ContainerID = "EmailConfig"
-		  emailConfig.Position = wc_Base.PositionEnum.TopLeft
+		  emailConfig.Position = wc_Base.PositionEnum.Center
 		  Session.Navigation.NavigateTo(emailConfig)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnLogout
-	#tag Event
-		Sub Pressed()
-		  ' *******************************************************************************
-		  ' btnLogout.Pressed Event
-		  ' *******************************************************************************
-		  Session.CurrentUserID = 0
-		  Session.CurrentUserName = ""
-		  Session.IsAdmin = False
-		  
-		  Var login As New wc_Login
-		  login.ContainerID = "Login"
-		  login.Position = wc_Base.PositionEnum.Center
-		  Session.Navigation.NavigateTo(login)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableBackButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableLogoutButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
@@ -360,6 +344,26 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="ContainerID"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Position"
+		Visible=true
+		Group="wc_Base"
+		InitialValue=""
+		Type="PositionEnum"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Center"
+			"1 - TopLeft"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="TabIndex"
 		Visible=true
 		Group="Visual Controls"
@@ -467,26 +471,6 @@ End
 			"7 - Light"
 			"8 - Dark"
 			"9 - Link"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ContainerID"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Position"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="PositionEnum"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Center"
-			"1 - TopLeft"
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty

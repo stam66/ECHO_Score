@@ -1,0 +1,167 @@
+' ═══════════════════════════════════════════════════════════════════
+' EmailHelper
+' Extracted Code and Properties
+' ═══════════════════════════════════════════════════════════════════
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Function GenerateOTP() As String
+  ' *******************************************************************************
+  ' Add Method: GenerateOTP
+  '   Return Type: String
+  '   Purpose: Generates a secure 6-digit OTP
+  ' *******************************************************************************
+  
+  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(4)
+  
+  Var number As Integer = Abs(randomData.UInt8Value(0) * 16777216 + randomData.UInt8Value(1) * 65536 + randomData.UInt8Value(2) * 256 + randomData.UInt8Value(3))
+  Var otp As String = Format(number Mod 1000000, "000000")
+  
+  Return otp
+End Function
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Private Function GeneratePasswordResetEmailHTML(userName As String, otp As String) As String
+  ' *******************************************************************************
+  ' Add Method: GeneratePasswordResetEmailHTML
+  '   Parameters: userName As String, otp As String
+  '   Return Type: String
+  '   Scope: Private
+  '   Purpose: Creates styled HTML email content
+  ' *******************************************************************************
+  
+  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+  html = html + "body{font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;}"
+  html = html + ".container{background:#f9f9f9;border-radius:10px;padding:30px;}"
+  html = html + ".header{background:#2c3e50;color:white;padding:20px;border-radius:10px 10px 0 0;text-align:center;}"
+  html = html + ".content{background:white;padding:30px;border-radius:0 0 10px 10px;}"
+  html = html + ".otp-box{background:#3498db;color:white;font-size:32px;font-weight:bold;padding:20px;text-align:center;border-radius:5px;margin:20px 0;letter-spacing:8px;}"
+  html = html + ".warning{background:#fff3cd;border-left:4px solid #ffc107;padding:15px;margin:20px 0;}"
+  html = html + ".footer{text-align:center;color:#666;font-size:12px;margin-top:30px;}"
+  html = html + "</style></head><body><div class='container'><div class='header'>"
+  html = html + "<h1>ECHOScore</h1><p>Password Reset Request</p></div><div class='content'>"
+  html = html + "<p>Hello <strong>" + userName + "</strong>,</p>"
+  html = html + "<p>You have requested to reset your ECHOScore password. Use the one-time password (OTP) below to proceed:</p>"
+  html = html + "<div class='otp-box'>" + otp + "</div>"
+  html = html + "<p style='text-align:center;'><strong>This OTP will expire in 30 minutes.</strong></p>"
+  html = html + "<div class='warning'><strong>⚠️ Security Notice:</strong> If you didn't request this password reset, please ignore this email and ensure your account is secure.</div>"
+  html = html + "<p>After entering your OTP, you'll be able to create a new password.</p>"
+  html = html + "<p>Best regards,<br>The ECHOScore Team</p></div>"
+  html = html + "<div class='footer'><p>This is an automated message. Please do not reply to this email.</p></div>"
+  html = html + "</div></body></html>"
+  
+  Return html
+End Function
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Function GenerateSecureToken() As String
+  ' *******************************************************************************
+  ' Add Method: GenerateSecureToken
+  '   Return Type: String
+  '   Purpose: Generates a secure 64-character token
+  ' *******************************************************************************
+  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(32)
+  
+  Var token As String = ""
+  For i As Integer = 0 To randomData.Size - 1
+    token = token + randomData.UInt8Value(i).ToHex(2)
+  Next
+  
+  Return token
+End Function
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Function SendPasswordResetEmail(toEmail As String, toName As String, otp As String, resetLink As String) As Boolean
+  ' *******************************************************************************
+  ' Add Method: SendPasswordResetEmail
+  '   Parameters: toEmail As String, toName As String, otp As String, resetLink As String
+  '   Return Type: Boolean
+  ' *******************************************************************************
+  
+  #Pragma Unused resetLink
+  
+  ' Load email configuration from database
+  Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
+  
+  Try
+    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
+    
+    If rs = Nil Or rs.AfterLastRow Then
+      System.DebugLog("Email configuration not found")
+      Return False
+    End If
+    
+    Var smtpServer As String = rs.Column("smtp_server").StringValue
+    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
+    Var smtpUsername As String = rs.Column("smtp_username").StringValue
+    Var smtpPassword As String = rs.Column("smtp_password").StringValue
+    Var fromEmail As String = rs.Column("from_email").StringValue
+    Var fromName As String = rs.Column("from_name").StringValue
+    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
+    
+    System.DebugLog("SMTP Config - Server: " + smtpServer + ", Port: " + Str(smtpPort) + ", Username: " + smtpUsername + ", TLS: " + If(useTLS, "Yes", "No"))
+    
+    ' Create email message
+    Var mail As New EmailMessage
+    mail.FromAddress = fromEmail
+    mail.Subject = "ECHOScore - Password Reset Request"
+    mail.AddRecipient(toEmail)
+    
+    ' Generate HTML body
+    Var htmlBody As String = GeneratePasswordResetEmailHTML(toName, otp)
+    mail.BodyHTML = htmlBody
+    
+    ' Generate plain text body
+    Var textBody As String = "Hello " + toName + "," + EndOfLine + EndOfLine
+    textBody = textBody + "You have requested to reset your ECHOScore password." + EndOfLine + EndOfLine
+    textBody = textBody + "Your one-time password (OTP) is: " + otp + EndOfLine + EndOfLine
+    textBody = textBody + "This OTP will expire in 30 minutes." + EndOfLine + EndOfLine
+    textBody = textBody + "If you didn't request this, please ignore this email." + EndOfLine + EndOfLine
+    textBody = textBody + "Best regards," + EndOfLine
+    textBody = textBody + "ECHOScore Team"
+    mail.BodyPlainText = textBody
+    
+    ' Configure SMTP socket
+    System.DebugLog("Creating SMTP socket...")
+    Var socket As New SMTPSecureSocket
+    socket.Address = smtpServer
+    socket.Port = smtpPort
+    socket.Username = smtpUsername
+    socket.Password = smtpPassword
+    
+    ' Send email
+    System.DebugLog("Adding message and sending...")
+    socket.Messages.Add(mail)
+    socket.SendMail
+    
+    ' Wait for send completion (max 30 seconds)
+    Var timeout As Integer = 30
+    Var elapsed As Integer = 0
+    While socket.Messages.Count > 0 And elapsed < timeout
+      App.DoEvents(100)
+      elapsed = elapsed + 1
+    Wend
+    
+    If socket.Messages.Count = 0 Then
+      System.DebugLog("Password reset email sent successfully to: " + toEmail)
+      Return True
+    Else
+      System.DebugLog("Failed to send password reset email to: " + toEmail + " - Message still in queue")
+      Return False
+    End If
+    
+  Catch e As RuntimeException
+    System.DebugLog("Error sending email: " + e.Message)
+    If e.Stack.Count > 0 Then
+      System.DebugLog("Stack trace: " + String.FromArray(e.Stack, EndOfLine))
+    End If
+    Return False
+  End Try
+End Function

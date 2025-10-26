@@ -1,0 +1,217 @@
+' =============================================================================
+' WebNavigationManager Class - Complete Updated Version
+' Manages container navigation with history stack and back button support
+' =============================================================================
+
+' Class: WebNavigationManager
+' Insert → Class
+
+' Properties:
+Private mSession As WebSession
+Private mHistory() As Dictionary
+Private mCurrentIndex As Integer = -1
+
+' Constructor
+Sub Constructor(session As WebSession)
+  mSession = session
+End Sub
+
+' NavigateTo Method - Navigate to a new container
+Sub NavigateTo(container As wc_Base)
+  ' Save container info to history
+  Var info As New Dictionary
+  info.Value("ContainerID") = container.ContainerID
+  info.Value("Instance") = container
+  
+  ' If we're not at the end of history, remove forward history
+  If mCurrentIndex < mHistory.LastIndex Then
+    For i As Integer = mHistory.LastIndex DownTo mCurrentIndex + 1
+      mHistory.RemoveAt(i)
+    Next
+  End If
+  
+  ' Add to history
+  mHistory.Add(info)
+  mCurrentIndex = mHistory.LastIndex
+  
+  ' Embed in placeholder
+  If mSession <> Nil Then
+    Var mainPage As wp_MainShell = wp_MainShell(mSession.CurrentPage)
+    If mainPage <> Nil Then
+      mainPage.ContentArea.EmbedWithin(container, 0, 0, mainPage.ContentArea.Width, mainPage.ContentArea.Height)
+      container.UpdateNavigation()
+    End If
+  End If
+  
+  System.DebugLog("Navigated to: " + container.ContainerID + " (History index: " + Str(mCurrentIndex) + ")")
+End Sub
+
+' NavigateBack Method - Go back in history
+Sub NavigateBack()
+  If Not CanGoBack Then
+    System.DebugLog("Cannot go back - at start of history")
+    Return
+  End If
+  
+  mCurrentIndex = mCurrentIndex - 1
+  
+  Var info As Dictionary = mHistory(mCurrentIndex)
+  Var containerID As String = info.Value("ContainerID")
+  
+  System.DebugLog("Navigating back to: " + containerID + " (History index: " + Str(mCurrentIndex) + ")")
+  
+  ' Create new instance of the container
+  Var container As wc_Base = CreateContainerInstance(containerID)
+  
+  If container <> Nil Then
+    ' Embed in placeholder
+    If mSession <> Nil Then
+      Var mainPage As wp_MainShell = wp_MainShell(mSession.CurrentPage)
+      If mainPage <> Nil Then
+        mainPage.ContentArea.EmbedWithin(container, 0, 0, mainPage.ContentArea.Width, mainPage.ContentArea.Height)
+        container.UpdateNavigation()
+      End If
+    End If
+  End If
+End Sub
+
+' CanGoBack Method - Check if back navigation is possible
+Function CanGoBack() As Boolean
+  Return mCurrentIndex > 0
+End Function
+
+' GetCurrentContainer Method - Get currently displayed container
+Function GetCurrentContainer() As wc_Base
+  If mCurrentIndex >= 0 And mCurrentIndex <= mHistory.LastIndex Then
+    Var info As Dictionary = mHistory(mCurrentIndex)
+    Return info.Value("Instance")
+  End If
+  
+  Return Nil
+End Function
+
+' ClearHistory Method - Clear navigation history (used on logout)
+Sub ClearHistory()
+  mHistory.RemoveAll
+  mCurrentIndex = -1
+  System.DebugLog("Navigation history cleared")
+End Sub
+
+' CreateContainerInstance Method - Factory method to create container instances
+Private Function CreateContainerInstance(containerID As String) As wc_Base
+  System.DebugLog("Creating container instance for: " + containerID)
+  
+  Select Case containerID
+  Case "Login"
+    Return New wc_Login
+  Case "ForgotPassword"
+    Return New wc_ForgotPassword
+  Case "EnterOTP"
+    Return New wc_EnterOTP
+  Case "NewPassword"
+    Return New wc_NewPassword
+  Case "UserHome"
+    Return New wc_UserHome
+  Case "AdminHome"
+    Return New wc_AdminHome
+  Case "UserAdmin"
+    Return New wc_UserAdmin
+  Case "EmailConfig"
+    Return New wc_EmailConfig
+  Case "CaseList"
+    Return New wc_CaseList
+  Case "CaseDetails"
+    Var container As New wc_CaseDetails
+    ' CaseID should be set by the calling code after creation
+    Return container
+  Case "CaseReview"
+    Var container As New wc_CaseReview
+    ' CaseID should be set by the calling code after creation
+    Return container
+  Else
+    System.DebugLog("Unknown container ID: " + containerID)
+    Return Nil
+  End Select
+End Function
+
+' GetHistoryCount Method - Get total number of items in history
+Function GetHistoryCount() As Integer
+  Return mHistory.Count
+End Function
+
+' GetCurrentIndex Method - Get current position in history
+Function GetCurrentIndex() As Integer
+  Return mCurrentIndex
+End Function
+
+' =============================================================================
+' WebNavigationManager Change Summary:
+' =============================================================================
+' 
+' KEY FEATURES:
+' 
+' 1. HISTORY STACK:
+'    - Maintains array of Dictionary objects
+'    - Each entry stores ContainerID and Instance reference
+'    - mCurrentIndex tracks current position in history
+' 
+' 2. NAVIGATION METHODS:
+'    - NavigateTo: Add new container to history and display
+'    - NavigateBack: Move back one step in history
+'    - CanGoBack: Check if back navigation is possible
+'    - ClearHistory: Reset history (used on logout)
+' 
+' 3. CONTAINER CREATION:
+'    - CreateContainerInstance factory method
+'    - Creates new instances for each container type
+'    - Uses ContainerID string to determine which class to instantiate
+'    - Special handling for containers that need properties (CaseDetails, CaseReview)
+' 
+' 4. INTEGRATION WITH wp_MainShell:
+'    - Uses ContentArea placeholder for embedding
+'    - Calls UpdateNavigation() after each navigation
+'    - Handles resizing automatically
+' 
+' 5. DEBUG LOGGING:
+'    - Logs all navigation events
+'    - Helps troubleshoot navigation issues
+'    - Can be removed in production
+' 
+' =============================================================================
+' Usage Examples:
+' =============================================================================
+' 
+' NAVIGATE TO A NEW CONTAINER:
+'   Var userHome As New wc_UserHome
+'   userHome.ContainerID = "UserHome"
+'   Session.Navigation.NavigateTo(userHome)
+' 
+' NAVIGATE TO CONTAINER WITH PROPERTIES:
+'   Var caseDetails As New wc_CaseDetails
+'   caseDetails.ContainerID = "CaseDetails"
+'   caseDetails.CaseID = 123
+'   Session.Navigation.NavigateTo(caseDetails)
+' 
+' NAVIGATE BACK:
+'   Session.Navigation.NavigateBack()
+' 
+' CHECK IF CAN GO BACK:
+'   btnBack.Enabled = Session.Navigation.CanGoBack()
+' 
+' CLEAR HISTORY ON LOGOUT:
+'   Session.Navigation.ClearHistory()
+'   Var login As New wc_Login
+'   login.ContainerID = "Login"
+'   Session.Navigation.NavigateTo(login)
+' 
+' =============================================================================
+' Notes:
+' =============================================================================
+' 
+' 1. Forward history is cleared when navigating to a new container
+' 2. Back navigation creates new instances (doesn't preserve state)
+' 3. ContainerID must be set on all containers before calling NavigateTo
+' 4. Special containers (CaseDetails, CaseReview) need properties set after creation
+' 5. UpdateNavigation() is called automatically after each navigation
+' 
+' =============================================================================

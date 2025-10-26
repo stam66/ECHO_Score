@@ -1,0 +1,231 @@
+' =============================================================================
+' wc_CaseReview WebContainer - PART 3 of 3
+' ShowCorrectAnswers with color-coded scoring and feedback
+' =============================================================================
+
+' ShowCorrectAnswers Method
+Sub ShowCorrectAnswers()
+  ' Get correct answers from database
+  Var sql As String = "SELECT * FROM cases WHERE case_id = ?"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(0, CaseID)
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    If rs <> Nil And Not rs.AfterLastRow Then
+      ' Get correct answers (handling NULL)
+      Var correctLVSize As Variant = rs.Column("lv_size_dilated").Value
+      Var correctLVFunction As Variant = rs.Column("lv_function_impaired").Value
+      Var correctRVSize As Variant = rs.Column("rv_size_dilated").Value
+      Var correctRVFunction As Variant = rs.Column("rv_function_impaired").Value
+      Var correctAorticStenosis As Variant = rs.Column("aortic_stenosis_significant").Value
+      Var correctAorticRegurg As Variant = rs.Column("aortic_regurgitation_significant").Value
+      Var correctMitralStenosis As Variant = rs.Column("mitral_stenosis_significant").Value
+      Var correctMitralRegurg As Variant = rs.Column("mitral_regurgitation_significant").Value
+      Var correctTricuspidStenosis As Variant = rs.Column("tricuspid_stenosis_significant").Value
+      Var correctTricuspidRegurg As Variant = rs.Column("tricuspid_regurgitation_significant").Value
+      Var correctPericardial As Variant = rs.Column("pericardial_effusion_significant").Value
+      Var correctIVC As Variant = rs.Column("ivc_high_ra_pressure").Value
+      Var correctFullEcho As Variant = rs.Column("requires_full_echo").Value
+      
+      ' Calculate score (13 points total)
+      Var score As Integer = 0
+      Var total As Integer = 13
+      
+      ' Color-code checkboxes and calculate score
+      ' Green = correct, Red = incorrect
+      
+      If correctLVSize <> Nil Then
+        If chkLVSizeDilated.Value = correctLVSize.BooleanValue Then
+          chkLVSizeDilated.TextColor = &c27ae60 ' Green
+          score = score + 1
+        Else
+          chkLVSizeDilated.TextColor = &ce74c3c ' Red
+        End If
+      End If
+      
+      If correctLVFunction <> Nil Then
+        If chkLVFunctionImpaired.Value = correctLVFunction.BooleanValue Then
+          chkLVFunctionImpaired.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkLVFunctionImpaired.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctRVSize <> Nil Then
+        If chkRVSizeDilated.Value = correctRVSize.BooleanValue Then
+          chkRVSizeDilated.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkRVSizeDilated.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctRVFunction <> Nil Then
+        If chkRVFunctionImpaired.Value = correctRVFunction.BooleanValue Then
+          chkRVFunctionImpaired.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkRVFunctionImpaired.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctAorticStenosis <> Nil Then
+        If chkAorticStenosis.Value = correctAorticStenosis.BooleanValue Then
+          chkAorticStenosis.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkAorticStenosis.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctAorticRegurg <> Nil Then
+        If chkAorticRegurgitation.Value = correctAorticRegurg.BooleanValue Then
+          chkAorticRegurgitation.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkAorticRegurgitation.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctMitralStenosis <> Nil Then
+        If chkMitralStenosis.Value = correctMitralStenosis.BooleanValue Then
+          chkMitralStenosis.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkMitralStenosis.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctMitralRegurg <> Nil Then
+        If chkMitralRegurgitation.Value = correctMitralRegurg.BooleanValue Then
+          chkMitralRegurgitation.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkMitralRegurgitation.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctTricuspidStenosis <> Nil Then
+        If chkTricuspidStenosis.Value = correctTricuspidStenosis.BooleanValue Then
+          chkTricuspidStenosis.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkTricuspidStenosis.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctTricuspidRegurg <> Nil Then
+        If chkTricuspidRegurgitation.Value = correctTricuspidRegurg.BooleanValue Then
+          chkTricuspidRegurgitation.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkTricuspidRegurgitation.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctPericardial <> Nil Then
+        If chkPericardialEffusion.Value = correctPericardial.BooleanValue Then
+          chkPericardialEffusion.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkPericardialEffusion.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctIVC <> Nil Then
+        If chkIVCHighPressure.Value = correctIVC.BooleanValue Then
+          chkIVCHighPressure.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkIVCHighPressure.TextColor = &ce74c3c
+        End If
+      End If
+      
+      If correctFullEcho <> Nil Then
+        If chkRequiresFullEcho.Value = correctFullEcho.BooleanValue Then
+          chkRequiresFullEcho.TextColor = &c27ae60
+          score = score + 1
+        Else
+          chkRequiresFullEcho.TextColor = &ce74c3c
+        End If
+      End If
+      
+      ' Display score
+      Var percentage As Double = (score / total) * 100
+      lblScore.Text = "Score: " + Str(score) + "/" + Str(total) + " (" + Format(percentage, "0.0") + "%)"
+      lblScore.Visible = True
+      
+      ' Display expert conclusions
+      lblCorrectConclusionsTitle.Visible = True
+      lblCorrectConclusions.Text = rs.Column("correct_conclusions").StringValue
+      lblCorrectConclusions.Visible = True
+      
+      ' Save score to database
+      Var updateScoreSQL As String = "UPDATE user_responses SET score = ? WHERE user_id = ? AND case_id = ?"
+      Var psScore As MySQLPreparedStatement = Session.DB.Prepare(updateScoreSQL)
+      psScore.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psScore.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psScore.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psScore.Bind(0, score)
+      psScore.Bind(1, Session.CurrentUserID)
+      psScore.Bind(2, CaseID)
+      psScore.ExecuteSQL
+      
+    End If
+  Catch e As DatabaseException
+    MessageBox("Error loading correct answers: " + e.Message)
+  End Try
+End Sub
+
+' =============================================================================
+' wc_CaseReview Complete Summary
+' =============================================================================
+' 
+' This container is split into 3 parts:
+' 
+' PART 1: Properties, Opening, LoadCase, LoadExistingResponse, LoadVideos
+' PART 2: DisplayCurrentVideo, UpdateVideoNavigation, SaveResponse, video buttons
+' PART 3: ShowCorrectAnswers, scoring, button events (Save/Submit/Back)
+' 
+' STUDENT WORKFLOW:
+' 1. Opens case from wc_UserHome
+' 2. Reviews videos (all videos for the case)
+' 3. Completes assessment checkboxes and conclusions
+' 4. Saves draft OR submits for grading
+' 5. After submit: sees color-coded results, score, and expert conclusions
+' 6. Can use Back button to return to wc_UserHome
+' 
+' SCORING DETAILS:
+' - 13 total questions (12 findings + requires_full_echo)
+' - Green text = correct answer
+' - Red text = incorrect answer
+' - Score displayed as: "Score: 11/13 (84.6%)"
+' - Score saved to user_responses.score
+' - Rewards correct identification of both abnormal AND normal findings
+' 
+' NULL CHECKBOX SUPPORT:
+' - Indeterminate checkboxes are saved as NULL in database
+' - Uses MYSQL_TYPE_NULL when binding Nil
+' - Uses MYSQL_TYPE_TINY when binding boolean values
+' - Allows partial completion (save draft with indeterminate values)
+' - Properly loads indeterminate state on LoadExistingResponse
+' 
+' VIDEO PLAYBACK:
+' - Auto-loop for continuous review
+' - Previous/Next navigation
+' - Replay button
+' - Transparent background
+' - Proper aspect ratio (object-fit: contain)
+' - WebFile-based video serving
+' 
+' COLOR CODES:
+' - Green (&c27ae60): Correct answer
+' - Red (&ce74c3c): Incorrect answer
+' - Default (black): Not yet graded
+' 
+' =============================================================================

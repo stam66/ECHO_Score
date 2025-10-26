@@ -307,6 +307,11 @@ End
 		  lblForgotPassword.TextColor = &c3498db
 		  lblForgotPassword.Underline = True
 		  
+		  Self.EnableBackButton = False
+		  Self.EnableLogoutButton = False
+		  Self.SectionTitle = "Login Page"
+		  
+		  UpdateNavigation // update shell page data
 		End Sub
 	#tag EndEvent
 
@@ -355,12 +360,12 @@ End
 		      If Session.IsAdmin Then
 		        Var adminHome As New wc_AdminHome
 		        adminHome.ContainerID = "AdminHome"
-		        adminHome.Position = wc_Base.PositionEnum.TopLeft
+		        adminHome.Position = wc_Base.PositionEnum.Center
 		        Session.Navigation.NavigateTo(adminHome)
 		      Else
 		        Var userHome As New wc_UserHome
 		        userHome.ContainerID = "UserHome"
-		        userHome.Position = wc_Base.PositionEnum.TopLeft
+		        userHome.Position = wc_Base.PositionEnum.Center
 		        Session.Navigation.NavigateTo(userHome)
 		      End If
 		    Else
@@ -389,6 +394,30 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableBackButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableLogoutButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ContainerID"
 		Visible=false

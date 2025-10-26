@@ -1,0 +1,156 @@
+' =============================================================================
+' wp_MainShell WebPage - Complete Updated Version
+' Main shell page with placeholder for dynamic content and persistent navigation
+' =============================================================================
+
+' Insert → WebPage
+' Name: wp_MainShell
+
+' Controls:
+' WebContainer: ContentArea (fills entire page, used as placeholder)
+' PushButton: btnBack (text: "← Back", positioned top-left)
+' PushButton: btnLogout (text: "Logout", positioned top-right)
+
+' Layout:
+' - ContentArea: X=0, Y=50, Width=100% (fill), Height=100%-50 (fill)
+' - btnBack: X=10, Y=10, Width=100, Height=35
+' - btnLogout: X=Width-110, Y=10, Width=100, Height=35 (anchored top-right)
+
+' wp_MainShell.Opening Event
+Sub Opening()
+  ' Initialize with login screen
+  Var login As New wc_Login
+  login.ContainerID = "Login"
+  Session.Navigation.NavigateTo(login)
+End Sub
+
+' btnBack.Pressed Event
+Sub Pressed()
+  Session.Navigation.NavigateBack()
+End Sub
+
+' btnLogout.Pressed Event
+Sub Pressed()
+  ' Clear session data
+  Session.CurrentUserID = 0
+  Session.CurrentUsername = ""
+  Session.IsAdmin = False
+  Session.UserGroup = ""
+  
+  ' Clear navigation history
+  Session.Navigation.ClearHistory()
+  
+  ' Navigate to login
+  Var login As New wc_Login
+  login.ContainerID = "Login"
+  Session.Navigation.NavigateTo(login)
+  
+  System.DebugLog("User logged out")
+End Sub
+
+' wp_MainShell.Resized Event
+Sub Resized()
+  ' ContentArea automatically resizes with constraints
+  ' btnLogout anchor keeps it in top-right
+  ' No additional code needed
+End Sub
+
+' =============================================================================
+' wp_MainShell Change Summary:
+' =============================================================================
+' 
+' KEY FEATURES:
+' 
+' 1. PERSISTENT NAVIGATION BUTTONS:
+'    - btnBack: Top-left, enabled/disabled by UpdateNavigation()
+'    - btnLogout: Top-right, anchored to stay in position
+'    - Visibility controlled by each container's UpdateNavigation()
+' 
+' 2. CONTENTAREA PLACEHOLDER:
+'    - Hosts all dynamic content containers
+'    - Fills entire page below navigation buttons
+'    - Used by WebNavigationManager for embedding
+' 
+' 3. BACK BUTTON:
+'    - Calls Session.Navigation.NavigateBack()
+'    - Enabled/disabled state managed by wc_Base.UpdateNavigation()
+'    - Hidden on authentication screens
+' 
+' 4. LOGOUT BUTTON:
+'    - Clears all session data
+'    - Clears navigation history
+'    - Returns to login screen
+'    - Hidden on authentication screens
+' 
+' 5. INITIALIZATION:
+'    - Opens with login screen
+'    - Uses Session.Navigation for proper history tracking
+' 
+' =============================================================================
+' Control Properties (Set in IDE):
+' =============================================================================
+' 
+' ContentArea (WebContainer):
+'   X: 0
+'   Y: 50
+'   Width: 100% (LockLeft=True, LockRight=True)
+'   Height: 100% - 50 (LockTop=True, LockBottom=True)
+' 
+' btnBack (PushButton):
+'   X: 10
+'   Y: 10
+'   Width: 100
+'   Height: 35
+'   Text: "← Back"
+'   LockLeft: True
+'   LockTop: True
+'   Enabled: False (initially)
+'   Visible: False (initially)
+' 
+' btnLogout (PushButton):
+'   X: (Page Width - 110)
+'   Y: 10
+'   Width: 100
+'   Height: 35
+'   Text: "Logout"
+'   LockRight: True
+'   LockTop: True
+'   Enabled: True
+'   Visible: False (initially)
+' 
+' =============================================================================
+' Styling Recommendations:
+' =============================================================================
+' 
+' btnBack:
+'   Style: Secondary or Default
+'   Caption: "← Back" (Unicode arrow character)
+' 
+' btnLogout:
+'   Style: Danger or Secondary
+'   Caption: "Logout"
+' 
+' Page Background:
+'   Set to match your app theme (#f5f5f5 or similar)
+' 
+' =============================================================================
+' Navigation Flow:
+' =============================================================================
+' 
+' 1. Page opens → Login screen displayed
+' 2. User logs in → Navigates to UserHome or AdminHome
+' 3. Navigation buttons become visible and functional
+' 4. Back button enabled when history exists
+' 5. Logout returns to Login and clears everything
+' 
+' =============================================================================
+' Important Notes:
+' =============================================================================
+' 
+' 1. ContentArea must be a WebContainer (not a placeholder control)
+' 2. Button visibility is controlled by UpdateNavigation() in wc_Base
+' 3. Button enabled state is controlled by UpdateNavigation() in wc_Base
+' 4. Logout clears both session data AND navigation history
+' 5. Initial button states: Enabled=False, Visible=False
+' 
+' =============================================================================

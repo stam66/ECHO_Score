@@ -1,11 +1,11 @@
 #tag WebContainerControl
-Begin WebContainer videoContainer
+Begin WebContainer Container1
    Compatibility   =   ""
    ControlCount    =   0
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   301
+   Height          =   250
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,43 +21,10 @@ Begin WebContainer videoContainer
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   401
+   Width           =   250
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
-   Begin WebMoviePlayer videoPreview
-      AllowAutoPlay   =   True
-      AllowFullScreen =   True
-      AllowLooping    =   True
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Duration        =   0.0
-      Enabled         =   True
-      HasController   =   True
-      Height          =   300
-      Index           =   -2147483648
-      Indicator       =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      MovieURL        =   "https://lh3.googleusercontent.com/sitesv/AICyYdYn5OGRmqZ57lxu3CYtIgvR0xTY54p2YsUa2VWQ58umLL8HUv9gbwb_GYiiWS2WB64t2YLmBXuIYOP2bh52GDW3WdbrMbjzm4AUmdqUWXxtrpDY3Ilf27lHBYZxZpQAyXu2dExW5Ev4hNHpzkFxqKFk08vQl2UHDmIMUG3RPnl_NOGBIp85-mTLt0mNpINEq73PaL-QwNR0BRJul8n2bUTnnl5IhYxPuoC-ViE=w1280"
-      PanelIndex      =   0
-      Position        =   0.0
-      PosterURL       =   ""
-      Scope           =   0
-      TabIndex        =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Visible         =   True
-      Width           =   400
-      _mPanelIndex    =   -1
-   End
 End
 #tag EndWebContainerControl
 

@@ -445,12 +445,12 @@ Begin wc_base wc_UserAdmin
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   153
+      Left            =   748
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -459,7 +459,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   82
+      Top             =   630
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -475,12 +475,12 @@ Begin wc_base wc_UserAdmin
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   286
+      Left            =   899
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -489,37 +489,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   13
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   82
-      Visible         =   True
-      Width           =   125
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnBack
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Back"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   899
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   14
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   20
+      Top             =   630
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -552,7 +522,7 @@ Begin wc_base wc_UserAdmin
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   539
+      Top             =   529
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -587,7 +557,7 @@ Begin wc_base wc_UserAdmin
       TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
-      Top             =   578
+      Top             =   568
       Visible         =   True
       Width           =   276
       _mPanelIndex    =   -1
@@ -603,7 +573,7 @@ Begin wc_base wc_UserAdmin
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   419
+      Left            =   153
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -633,7 +603,7 @@ Begin wc_base wc_UserAdmin
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   597
+      Left            =   331
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -664,6 +634,12 @@ End
 		  LoadUsers("")
 		  LoadUserGroups
 		  ClearFields
+		  
+		  Self.EnableBackButton = True
+		  Self.EnableLogoutButton = True
+		  Self.SectionTitle = "Manage Users"
+		  
+		  UpdateNavigation // update shell page data
 		End Sub
 	#tag EndEvent
 
@@ -1048,13 +1024,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnBack
-	#tag Event
-		Sub Pressed()
-		  Session.Navigation.NavigateBack
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events btnFilterByGroup
 	#tag Event
 		Sub Pressed()
@@ -1079,6 +1048,30 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableBackButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableLogoutButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

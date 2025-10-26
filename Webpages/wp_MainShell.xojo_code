@@ -33,6 +33,150 @@ Begin WebPage wp_MainShell
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
+   Begin WebRectangle Rectangle2
+      BorderColor     =   &c000000FF
+      BorderThickness =   0
+      ControlCount    =   0
+      ControlID       =   ""
+      CornerSize      =   0
+      CSSClasses      =   ""
+      Enabled         =   True
+      FillColor       =   &c005EB800
+      HasFillColor    =   True
+      Height          =   98
+      Index           =   -2147483648
+      Indicator       =   ""
+      LayoutDirection =   "LayoutDirections.LeftToRight"
+      LayoutType      =   "LayoutTypes.Fixed"
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      Parent          =   "nil"
+      Scope           =   0
+      TabIndex        =   9
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Visible         =   True
+      Width           =   1138
+      _mDesignHeight  =   0
+      _mDesignWidth   =   0
+      _mPanelIndex    =   -1
+      Begin WebLabel lblAppTitle
+         Bold            =   False
+         ControlID       =   ""
+         CSSClasses      =   ""
+         Enabled         =   True
+         FontName        =   "Verdana"
+         FontSize        =   28.0
+         Height          =   41
+         Index           =   -2147483648
+         Indicator       =   0
+         Italic          =   False
+         Left            =   111
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockHorizontal  =   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         LockVertical    =   False
+         Multiline       =   False
+         PanelIndex      =   0
+         Parent          =   "Rectangle2"
+         Scope           =   0
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "ECHOScore "
+         TextAlignment   =   0
+         TextColor       =   &cFFFFFF00
+         Tooltip         =   ""
+         Top             =   28
+         Underline       =   False
+         Visible         =   True
+         Width           =   241
+         _mPanelIndex    =   -1
+      End
+      Begin WebLabel lblUserName
+         Bold            =   False
+         ControlID       =   ""
+         CSSClasses      =   ""
+         Enabled         =   True
+         FontName        =   ""
+         FontSize        =   13.0
+         Height          =   27
+         Index           =   -2147483648
+         Indicator       =   ""
+         Italic          =   False
+         Left            =   887
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockHorizontal  =   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         LockVertical    =   False
+         Multiline       =   False
+         PanelIndex      =   0
+         Parent          =   "Rectangle2"
+         Scope           =   0
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Logged In User"
+         TextAlignment   =   3
+         TextColor       =   &cFFFFFF00
+         Tooltip         =   ""
+         Top             =   68
+         Underline       =   False
+         Visible         =   False
+         Width           =   224
+         _mPanelIndex    =   -1
+      End
+      Begin WebLabel lblSectionTitle
+         Bold            =   False
+         ControlID       =   ""
+         CSSClasses      =   ""
+         Enabled         =   True
+         FontName        =   ""
+         FontSize        =   15.0
+         Height          =   27
+         Index           =   -2147483648
+         Indicator       =   ""
+         Italic          =   False
+         Left            =   111
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockHorizontal  =   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         LockVertical    =   False
+         Multiline       =   False
+         PanelIndex      =   0
+         Parent          =   "Rectangle2"
+         Scope           =   0
+         TabIndex        =   11
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Section Title"
+         TextAlignment   =   1
+         TextColor       =   &cFFFFFF00
+         Tooltip         =   ""
+         Top             =   61
+         Underline       =   False
+         Visible         =   True
+         Width           =   368
+         _mPanelIndex    =   -1
+      End
+   End
    Begin WebRectangle Rectangle1
       BorderColor     =   &c000000FF
       BorderThickness =   1
@@ -101,47 +245,13 @@ Begin WebPage wp_MainShell
          _mPanelIndex    =   -1
       End
    End
-   Begin WebLabel lblSection
-      Bold            =   False
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   "Verdana"
-      FontSize        =   28.0
-      Height          =   41
-      Index           =   -2147483648
-      Indicator       =   0
-      Italic          =   False
-      Left            =   125
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   0
-      TabStop         =   True
-      Text            =   "ECHOScore "
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   28
-      Underline       =   False
-      Visible         =   True
-      Width           =   664
-      _mPanelIndex    =   -1
-   End
-   Begin WebImageViewer ImageViewer1
+   Begin WebImageViewer imgAppIcon
       ControlID       =   ""
       CSSClasses      =   ""
       DisplayMode     =   2
       Enabled         =   True
       Height          =   67
-      Image           =   1359208447
+      Image           =   563056639
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   20
@@ -165,15 +275,192 @@ Begin WebPage wp_MainShell
       _mPanelIndex    =   -1
       _ProtectImage   =   False
    End
+   Begin WebButton btnLogout
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Log out"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   8
+      Left            =   1007
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   6
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   28
+      Visible         =   True
+      Width           =   111
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnBack
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "← Back"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   8
+      Left            =   888
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   7
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   28
+      Visible         =   True
+      Width           =   111
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblUserNameFooter
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   13.0
+      Height          =   27
+      Index           =   -2147483648
+      Indicator       =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Parent          =   "nil"
+      Scope           =   0
+      TabIndex        =   10
+      TabStop         =   True
+      Text            =   "Logged In User"
+      TextAlignment   =   1
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   677
+      Underline       =   False
+      Visible         =   True
+      Width           =   401
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblVersionCopyright
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   11.0
+      Height          =   27
+      Index           =   -2147483648
+      Indicator       =   ""
+      Italic          =   True
+      Left            =   833
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Parent          =   "nil"
+      Scope           =   0
+      TabIndex        =   12
+      TabStop         =   True
+      Text            =   "Version 1.0	©️Dr S. Kapetanakis, 2025"
+      TextAlignment   =   3
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   677
+      Underline       =   False
+      Visible         =   True
+      Width           =   285
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebPage
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  ' Initially disable navigation buttons (for login screen)
+		  btnBack.Enabled = False
+		  btnLogout.Enabled = False
+		  lblUserName.Text = "Not logged in"
+		  lblSectionTitle.Text = "Login page"
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub HandleLogoutConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
+		  If button = dialog.ActionButton Then
+		    ' Clear session
+		    Session.CurrentUserID = 0
+		    Session.CurrentUserName = ""
+		    Session.CurrentUserEmail = ""
+		    Session.IsAdmin = False
+		    
+		    ' Navigate to login
+		    Var login As New wc_Login
+		    login.ContainerID = "Login"
+		    login.Position = wc_Base.PositionEnum.Center
+		    Session.Navigation.NavigateTo(login)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub RepositionContent()
 		  If ContentArea IsA wc_Base Then
 		    wc_Base(ContentArea).EmbedInto(Placeholder)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowNavigation(enableBack as Boolean, enableLogout as Boolean, currentSection as string)
+		  btnBack.Enabled = enableBack
+		  btnLogout.Enabled = enableLogout
+		  
+		  ' Update username display
+		  If Session.CurrentUserName <> "" Then
+		    lblUserName.Text = "Logged in as: " + Session.CurrentUserName
+		    lblUserNameFooter.Text = "Logged in as: " + Session.CurrentUserName
+		    lblSectionTitle.Text = currentSection
+		  Else
+		    lblUserName.Text = "Not logged in"
+		    lblUserNameFooter.Text = "Not logged in"
+		  End If
+		  
 		End Sub
 	#tag EndMethod
 
@@ -194,6 +481,29 @@ End
 	#tag Event
 		Sub Resized()
 		  RepositionContent
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnLogout
+	#tag Event
+		Sub Pressed()
+		  ' Confirm logout
+		  Var d As New WebMessageDialog
+		  d.Title = "Confirm Logout"
+		  d.Message = "Are you sure you want to logout?"
+		  d.ActionButton.Caption = "Logout"
+		  d.CancelButton.Caption = "Cancel"
+		  d.CancelButton.Visible = True
+		  
+		  AddHandler d.ButtonPressed, AddressOf HandleLogoutConfirm
+		  d.Show
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnBack
+	#tag Event
+		Sub Pressed()
+		  Session.Navigation.NavigateBack
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -1,0 +1,488 @@
+' =============================================================================
+' wc_CaseDetails WebContainer - PART 2
+' Save methods, video management, and supporting functions
+' CRITICAL: Uses MYSQL_TYPE_NULL when binding Nil for indeterminate checkboxes
+' =============================================================================
+
+' TrackCaseInfoChange Method
+Sub TrackCaseInfoChange()
+  mCaseInfoChanged = True
+End Sub
+
+' TrackAnswerChange Method
+Sub TrackAnswerChange()
+  mAnswersChanged = True
+End Sub
+
+' NOTE: In the IDE, add these event handlers:
+' - txtCaseLabel.TextChanged → call TrackCaseInfoChange()
+' - All checkboxes ValueChanged → call TrackAnswerChange()
+' - txtCorrectConclusions.TextChanged → call TrackAnswerChange()
+
+' btnSaveAll.Pressed Event (FIXED WITH MYSQL_TYPE_NULL)
+Sub Pressed()
+  ' Check if anything has changed
+  If Not mCaseInfoChanged And Not mAnswersChanged And Not mGroupsChanged Then
+    MessageBox("No changes to save.")
+    Return
+  End If
+  
+  ' Validate case label
+  If txtCaseLabel.Text.Trim = "" Then
+    MessageBox("Case description cannot be empty")
+    Return
+  End If
+  
+  Try
+    Session.DB.BeginTransaction
+    Var changesMade As Boolean = False
+    
+    ' Save case info (description) and groups if changed
+    If mCaseInfoChanged Or mGroupsChanged Then
+      Var sqlCase As String = "UPDATE cases SET case_label = ?, case_groups = ? WHERE case_id = ?"
+      Var psCase As MySQLPreparedStatement = Session.DB.Prepare(sqlCase)
+      psCase.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      psCase.Bind(0, txtCaseLabel.Text.Trim)
+      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      psCase.Bind(1, GetCurrentGroups())
+      psCase.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psCase.Bind(2, CaseID)
+      psCase.ExecuteSQL
+      changesMade = True
+      mCaseInfoChanged = False
+      mGroupsChanged = False
+    End If
+    
+    ' Save correct answers if changed (FIXED: uses MYSQL_TYPE_NULL)
+    If mAnswersChanged Then
+      Var sqlAnswers As String = "UPDATE cases SET "
+      sqlAnswers = sqlAnswers + "lv_size_dilated=?, lv_function_impaired=?, rv_size_dilated=?, rv_function_impaired=?, "
+      sqlAnswers = sqlAnswers + "aortic_stenosis_significant=?, aortic_regurgitation_significant=?, "
+      sqlAnswers = sqlAnswers + "mitral_stenosis_significant=?, mitral_regurgitation_significant=?, "
+      sqlAnswers = sqlAnswers + "tricuspid_stenosis_significant=?, tricuspid_regurgitation_significant=?, "
+      sqlAnswers = sqlAnswers + "pericardial_effusion_significant=?, ivc_high_ra_pressure=?, "
+      sqlAnswers = sqlAnswers + "correct_conclusions=?, requires_full_echo=? "
+      sqlAnswers = sqlAnswers + "WHERE case_id=?"
+      
+      Var psAnswers As MySQLPreparedStatement = Session.DB.Prepare(sqlAnswers)
+      
+      ' Bind all 12 finding checkboxes with NULL support (FIXED)
+      If chkLVSizeDilated.Indeterminate Then
+        psAnswers.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(0, Nil)
+      Else
+        psAnswers.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(0, chkLVSizeDilated.Value)
+      End If
+      
+      If chkLVFunctionImpaired.Indeterminate Then
+        psAnswers.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(1, Nil)
+      Else
+        psAnswers.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(1, chkLVFunctionImpaired.Value)
+      End If
+      
+      If chkRVSizeDilated.Indeterminate Then
+        psAnswers.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(2, Nil)
+      Else
+        psAnswers.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(2, chkRVSizeDilated.Value)
+      End If
+      
+      If chkRVFunctionImpaired.Indeterminate Then
+        psAnswers.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(3, Nil)
+      Else
+        psAnswers.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(3, chkRVFunctionImpaired.Value)
+      End If
+      
+      If chkAorticStenosis.Indeterminate Then
+        psAnswers.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(4, Nil)
+      Else
+        psAnswers.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(4, chkAorticStenosis.Value)
+      End If
+      
+      If chkAorticRegurgitation.Indeterminate Then
+        psAnswers.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(5, Nil)
+      Else
+        psAnswers.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(5, chkAorticRegurgitation.Value)
+      End If
+      
+      If chkMitralStenosis.Indeterminate Then
+        psAnswers.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(6, Nil)
+      Else
+        psAnswers.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(6, chkMitralStenosis.Value)
+      End If
+      
+      If chkMitralRegurgitation.Indeterminate Then
+        psAnswers.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(7, Nil)
+      Else
+        psAnswers.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(7, chkMitralRegurgitation.Value)
+      End If
+      
+      If chkTricuspidStenosis.Indeterminate Then
+        psAnswers.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(8, Nil)
+      Else
+        psAnswers.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(8, chkTricuspidStenosis.Value)
+      End If
+      
+      If chkTricuspidRegurgitation.Indeterminate Then
+        psAnswers.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(9, Nil)
+      Else
+        psAnswers.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(9, chkTricuspidRegurgitation.Value)
+      End If
+      
+      If chkPericardialEffusion.Indeterminate Then
+        psAnswers.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(10, Nil)
+      Else
+        psAnswers.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(10, chkPericardialEffusion.Value)
+      End If
+      
+      If chkIVCHighPressure.Indeterminate Then
+        psAnswers.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(11, Nil)
+      Else
+        psAnswers.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(11, chkIVCHighPressure.Value)
+      End If
+      
+      ' Bind correct conclusions text
+      psAnswers.BindType(12, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      psAnswers.Bind(12, txtCorrectConclusions.Text)
+      
+      ' Bind requires_full_echo checkbox (13th checkbox)
+      If chkRequiresFullEcho.Indeterminate Then
+        psAnswers.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+        psAnswers.Bind(13, Nil)
+      Else
+        psAnswers.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+        psAnswers.Bind(13, chkRequiresFullEcho.Value)
+      End If
+      
+      ' Bind WHERE clause case_id
+      psAnswers.BindType(14, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      psAnswers.Bind(14, CaseID)
+      
+      psAnswers.ExecuteSQL
+      changesMade = True
+      mAnswersChanged = False
+    End If
+    
+    Session.DB.CommitTransaction
+    
+    If changesMade Then
+      MessageBox("All changes saved successfully!")
+      
+      ' Update original groups tracking
+      mOriginalGroups.RemoveAll
+      For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+        mOriginalGroups.Add(lstAssignedGroups.CellTextAt(i, 0))
+      Next
+    End If
+    
+  Catch e As DatabaseException
+    Session.DB.RollbackTransaction
+    MessageBox("Error saving changes: " + e.Message)
+  End Try
+End Sub
+
+' btnCancelChanges.Pressed Event
+Sub Pressed()
+  ' Reload from database
+  LoadCaseDetails()
+  LoadCaseVideos()
+  
+  ' Reset change flags
+  mCaseInfoChanged = False
+  mAnswersChanged = False
+  mGroupsChanged = False
+  
+  MessageBox("Changes cancelled")
+End Sub
+
+' LoadCaseVideos Method
+Sub LoadCaseVideos()
+  lstVideos.RemoveAllRows
+  
+  Var sql As String = "SELECT video_id, video_filename, view_description, video_order FROM case_videos WHERE case_id = ? ORDER BY video_order"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(0, CaseID)
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    While rs <> Nil And Not rs.AfterLastRow
+      lstVideos.AddRow(rs.Column("video_filename").StringValue)
+      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 1) = rs.Column("view_description").StringValue
+      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 2) = Str(rs.Column("video_order").IntegerValue)
+      lstVideos.RowTagAt(lstVideos.LastAddedRowIndex) = rs.Column("video_id").IntegerValue
+      
+      rs.MoveToNextRow
+    Wend
+  Catch e As DatabaseException
+    MessageBox("Error loading videos: " + e.Message)
+  End Try
+End Sub
+
+' lstVideos.SelectionChanged Event
+Sub SelectionChanged()
+  If Me.SelectedRowIndex >= 0 Then
+    Var videoFilename As String = Me.CellTextAt(Me.SelectedRowIndex, 0)
+    LoadVideoPreview(videoFilename)
+  Else
+    htmlVideoPreview.LoadHTML("")
+  End If
+End Sub
+
+' lstVideos.CellTextChanged Event (inline editing)
+Sub CellTextChanged(row As Integer, column As Integer, newValue As String)
+  If row < 0 Or column < 1 Then Return
+  
+  Var videoID As Integer = Me.RowTagAt(row)
+  Var oldValue As String = mOriginalCellValue
+  
+  ' Save undo info
+  mLastVideoID = videoID
+  mLastColumn = column
+  mLastOldValue = oldValue
+  mLastNewValue = newValue
+  btnUndoVideoEdit.Enabled = True
+  
+  ' Save to database immediately
+  Var sql As String
+  Select Case column
+  Case 1
+    sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
+  Case 2
+    sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
+  Else
+    Return
+  End Select
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    
+    If column = 2 Then
+      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      ps.Bind(0, Val(newValue))
+    Else
+      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      ps.Bind(0, newValue)
+    End If
+    
+    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(1, videoID)
+    
+    ps.ExecuteSQL
+    
+    System.DebugLog("Video metadata updated: video_id=" + Str(videoID) + ", column=" + Str(column))
+    
+  Catch e As DatabaseException
+    MessageBox("Error saving change: " + e.Message)
+  End Try
+End Sub
+
+' lstVideos.CellEditingStarted Event
+Sub CellEditingStarted(row As Integer, column As Integer)
+  If row >= 0 And column >= 1 Then
+    mOriginalCellValue = Me.CellTextAt(row, column)
+  End If
+End Sub
+
+' LoadVideoPreview Method
+Sub LoadVideoPreview(videoFilename As String)
+  Var wf As WebFile = Session.ServeVideo(videoFilename)
+  
+  If wf = Nil Then
+    htmlVideoPreview.LoadHTML("<html><body style='background:transparent;color:#999;text-align:center;padding:50px;'>Video not found</body></html>")
+    Return
+  End If
+  
+  Var videoURL As String = wf.URL
+  
+  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+  html = html + "body{margin:0;padding:0;background:transparent;overflow:hidden;}"
+  html = html + "video{width:100%;height:100vh;object-fit:contain;display:block;}"
+  html = html + "</style></head><body>"
+  html = html + "<video controls loop autoplay playsinline>"
+  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+  html = html + "Your browser does not support video.</video>"
+  html = html + "</body></html>"
+  
+  htmlVideoPreview.LoadHTML(html)
+End Sub
+
+' uplVideo.FileAdded Event
+Sub FileAdded(file As WebUploadedFile)
+  btnStartUpload.Enabled = True
+End Sub
+
+' btnStartUpload.Pressed Event
+Sub Pressed()
+  uplVideo.StartUpload
+End Sub
+
+' uplVideo.UploadFinished Event
+Sub UploadFinished(file As WebUploadedFile)
+  ' Save file to disk
+  Try
+    Var videoFile As FolderItem = Session.CurrentVideoFolder.Child(file.Name)
+    videoFile.Write(file.Data)
+    
+    ' Get next video order
+    Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
+    Var psOrder As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
+    psOrder.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    psOrder.Bind(0, CaseID)
+    Var orderRS As RowSet = psOrder.SelectSQL
+    Var videoOrder As Integer = 0
+    If orderRS <> Nil And Not orderRS.AfterLastRow Then
+      videoOrder = orderRS.Column("next_order").IntegerValue
+    End If
+    
+    ' Insert into database
+    Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_order) VALUES (?, ?, ?, ?)"
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    
+    ps.Bind(0, CaseID)
+    ps.Bind(1, file.Name)
+    ps.Bind(2, "")
+    ps.Bind(3, videoOrder)
+    
+    ps.ExecuteSQL
+    
+    MessageBox("Video uploaded successfully!")
+    LoadCaseVideos()
+    btnStartUpload.Enabled = False
+    
+  Catch e As IOException
+    MessageBox("Error copying video file: " + e.Message)
+  Catch e As DatabaseException
+    MessageBox("Error saving video: " + e.Message)
+  End Try
+End Sub
+
+' btnDeleteVideo.Pressed Event
+Sub Pressed()
+  If lstVideos.SelectedRowIndex < 0 Then
+    MessageBox("Please select a video to delete")
+    Return
+  End If
+  
+  Var d As New WebMessageDialog
+  d.Title = "Confirm Delete"
+  d.Message = "Are you sure you want to delete this video? This action cannot be undone."
+  d.ActionButton.Caption = "Delete"
+  d.CancelButton.Caption = "Cancel"
+  d.CancelButton.Visible = True
+  
+  AddHandler d.ButtonPressed, AddressOf HandleDeleteVideoConfirm
+  d.Show
+End Sub
+
+' HandleDeleteVideoConfirm Method
+Private Sub HandleDeleteVideoConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
+  Select Case button
+  Case dialog.ActionButton
+    Var videoID As Integer = lstVideos.RowTagAt(lstVideos.SelectedRowIndex)
+    Var sql As String = "DELETE FROM case_videos WHERE video_id = ?"
+    
+    Try
+      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      ps.Bind(0, videoID)
+      
+      ps.ExecuteSQL
+      
+      MessageBox("Video deleted successfully!")
+      LoadCaseVideos()
+      htmlVideoPreview.LoadHTML("")
+      
+    Catch e As DatabaseException
+      MessageBox("Error deleting video: " + e.Message)
+    End Try
+  End Select
+End Sub
+
+' btnUndoVideoEdit.Pressed Event
+Sub Pressed()
+  If mLastVideoID = 0 Then
+    MessageBox("No change to undo")
+    Return
+  End If
+  
+  Var sql As String
+  Select Case mLastColumn
+  Case 1
+    sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
+  Case 2
+    sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
+  Else
+    Return
+  End Select
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    
+    If mLastColumn = 2 Then
+      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      ps.Bind(0, Val(mLastOldValue))
+    Else
+      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      ps.Bind(0, mLastOldValue)
+    End If
+    
+    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(1, mLastVideoID)
+    
+    ps.ExecuteSQL
+    
+    System.DebugLog("Video metadata change undone: video_id=" + Str(mLastVideoID))
+    
+    LoadCaseVideos()
+    
+    btnUndoVideoEdit.Enabled = False
+    mLastVideoID = 0
+    mLastColumn = 0
+    mLastOldValue = ""
+    mLastNewValue = ""
+    
+  Catch e As DatabaseException
+    MessageBox("Error undoing change: " + e.Message)
+  End Try
+End Sub
+
+' =============================================================================
+' wc_CaseDetails Complete Summary
+' =============================================================================
+' 
+' CRITICAL FIXES:
+' 1. Uses MYSQL_TYPE_NULL when binding Nil for indeterminate checkboxes
+' 2. Uses MYSQL_TYPE_TINY when binding actual boolean values
+' 3. Tag-based group management with GetCurrentGroups()
+' 4. Saves case_label, case_groups, and all 13 checkboxes
+' 
+' =============================================================================

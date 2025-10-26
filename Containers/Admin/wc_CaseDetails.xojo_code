@@ -5,7 +5,7 @@ Begin wc_base wc_CaseDetails
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   844
+   Height          =   761
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,14 +21,14 @@ Begin wc_base wc_CaseDetails
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   1121
+   Width           =   1084
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
    Begin WebListBox lstVideos
       AllowRowReordering=   False
       ColumnCount     =   3
-      ColumnWidths    =   "220,220,100"
+      ColumnWidths    =   ""
       ControlID       =   ""
       CSSClasses      =   ""
       DefaultRowHeight=   49
@@ -37,7 +37,7 @@ Begin wc_base wc_CaseDetails
       HasBorder       =   True
       HasHeader       =   True
       HeaderHeight    =   0
-      Height          =   471
+      Height          =   388
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
@@ -116,12 +116,12 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   560
+      Left            =   578
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       MaximumCharactersAllowed=   0
@@ -149,12 +149,12 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   560
+      Left            =   578
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
@@ -184,12 +184,12 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   560
+      Left            =   578
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       MaximumCharactersAllowed=   0
@@ -228,10 +228,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   21
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   743
+      Top             =   660
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   167
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkIVCHighPressure
@@ -256,10 +256,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   22
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   777
+      Top             =   694
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   200
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkRequiresFullEcho
@@ -284,7 +284,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   23
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   810
+      Top             =   727
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -318,9 +318,9 @@ Begin wc_base wc_CaseDetails
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   810
+      Top             =   727
       Visible         =   True
-      Width           =   469
+      Width           =   432
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblVideosTitle
@@ -368,12 +368,12 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   818
+      Left            =   578
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
@@ -385,7 +385,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   66
+      Top             =   287
       Underline       =   False
       Visible         =   True
       Width           =   122
@@ -416,7 +416,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   33
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   584
+      Top             =   501
       Visible         =   True
       Width           =   90
       _mPanelIndex    =   -1
@@ -446,39 +446,9 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   34
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   584
+      Top             =   501
       Visible         =   True
       Width           =   90
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnBack
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Back"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   1003
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   35
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Visible         =   True
-      Width           =   118
       _mPanelIndex    =   -1
    End
    Begin WebButton btnSaveAll
@@ -492,7 +462,7 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   1
-      Left            =   1003
+      Left            =   966
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -506,7 +476,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   36
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   806
+      Top             =   723
       Visible         =   True
       Width           =   118
       _mPanelIndex    =   -1
@@ -522,7 +492,7 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   895
+      Left            =   858
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -536,7 +506,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   37
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   806
+      Top             =   723
       Visible         =   True
       Width           =   100
       _mPanelIndex    =   -1
@@ -567,7 +537,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   40
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   584
+      Top             =   501
       UploadTimeout   =   0
       Visible         =   True
       Width           =   220
@@ -584,12 +554,12 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   563
+      Left            =   842
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
@@ -601,7 +571,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   236
+      Top             =   66
       Underline       =   False
       Visible         =   True
       Width           =   64
@@ -617,12 +587,12 @@ Begin wc_base wc_CaseDetails
       InitialValue    =   ""
       LastAddedRowIndex=   0
       LastRowIndex    =   0
-      Left            =   563
+      Left            =   842
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       PanelIndex      =   0
@@ -633,7 +603,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   43
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   358
+      Top             =   188
       Visible         =   True
       Width           =   240
       _mPanelIndex    =   -1
@@ -649,12 +619,12 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   563
+      Left            =   842
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -663,7 +633,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   44
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   404
+      Top             =   234
       Visible         =   True
       Width           =   109
       _mPanelIndex    =   -1
@@ -688,12 +658,12 @@ Begin wc_base wc_CaseDetails
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
-      Left            =   563
+      Left            =   842
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       NoRowsMessage   =   ""
@@ -708,7 +678,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   46
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   273
+      Top             =   103
       Visible         =   True
       Width           =   240
       _mPanelIndex    =   -1
@@ -724,12 +694,12 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   694
+      Left            =   973
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -738,7 +708,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   47
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   404
+      Top             =   234
       Visible         =   True
       Width           =   109
       _mPanelIndex    =   -1
@@ -765,7 +735,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   11
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   675
+      Top             =   592
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -793,7 +763,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   709
+      Top             =   626
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -821,7 +791,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   13
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   743
+      Top             =   660
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -849,7 +819,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   14
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   777
+      Top             =   694
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -877,10 +847,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   15
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   675
+      Top             =   592
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   161
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkAorticRegurgitation
@@ -888,7 +858,7 @@ Begin wc_base wc_CaseDetails
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   34
+      Height          =   32
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   0
@@ -905,10 +875,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   16
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   709
+      Top             =   628
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   161
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkMitralStenosis
@@ -916,7 +886,7 @@ Begin wc_base wc_CaseDetails
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   34
+      Height          =   32
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   0
@@ -933,10 +903,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   17
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   743
+      Top             =   662
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   161
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkMitralRegurgitation
@@ -944,7 +914,7 @@ Begin wc_base wc_CaseDetails
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   34
+      Height          =   32
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   0
@@ -961,10 +931,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   18
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   777
+      Top             =   696
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   161
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkTricuspidStenosis
@@ -989,10 +959,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   19
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   675
+      Top             =   592
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   148
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkTricuspidRegurgitation
@@ -1017,10 +987,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   20
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   709
+      Top             =   626
       Value           =   False
       Visible         =   True
-      Width           =   212
+      Width           =   148
       _mPanelIndex    =   -1
    End
    Begin WebButton btnUndoVideoEdit
@@ -1048,7 +1018,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   39
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   584
+      Top             =   501
       Visible         =   True
       Width           =   112
       _mPanelIndex    =   -1
@@ -1081,7 +1051,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   643
+      Top             =   560
       Underline       =   False
       Visible         =   True
       Width           =   167
@@ -1098,12 +1068,12 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   560
+      Left            =   578
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Multiline       =   False
@@ -1121,37 +1091,30 @@ Begin wc_base wc_CaseDetails
       Width           =   199
       _mPanelIndex    =   -1
    End
-   Begin WebMoviePlayer videoPreview
-      AllowAutoPlay   =   True
-      AllowFullScreen =   True
-      AllowLooping    =   True
+   Begin WebHTMLViewer htmlVideoPreview
       ControlID       =   ""
       CSSClasses      =   ""
-      Duration        =   0.0
       Enabled         =   True
-      HasController   =   True
-      Height          =   200
+      Height          =   373
       Index           =   -2147483648
-      indicator       =   0
-      Left            =   818
-      LockBottom      =   False
+      Indicator       =   ""
+      Left            =   587
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      MovieURL        =   ""
       PanelIndex      =   0
-      Position        =   0.0
-      PosterURL       =   ""
       Scope           =   2
       TabIndex        =   50
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   105
+      Top             =   319
+      UseSandbox      =   False
       Visible         =   True
-      Width           =   300
+      Width           =   495
       _mPanelIndex    =   -1
    End
 End
@@ -1179,67 +1142,12 @@ End
 		  mGroupsChanged = False
 		  btnUndoVideoEdit.Enabled = False
 		  btnStartUpload.Enabled = False
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resized()
-		  // Get video's aspect ratio (get fresh ratio each time)
-		  Var ratio As Double
-		  If videoPreview.Height > 0 Then
-		    ratio = videoPreview.Width / videoPreview.Height
-		  Else
-		    ratio = 4.0 / 3.0  // Default aspect ratio
-		  End If
 		  
-		  // Fixed position (don't change these)
-		  Var currentTop As Integer = 105
-		  Var currentLeft As Integer = 818
+		  Self.EnableBackButton = True
+		  Self.EnableLogoutButton = True
+		  Self.SectionTitle = "Case Data"
 		  
-		  // Calculate width - fill from left position to right edge
-		  Var calculatedWidth As Integer = Self.Width - currentLeft - 10  // 10px right margin
-		  
-		  // Calculate height from width maintaining aspect ratio
-		  Var calculatedHeight As Integer = calculatedWidth / ratio
-		  
-		  // Check if this would cover the buttons at bottom
-		  Var maxHeight As Integer = Self.Height - currentTop - 80  // 80px for buttons
-		  
-		  // Only constrain if it exceeds available height
-		  If calculatedHeight > maxHeight Then
-		    calculatedHeight = maxHeight
-		    calculatedWidth = calculatedHeight * ratio  // Recalculate width from constrained height
-		  End If
-		  
-		  // Only apply if dimensions are reasonable
-		  If calculatedWidth > 100 And calculatedHeight > 100 Then
-		    videoPreview.Width = calculatedWidth
-		    videoPreview.Height = calculatedHeight
-		    videoPreview.Top = currentTop
-		    videoPreview.Left = currentLeft
-		    System.DebugLog("Video resized to: " + Str(calculatedWidth) + "x" + Str(calculatedHeight))
-		  End If
-		  
-		  
-		  
-		  ' var currentTop  as integer = 105
-		  ' var currentLeft as integer = 818
-		  ' var currentWIdth as integer = videoPreview.width
-		  ' var currentHeight as integer = videoPreview.height
-		  ' 
-		  ' var calculatedWidth as Integer = self.width - currentLeft - 10
-		  ' var ratio As Double = videoPreview.Width / videoPreview.Height
-		  ' var calculatedHeight as integer = currentWIdth / (4/3)
-		  ' 
-		  ' // Set explicit size
-		  ' 
-		  ' videoPreview.Width = calculatedWidth
-		  ' videoPreview.Height = calculatedHeight
-		  ' videoPreview.Top = currentTop
-		  ' videoPreview.left = currentLeft
-		  ' 
-		  ' System.DebugLog("Video resized to: " + Str(calculatedWidth) + "x" + Str(calculatedHeight) + " from " + str(currentWidth) + "x" + str(currentHeight))
-		  
+		  UpdateNavigation // update shell page data
 		End Sub
 	#tag EndEvent
 
@@ -1303,7 +1211,8 @@ End
 		      
 		      MessageBox("Video deleted successfully!")
 		      LoadCaseVideos
-		      videoPreview.MovieURL = ""
+		      htmlVideoPreview.LoadHTML("")  // Clear the video preview
+		      
 		    Catch e As DatabaseException
 		      MessageBox("Error deleting video: " + e.Message)
 		    End Try
@@ -1584,88 +1493,58 @@ End
 	#tag Method, Flags = &h21
 		Private Sub LoadVideoPreview(rowIndex As Integer)
 		  If rowIndex < 0 Then
-		    videoPreview.MovieURL = ""
+		    htmlVideoPreview.LoadHTML("")
 		    Return
 		  End If
 		  
 		  Var videoFilename As String = lstVideos.CellTextAt(rowIndex, 0)
 		  Var wf As WebFile = Session.ServeVideo(videoFilename)
 		  
-		  If wf <> Nil Then
-		    videoPreview.MovieURL = wf.URL
-		    System.DebugLog("Loading video in preview: " + wf.URL)
-		  Else
-		    videoPreview.MovieURL = ""
-		    MessageBox("Video file not found: " + videoFilename)
+		  If wf = Nil Then
+		    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		    errorHTML = errorHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#e74c3c;font-family:Arial,sans-serif;}"
+		    errorHTML = errorHTML + ".error{background:#fff;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
+		    errorHTML = errorHTML + "</style></head><body><div class='error'>"
+		    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+		    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+		    errorHTML = errorHTML + "</div></body></html>"
+		    
+		    htmlVideoPreview.LoadHTML(errorHTML)
+		    Return
 		  End If
 		  
-		  ' If rowIndex < 0 Then
-		  ' htmlVideoPreview.LoadHTML("")
-		  ' Return
-		  ' End If
-		  ' 
-		  ' Var videoFilename As String = lstVideos.CellTextAt(rowIndex, 0)
-		  ' 
-		  ' Var wf As WebFile = Session.ServeVideo(videoFilename)
-		  ' 
-		  ' If wf = Nil Then
-		  ' Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		  ' errorHTML = errorHTML + "body{margin:0;padding:20px;background:transparent;color:#e74c3c;font-family:Arial,sans-serif;}"
-		  ' errorHTML = errorHTML + ".error{background:#2c2c2c;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
-		  ' errorHTML = errorHTML + "</style></head><body><div class='error'>"
-		  ' errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
-		  ' errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
-		  ' errorHTML = errorHTML + "</div></body></html>"
-		  ' 
-		  ' htmlVideoPreview.LoadHTML(errorHTML)
-		  ' Return
-		  ' End If
-		  ' 
-		  ' Var videoURL As String = wf.URL
-		  ' System.DebugLog("Loading video in preview: " + videoURL)
-		  ' 
-		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		  ' html = html + "*{margin:0;padding:0;box-sizing:border-box;}"
-		  ' html = html + "html,body{width:100%;height:100%;overflow:hidden;background:transparent;}"
-		  ' html = html + ".video-wrapper{position:absolute;top:0;left:0;right:0;bottom:40px;display:flex;align-items:center;justify-content:center;background:#000;}"
-		  ' html = html + "video{width:100%;height:100%;object-fit:contain;background:#000;}"
-		  ' html = html + ".info-bar{position:absolute;bottom:0;left:0;right:0;height:40px;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px;background:rgba(0,0,0,0.5);font-family:Arial,sans-serif;}"
-		  ' html = html + ".error{color:#e74c3c;background:#2c2c2c;padding:15px;border-radius:8px;margin:10px;}"
-		  ' html = html + "</style></head><body>"
-		  ' html = html + "<div class='video-wrapper'>"
-		  ' html = html + "<video id='videoPlayer' controls loop autoplay playsinline preload='metadata'>"
-		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
-		  ' html = html + "Your browser does not support the video tag.</video></div>"
-		  ' html = html + "<div class='info-bar'><span id='debugInfo'></span></div>"
-		  ' html = html + "<div id='errorMsg' class='error' style='display:none;'></div>"
-		  ' html = html + "<script>"
-		  ' html = html + "var v=document.getElementById('videoPlayer');"
-		  ' html = html + "var err=document.getElementById('errorMsg');"
-		  ' html = html + "var dbg=document.getElementById('debugInfo');"
-		  ' html = html + "dbg.textContent='" + videoFilename + "';"
-		  ' html = html + "v.addEventListener('loadedmetadata',function(){"
-		  ' html = html + "  console.log('Video metadata loaded');"
-		  ' html = html + "  dbg.textContent+=(' | '+v.duration.toFixed(1)+'s');"
-		  ' html = html + "});"
-		  ' html = html + "v.addEventListener('canplay',function(){"
-		  ' html = html + "  console.log('Video can play');"
-		  ' html = html + "  v.play().catch(function(e){console.log('Autoplay prevented:',e);});"
-		  ' html = html + "});"
-		  ' html = html + "v.addEventListener('error',function(e){"
-		  ' html = html + "  console.error('Video error:',e);"
-		  ' html = html + "  var errCode=v.error?v.error.code:'unknown';"
-		  ' html = html + "  var errMsg='Error loading video (code: '+errCode+')';"
-		  ' html = html + "  if(errCode==1)errMsg='Video loading aborted';"
-		  ' html = html + "  if(errCode==2)errMsg='Network error loading video';"
-		  ' html = html + "  if(errCode==3)errMsg='Video decoding failed - codec not supported';"
-		  ' html = html + "  if(errCode==4)errMsg='Video format not supported';"
-		  ' html = html + "  err.textContent=errMsg;"
-		  ' html = html + "  err.style.display='block';"
-		  ' html = html + "});"
-		  ' html = html + "v.addEventListener('ended',function(){this.currentTime=0;this.play();});"
-		  ' html = html + "</script></body></html>"
-		  ' 
-		  ' htmlVideoPreview.LoadHTML(html)
+		  Var videoURL As String = wf.URL
+		  System.DebugLog("Loading video in preview: " + videoURL)
+		  
+		  ' HTML with max-width and max-height constraints
+		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		  html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		  html = html + "<style>"
+		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: #f5f5f5; }"
+		  
+		  ' Wrapper centers the video
+		  html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
+		  
+		  ' Container with max dimensions and 4:3 aspect ratio
+		  html = html + ".video-container { position: relative; width: 100%; max-width: 495px; max-height: 373px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  
+		  ' Video fills container
+		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
+		  
+		  html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
+		  
+		  html = html + "</style></head><body>"
+		  html = html + "<div class='video-wrapper'>"
+		  html = html + "<div class='video-container'>"
+		  html = html + "<video controls loop autoplay playsinline>"
+		  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+		  html = html + "Your browser does not support video.</video>"
+		  html = html + "<div class='info'>" + videoFilename + "</div>"
+		  html = html + "</div></div>"
+		  html = html + "</body></html>"
+		  
+		  htmlVideoPreview.LoadHTML(html)
 		End Sub
 	#tag EndMethod
 
@@ -1904,20 +1783,17 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnBack
-	#tag Event
-		Sub Pressed()
-		  Session.Navigation.NavigateBack
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events btnSaveAll
 	#tag Event
 		Sub Pressed()
 		  ' ******************************************************************
 		  ' btnSaveAll.Pressed Event
 		  ' ******************************************************************
-		  Var changesMade As Boolean = False
+		  ' Check if anything has changed
+		  If Not mCaseInfoChanged And Not mAnswersChanged And Not mGroupsChanged Then
+		    MessageBox("No changes to save.")
+		    Return
+		  End If
 		  
 		  ' Validate case label
 		  If txtCaseLabel.Text.Trim = "" Then
@@ -1927,149 +1803,179 @@ End
 		  
 		  Try
 		    Session.DB.BeginTransaction
+		    Var changesMade As Boolean = False
 		    
-		    ' Save case info (description and groups)
+		    ' Save case info (description) and groups if changed
 		    If mCaseInfoChanged Or mGroupsChanged Then
 		      Var sqlCase As String = "UPDATE cases SET case_label = ?, case_groups = ? WHERE case_id = ?"
 		      Var psCase As MySQLPreparedStatement = Session.DB.Prepare(sqlCase)
 		      psCase.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      psCase.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      psCase.Bind(0, txtCaseLabel.Text.Trim)
+		      psCase.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      psCase.Bind(1, GetCurrentGroups())
+		      psCase.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      psCase.Bind(2, CaseID)
 		      psCase.ExecuteSQL
 		      changesMade = True
+		      mCaseInfoChanged = False
+		      mGroupsChanged = False
 		    End If
 		    
-		    ' Save correct answers if changed
+		    ' Save correct answers if changed (FIXED: uses MYSQL_TYPE_NULL)
 		    If mAnswersChanged Then
-		      Var sqlAnswers As String = "UPDATE cases SET lv_size_dilated=?, lv_function_impaired=?, rv_size_dilated=?, rv_function_impaired=?, aortic_stenosis_significant=?, aortic_regurgitation_significant=?, mitral_stenosis_significant=?, mitral_regurgitation_significant=?, tricuspid_stenosis_significant=?, tricuspid_regurgitation_significant=?, pericardial_effusion_significant=?, ivc_high_ra_pressure=?, correct_conclusions=?, requires_full_echo=? WHERE case_id=?"
+		      Var sqlAnswers As String = "UPDATE cases SET "
+		      sqlAnswers = sqlAnswers + "lv_size_dilated=?, lv_function_impaired=?, rv_size_dilated=?, rv_function_impaired=?, "
+		      sqlAnswers = sqlAnswers + "aortic_stenosis_significant=?, aortic_regurgitation_significant=?, "
+		      sqlAnswers = sqlAnswers + "mitral_stenosis_significant=?, mitral_regurgitation_significant=?, "
+		      sqlAnswers = sqlAnswers + "tricuspid_stenosis_significant=?, tricuspid_regurgitation_significant=?, "
+		      sqlAnswers = sqlAnswers + "pericardial_effusion_significant=?, ivc_high_ra_pressure=?, "
+		      sqlAnswers = sqlAnswers + "correct_conclusions=?, requires_full_echo=? "
+		      sqlAnswers = sqlAnswers + "WHERE case_id=?"
 		      
 		      Var psAnswers As MySQLPreparedStatement = Session.DB.Prepare(sqlAnswers)
 		      
-		      psAnswers.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		      ' Bind all 12 finding checkboxes with NULL support (FIXED)
 		      If chkLVSizeDilated.Indeterminate Then
+		        psAnswers.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(0, Nil)
 		      Else
+		        psAnswers.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(0, chkLVSizeDilated.Value)
 		      End If
 		      
-		      psAnswers.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkLVFunctionImpaired.Indeterminate Then
+		        psAnswers.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(1, Nil)
 		      Else
+		        psAnswers.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(1, chkLVFunctionImpaired.Value)
 		      End If
 		      
-		      psAnswers.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkRVSizeDilated.Indeterminate Then
+		        psAnswers.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(2, Nil)
 		      Else
+		        psAnswers.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(2, chkRVSizeDilated.Value)
 		      End If
 		      
-		      psAnswers.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkRVFunctionImpaired.Indeterminate Then
+		        psAnswers.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(3, Nil)
 		      Else
+		        psAnswers.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(3, chkRVFunctionImpaired.Value)
 		      End If
 		      
-		      psAnswers.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkAorticStenosis.Indeterminate Then
+		        psAnswers.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(4, Nil)
 		      Else
+		        psAnswers.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(4, chkAorticStenosis.Value)
 		      End If
 		      
-		      psAnswers.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkAorticRegurgitation.Indeterminate Then
+		        psAnswers.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(5, Nil)
 		      Else
+		        psAnswers.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(5, chkAorticRegurgitation.Value)
 		      End If
 		      
-		      psAnswers.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkMitralStenosis.Indeterminate Then
+		        psAnswers.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(6, Nil)
 		      Else
+		        psAnswers.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(6, chkMitralStenosis.Value)
 		      End If
 		      
-		      psAnswers.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkMitralRegurgitation.Indeterminate Then
+		        psAnswers.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(7, Nil)
 		      Else
+		        psAnswers.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(7, chkMitralRegurgitation.Value)
 		      End If
 		      
-		      psAnswers.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkTricuspidStenosis.Indeterminate Then
+		        psAnswers.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(8, Nil)
 		      Else
+		        psAnswers.BindType(8, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(8, chkTricuspidStenosis.Value)
 		      End If
 		      
-		      psAnswers.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkTricuspidRegurgitation.Indeterminate Then
+		        psAnswers.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(9, Nil)
 		      Else
+		        psAnswers.BindType(9, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(9, chkTricuspidRegurgitation.Value)
 		      End If
 		      
-		      psAnswers.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkPericardialEffusion.Indeterminate Then
+		        psAnswers.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(10, Nil)
 		      Else
+		        psAnswers.BindType(10, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(10, chkPericardialEffusion.Value)
 		      End If
 		      
-		      psAnswers.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      If chkIVCHighPressure.Indeterminate Then
+		        psAnswers.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(11, Nil)
 		      Else
+		        psAnswers.BindType(11, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(11, chkIVCHighPressure.Value)
 		      End If
 		      
+		      ' Bind correct conclusions text
 		      psAnswers.BindType(12, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      psAnswers.Bind(12, txtCorrectConclusions.Text)
 		      
-		      psAnswers.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		      ' Bind requires_full_echo checkbox (13th checkbox)
 		      If chkRequiresFullEcho.Indeterminate Then
+		        psAnswers.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		        psAnswers.Bind(13, Nil)
 		      Else
+		        psAnswers.BindType(13, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		        psAnswers.Bind(13, chkRequiresFullEcho.Value)
 		      End If
 		      
+		      ' Bind WHERE clause case_id
 		      psAnswers.BindType(14, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      psAnswers.Bind(14, CaseID)
 		      
 		      psAnswers.ExecuteSQL
 		      changesMade = True
+		      mAnswersChanged = False
 		    End If
 		    
 		    Session.DB.CommitTransaction
 		    
 		    If changesMade Then
 		      MessageBox("All changes saved successfully!")
-		      mCaseInfoChanged = False
-		      mAnswersChanged = False
-		      mGroupsChanged = False
 		      
-		      ' Update original groups
-		      Redim mOriginalGroups(-1)
+		      ' Update original groups tracking
+		      mOriginalGroups.RemoveAll
 		      For i As Integer = 0 To lstAssignedGroups.RowCount - 1
 		        mOriginalGroups.Add(lstAssignedGroups.CellTextAt(i, 0))
 		      Next
-		    Else
-		      MessageBox("No changes to save")
 		    End If
 		    
 		  Catch e As DatabaseException
 		    Session.DB.RollbackTransaction
 		    MessageBox("Error saving changes: " + e.Message)
 		  End Try
+		  
+		  ' =============================================================================
+		  ' Notes:
+		  ' * FIXED: Uses MYSQL_TYPE_NULL when binding Nil for indeterminate checkboxes
+		  ' * Uses MYSQL_TYPE_TINY when binding actual boolean values
+		  ' * All 13 checkboxes properly handle indeterminate state
+		  ' =============================================================================
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2459,6 +2365,30 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableBackButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableLogoutButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

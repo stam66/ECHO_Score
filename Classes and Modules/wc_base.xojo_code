@@ -27,13 +27,32 @@ Inherits webcontainer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub UpdateNavigation()
+		  Session.MainShell.ShowNavigation(EnableBackButton, EnableLogoutButton, SectionTitle)
+		  
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h0
 		ContainerID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		EnableBackButton As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		EnableLogoutButton As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		Position As PositionEnum
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		SectionTitle As String
 	#tag EndProperty
 
 
@@ -179,6 +198,26 @@ Inherits webcontainer
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="ContainerID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Position"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="PositionEnum"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Center"
+				"1 - TopLeft"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="TabIndex"
 			Visible=true
 			Group="Visual Controls"
@@ -289,24 +328,28 @@ Inherits webcontainer
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ContainerID"
+			Name="EnableBackButton"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EnableLogoutButton"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SectionTitle"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Position"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="PositionEnum"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Center"
-				"1 - TopLeft"
-			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

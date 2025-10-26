@@ -1,0 +1,362 @@
+' =============================================================================
+' wc_CaseDetails WebContainer - Complete Updated Version
+' Case editor with video management, NULL checkbox support, and tag-based groups
+' This is the COMPLETE version with all fixes from multiple conversations
+' =============================================================================
+
+' Insert → WebContainer
+' Name: wc_CaseDetails
+' Super: wc_Base
+
+' Properties:
+Public CaseID As Integer
+Private mOriginalCellValue As String
+Private mLastVideoID As Integer
+Private mLastColumn As Integer
+Private mLastOldValue As String
+Private mLastNewValue As String
+Private mCaseInfoChanged As Boolean = False
+Private mAnswersChanged As Boolean = False
+Private mGroupsChanged As Boolean = False
+Private mOriginalGroups() As String
+
+' CASE INFO SECTION:
+' Label: lblCaseInfo (text: "Case Information", Bold)
+' Label: lblSerial (text: "Serial Number:")
+' TextField: txtSerialNumber (ReadOnly = True)
+' Label: lblLabel (text: "Description:")
+' TextField: txtCaseLabel
+
+' GROUP ASSIGNMENT SECTION:
+' Label: lblGroups (text: "Assigned Groups", Bold)
+' Label: lblAvailableGroups (text: "Available Groups:")
+' PopupMenu: popAvailableGroups
+' PushButton: btnAddGroup (text: "Add Group →")
+' Label: lblAssignedGroups (text: "Currently Assigned:")
+' ListBox: lstAssignedGroups (1 column)
+' PushButton: btnRemoveGroup (text: "← Remove Selected")
+
+' CORRECT ANSWERS SECTION:
+' Label: lblCorrectAnswers (text: "Correct Answers", Bold)
+' CheckBox: chkLVSizeDilated (text: "LV Size - Dilated", AllowIndeterminate = True)
+' CheckBox: chkLVFunctionImpaired (text: "LV Function - Significantly Impaired", AllowIndeterminate = True)
+' CheckBox: chkRVSizeDilated (text: "RV Size - Dilated", AllowIndeterminate = True)
+' CheckBox: chkRVFunctionImpaired (text: "RV Function - Significantly Impaired", AllowIndeterminate = True)
+' CheckBox: chkAorticStenosis (text: "Aortic Valve - Significant Stenosis", AllowIndeterminate = True)
+' CheckBox: chkAorticRegurgitation (text: "Aortic Valve - Significant Regurgitation", AllowIndeterminate = True)
+' CheckBox: chkMitralStenosis (text: "Mitral Valve - Significant Stenosis", AllowIndeterminate = True)
+' CheckBox: chkMitralRegurgitation (text: "Mitral Valve - Significant Regurgitation", AllowIndeterminate = True)
+' CheckBox: chkTricuspidStenosis (text: "Tricuspid Valve - Significant Stenosis", AllowIndeterminate = True)
+' CheckBox: chkTricuspidRegurgitation (text: "Tricuspid Valve - Significant Regurgitation", AllowIndeterminate = True)
+' CheckBox: chkPericardialEffusion (text: "Pericardium - Significant Effusion", AllowIndeterminate = True)
+' CheckBox: chkIVCHighPressure (text: "IVC - High RA Pressure", AllowIndeterminate = True)
+' Label: lblCorrectConclusions (text: "Correct Conclusions:")
+' TextArea: txtCorrectConclusions
+' CheckBox: chkRequiresFullEcho (text: "Requires Full ECHO?", AllowIndeterminate = True)
+
+' SAVE/CANCEL SECTION:
+' PushButton: btnSaveAll (text: "Save All Changes", Primary style)
+' PushButton: btnCancelChanges (text: "Cancel Changes")
+
+' VIDEOS SECTION:
+' Label: lblVideos (text: "Case Videos", Bold)
+' Label: lblVideoInstructions (text: "Click 'Choose File' to select video, then click 'Upload'. Double-click cells to edit.")
+' ListBox: lstVideos (3 columns: Filename, View Description, Order)
+' WebFileUploader: uplVideo (AllowMultipleFiles = False, Filter = "video/mp4,video/*")
+' PushButton: btnStartUpload (text: "Upload Selected Video")
+' PushButton: btnDeleteVideo (text: "Delete Video")
+' PushButton: btnUndoVideoEdit (text: "Undo Last Change", Enabled = False)
+
+' VIDEO PREVIEW SECTION:
+' Label: lblVideoPreview (text: "Video Preview", Bold)
+' HTMLViewer: htmlVideoPreview
+
+' wc_CaseDetails.Opening Event
+Sub Opening()
+  ContainerID = "CaseDetails"
+  
+  ' Configure editable columns in video listbox
+  lstVideos.ColumnTypeAt(1) = WebListBox.CellTypes.TextField
+  lstVideos.ColumnTypeAt(2) = WebListBox.CellTypes.TextField
+  
+  ' Load data
+  LoadAvailableGroups()
+  LoadCaseDetails()
+  LoadCaseVideos()
+  
+  ' Reset change flags
+  mCaseInfoChanged = False
+  mAnswersChanged = False
+  mGroupsChanged = False
+  
+  btnUndoVideoEdit.Enabled = False
+  btnStartUpload.Enabled = False
+  
+  ' Add change tracking handlers (set in IDE)
+  ' txtCaseLabel.TextChanged → TrackCaseInfoChange()
+  ' All checkboxes.ValueChanged → TrackAnswerChange()
+  ' txtCorrectConclusions.TextChanged → TrackAnswerChange()
+End Sub
+
+' LoadAvailableGroups Method
+Sub LoadAvailableGroups()
+  popAvailableGroups.RemoveAllRows
+  
+  ' Add common groups
+  Var currentYear As Integer = DateTime.Now.Year
+  Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
+  Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+  
+  For Each specialty As String In specialties
+    For Each quarter As String In quarters
+      popAvailableGroups.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
+    Next
+  Next
+  
+  ' Load existing groups from database
+  Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL AND user_group <> '' UNION SELECT DISTINCT case_groups FROM cases WHERE case_groups IS NOT NULL AND case_groups <> '' ORDER BY 1"
+  
+  Try
+    Var rs As RowSet = Session.DB.SelectSQL(sql)
+    Var uniqueGroups() As String
+    
+    While rs <> Nil And Not rs.AfterLastRow
+      Var groupText As String = rs.Column(0).StringValue
+      
+      ' Split comma-separated groups
+      If groupText.Trim <> "" Then
+        Var groups() As String = groupText.Split(",")
+        For Each group As String In groups
+          Var cleanGroup As String = group.Trim
+          If cleanGroup <> "" Then
+            ' Check if already in list
+            Var found As Boolean = False
+            For Each existing As String In uniqueGroups
+              If existing = cleanGroup Then
+                found = True
+                Exit For existing
+              End If
+            Next
+            If Not found Then
+              uniqueGroups.Add(cleanGroup)
+            End If
+          End If
+        Next
+      End If
+      
+      rs.MoveToNextRow
+    Wend
+    
+    ' Add unique groups to popup
+    For Each group As String In uniqueGroups
+      ' Check if already in popup
+      Var alreadyExists As Boolean = False
+      For i As Integer = 0 To popAvailableGroups.RowCount - 1
+        If popAvailableGroups.RowTextAt(i) = group Then
+          alreadyExists = True
+          Exit For i
+        End If
+      Next
+      
+      If Not alreadyExists Then
+        popAvailableGroups.AddRow(group)
+      End If
+    Next
+    
+  Catch e As DatabaseException
+    System.DebugLog("Error loading groups: " + e.Message)
+  End Try
+  
+  If popAvailableGroups.RowCount > 0 Then
+    popAvailableGroups.SelectedRowIndex = 0
+  End If
+End Sub
+
+' LoadCaseDetails Method
+Sub LoadCaseDetails()
+  Var sql As String = "SELECT * FROM cases WHERE case_id = ?"
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(0, CaseID)
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    If rs <> Nil And Not rs.AfterLastRow Then
+      txtSerialNumber.Text = rs.Column("serial_number").StringValue
+      txtCaseLabel.Text = rs.Column("case_label").StringValue
+      
+      ' Load assigned groups
+      Var caseGroups As String = rs.Column("case_groups").StringValue
+      LoadAssignedGroups(caseGroups)
+      
+      ' Load checkbox values (may be NULL/indeterminate)
+      If rs.Column("lv_size_dilated").Value = Nil Then
+        chkLVSizeDilated.Indeterminate = True
+      Else
+        chkLVSizeDilated.Value = rs.Column("lv_size_dilated").BooleanValue
+        chkLVSizeDilated.Indeterminate = False
+      End If
+      
+      If rs.Column("lv_function_impaired").Value = Nil Then
+        chkLVFunctionImpaired.Indeterminate = True
+      Else
+        chkLVFunctionImpaired.Value = rs.Column("lv_function_impaired").BooleanValue
+        chkLVFunctionImpaired.Indeterminate = False
+      End If
+      
+      If rs.Column("rv_size_dilated").Value = Nil Then
+        chkRVSizeDilated.Indeterminate = True
+      Else
+        chkRVSizeDilated.Value = rs.Column("rv_size_dilated").BooleanValue
+        chkRVSizeDilated.Indeterminate = False
+      End If
+      
+      If rs.Column("rv_function_impaired").Value = Nil Then
+        chkRVFunctionImpaired.Indeterminate = True
+      Else
+        chkRVFunctionImpaired.Value = rs.Column("rv_function_impaired").BooleanValue
+        chkRVFunctionImpaired.Indeterminate = False
+      End If
+      
+      If rs.Column("aortic_stenosis_significant").Value = Nil Then
+        chkAorticStenosis.Indeterminate = True
+      Else
+        chkAorticStenosis.Value = rs.Column("aortic_stenosis_significant").BooleanValue
+        chkAorticStenosis.Indeterminate = False
+      End If
+      
+      If rs.Column("aortic_regurgitation_significant").Value = Nil Then
+        chkAorticRegurgitation.Indeterminate = True
+      Else
+        chkAorticRegurgitation.Value = rs.Column("aortic_regurgitation_significant").BooleanValue
+        chkAorticRegurgitation.Indeterminate = False
+      End If
+      
+      If rs.Column("mitral_stenosis_significant").Value = Nil Then
+        chkMitralStenosis.Indeterminate = True
+      Else
+        chkMitralStenosis.Value = rs.Column("mitral_stenosis_significant").BooleanValue
+        chkMitralStenosis.Indeterminate = False
+      End If
+      
+      If rs.Column("mitral_regurgitation_significant").Value = Nil Then
+        chkMitralRegurgitation.Indeterminate = True
+      Else
+        chkMitralRegurgitation.Value = rs.Column("mitral_regurgitation_significant").BooleanValue
+        chkMitralRegurgitation.Indeterminate = False
+      End If
+      
+      If rs.Column("tricuspid_stenosis_significant").Value = Nil Then
+        chkTricuspidStenosis.Indeterminate = True
+      Else
+        chkTricuspidStenosis.Value = rs.Column("tricuspid_stenosis_significant").BooleanValue
+        chkTricuspidStenosis.Indeterminate = False
+      End If
+      
+      If rs.Column("tricuspid_regurgitation_significant").Value = Nil Then
+        chkTricuspidRegurgitation.Indeterminate = True
+      Else
+        chkTricuspidRegurgitation.Value = rs.Column("tricuspid_regurgitation_significant").BooleanValue
+        chkTricuspidRegurgitation.Indeterminate = False
+      End If
+      
+      If rs.Column("pericardial_effusion_significant").Value = Nil Then
+        chkPericardialEffusion.Indeterminate = True
+      Else
+        chkPericardialEffusion.Value = rs.Column("pericardial_effusion_significant").BooleanValue
+        chkPericardialEffusion.Indeterminate = False
+      End If
+      
+      If rs.Column("ivc_high_ra_pressure").Value = Nil Then
+        chkIVCHighPressure.Indeterminate = True
+      Else
+        chkIVCHighPressure.Value = rs.Column("ivc_high_ra_pressure").BooleanValue
+        chkIVCHighPressure.Indeterminate = False
+      End If
+      
+      ' Load text area
+      txtCorrectConclusions.Text = rs.Column("correct_conclusions").StringValue
+      
+      ' Load requires_full_echo checkbox (13th checkbox)
+      If rs.Column("requires_full_echo").Value = Nil Then
+        chkRequiresFullEcho.Indeterminate = True
+      Else
+        chkRequiresFullEcho.Value = rs.Column("requires_full_echo").BooleanValue
+        chkRequiresFullEcho.Indeterminate = False
+      End If
+    End If
+  Catch e As DatabaseException
+    MessageBox("Error loading case: " + e.Message)
+  End Try
+End Sub
+
+' LoadAssignedGroups Method
+Sub LoadAssignedGroups(groupString As String)
+  lstAssignedGroups.RemoveAllRows
+  mOriginalGroups.RemoveAll
+  
+  If groupString.Trim <> "" Then
+    Var groups() As String = groupString.Split(",")
+    For Each group As String In groups
+      Var cleanGroup As String = group.Trim
+      If cleanGroup <> "" Then
+        lstAssignedGroups.AddRow(cleanGroup)
+        mOriginalGroups.Add(cleanGroup)
+      End If
+    Next
+  End If
+End Sub
+
+' GetCurrentGroups Method
+Function GetCurrentGroups() As String
+  Var groups() As String
+  
+  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+    groups.Add(lstAssignedGroups.CellTextAt(i, 0))
+  Next
+  
+  Return String.FromArray(groups, ",")
+End Function
+
+' btnAddGroup.Pressed Event
+Sub Pressed()
+  If popAvailableGroups.SelectedRowIndex < 0 Then
+    MessageBox("Please select a group to add")
+    Return
+  End If
+  
+  Var selectedGroup As String = popAvailableGroups.RowTextAt(popAvailableGroups.SelectedRowIndex)
+  
+  ' Check if already assigned
+  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+    If lstAssignedGroups.CellTextAt(i, 0) = selectedGroup Then
+      MessageBox("This group is already assigned")
+      Return
+    End If
+  Next
+  
+  ' Add to list
+  lstAssignedGroups.AddRow(selectedGroup)
+  mGroupsChanged = True
+  
+  System.DebugLog("Group added: " + selectedGroup)
+End Sub
+
+' btnRemoveGroup.Pressed Event
+Sub Pressed()
+  If lstAssignedGroups.SelectedRowIndex < 0 Then
+    MessageBox("Please select a group to remove")
+    Return
+  End If
+  
+  Var selectedGroup As String = lstAssignedGroups.CellTextAt(lstAssignedGroups.SelectedRowIndex, 0)
+  lstAssignedGroups.RemoveRowAt(lstAssignedGroups.SelectedRowIndex)
+  mGroupsChanged = True
+  
+  System.DebugLog("Group removed: " + selectedGroup)
+End Sub
+
+' Continue in next file...
+' =============================================================================

@@ -1,0 +1,247 @@
+' ═══════════════════════════════════════════════════════════════════
+' wc_UserHome
+' Extracted Code and Properties
+' ═══════════════════════════════════════════════════════════════════
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Opening()
+  ' *******************************************************************************
+  ' wc_UserHome.Opening event
+  ' *******************************************************************************
+  lblWelcome.Text = "Welcome, " + Session.CurrentUserName
+  LoadProgressStats
+  LoadCases
+  
+  Self.EnableBackButton = False
+  Self.EnableLogoutButton = True
+  UpdateNavigation ' update status of back/login buttons & logged in user
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Shown()
+  LoadProgressStats
+  LoadCases
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Sub LoadCases()
+  ' *******************************************************************************
+  '  LoadCases Method (WITH MULTI-GROUP FILTERING)
+  ' *******************************************************************************
+  lstCases.RemoveAllRows
+  
+  ' Get current user's group
+  Var userGroup As String = ""
+  Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
+  
+  Try
+    Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
+    userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    userPS.Bind(0, Session.CurrentUserID)
+    
+    Var userRS As RowSet = userPS.SelectSQL
+    If userRS <> Nil And Not userRS.AfterLastRow Then
+      userGroup = userRS.Column("user_group").StringValue
+    End If
+  Catch e As DatabaseException
+    ' If error, show all cases
+  End Try
+  
+  ' Build SQL based on whether user has a group
+  Var sql As String
+  If userGroup.Trim = "" Then
+    ' No group - show all cases
+    sql = "SELECT c.case_id, c.serial_number, ur.is_completed, ur.response_id, ur.score, ur.completed_at " + _
+    "FROM cases c " + _
+    "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
+    "ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
+  Else
+    ' Has group - show cases where case_groups contains user's group
+    sql = "SELECT c.case_id, c.serial_number, ur.is_completed, ur.response_id, ur.score, ur.completed_at " + _
+    "FROM cases c " + _
+    "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
+    "WHERE c.case_groups LIKE ? OR c.case_groups IS NULL OR c.case_groups = '' " + _
+    "ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
+  End If
+  
+  Try
+    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    ps.Bind(0, Session.CurrentUserID)
+    
+    If userGroup.Trim <> "" Then
+      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      ps.Bind(1, "%" + userGroup + "%")
+    End If
+    
+    Var rs As RowSet = ps.SelectSQL
+    
+    While Not rs.AfterLastRow
+      ' Column 0: Serial Number
+      lstCases.AddRow(rs.Column("serial_number").StringValue)
+      
+      ' Column 1: Status
+      If rs.Column("response_id").IntegerValue > 0 Then
+        If rs.Column("is_completed").BooleanValue Then
+          lstCases.CellTextAt(lstCases.LastAddedRowIndex, 1) = "Completed"
+        Else
+          lstCases.CellTextAt(lstCases.LastAddedRowIndex, 1) = "In Progress"
+        End If
+      Else
+        lstCases.CellTextAt(lstCases.LastAddedRowIndex, 1) = "Not Started"
+      End If
+      
+      ' Column 2: Score (only if completed)
+      ' FIXED: Score is always calculated on submit, never NULL if completed
+      If rs.Column("is_completed").BooleanValue Then
+        If rs.Column("score").Value <> Nil Then
+          lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = Str(rs.Column("score").IntegerValue) + " / 13"
+        Else
+          ' This should never happen, but handle gracefully
+          lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = "Error"
+        End If
+      Else
+        lstCases.CellTextAt(lstCases.LastAddedRowIndex, 2) = "--"
+      End If
+      
+      ' Column 3: Date Completed
+      If rs.Column("completed_at").Value <> Nil Then
+        Var completedDate As DateTime = rs.Column("completed_at").DateTimeValue
+        lstCases.CellTextAt(lstCases.LastAddedRowIndex, 3) = completedDate.ToString(Locale.Current, DateTime.FormatStyles.Short, DateTime.FormatStyles.None)
+      Else
+        lstCases.CellTextAt(lstCases.LastAddedRowIndex, 3) = "--"
+      End If
+      
+      lstCases.RowTagAt(lstCases.LastAddedRowIndex) = rs.Column("case_id").IntegerValue
+      
+      rs.MoveToNextRow
+    Wend
+    
+  Catch e As DatabaseException
+    MessageBox("Error loading cases: " + e.Message)
+  End Try
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Method
+' ─────────────────────────────────────────────────────────────────
+Sub LoadProgressStats()
+  ' Get user's group for filtering
+  Var userGroup As String = ""
+  Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
+  
+  Try
+    Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
+    userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+    userPS.Bind(0, Session.CurrentUserID)
+    
+    Var userRS As RowSet = userPS.SelectSQL
+    If userRS <> Nil And Not userRS.AfterLastRow Then
+      userGroup = userRS.Column("user_group").StringValue
+    End If
+  Catch e As DatabaseException
+    System.DebugLog("Error getting user group: " + e.Message)
+  End Try
+  
+  ' Build SQL to get progress stats based on accessible cases
+  Var statsSQL As String
+  If userGroup.Trim = "" Then
+    ' No group - count all cases
+    statsSQL = "SELECT " + _
+    "(SELECT COUNT(DISTINCT c.case_id) FROM cases c) AS total_cases, " + _
+    "(SELECT COUNT(*) FROM user_responses WHERE user_id = ? AND is_completed = 1) AS completed, " + _
+    "(SELECT COUNT(*) FROM user_responses WHERE user_id = ? AND is_completed = 0) AS in_progress, " + _
+    "(SELECT AVG(score) FROM user_responses WHERE user_id = ? AND is_completed = 1) AS avg_score"
+  Else
+    ' Has group - count only accessible cases
+    statsSQL = "SELECT " + _
+    "(SELECT COUNT(DISTINCT c.case_id) FROM cases c WHERE c.case_groups LIKE ? OR c.case_groups IS NULL OR c.case_groups = '') AS total_cases, " + _
+    "(SELECT COUNT(*) FROM user_responses ur INNER JOIN cases c ON ur.case_id = c.case_id WHERE ur.user_id = ? AND ur.is_completed = 1 AND (c.case_groups LIKE ? OR c.case_groups IS NULL OR c.case_groups = '')) AS completed, " + _
+    "(SELECT COUNT(*) FROM user_responses ur INNER JOIN cases c ON ur.case_id = c.case_id WHERE ur.user_id = ? AND ur.is_completed = 0 AND (c.case_groups LIKE ? OR c.case_groups IS NULL OR c.case_groups = '')) AS in_progress, " + _
+    "(SELECT AVG(ur.score) FROM user_responses ur INNER JOIN cases c ON ur.case_id = c.case_id WHERE ur.user_id = ? AND ur.is_completed = 1 AND (c.case_groups LIKE ? OR c.case_groups IS NULL OR c.case_groups = '')) AS avg_score"
+  End If
+  
+  Try
+    Var statsPS As MySQLPreparedStatement = Session.DB.Prepare(statsSQL)
+    Var paramIndex As Integer = 0
+    
+    If userGroup.Trim <> "" Then
+      ' Bind group filter for total_cases
+      statsPS.BindType(paramIndex, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+      statsPS.Bind(paramIndex, "%" + userGroup + "%")
+      paramIndex = paramIndex + 1
+    End If
+    
+    ' Bind user_id parameters
+    For i As Integer = 0 To 2
+      statsPS.BindType(paramIndex, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+      statsPS.Bind(paramIndex, Session.CurrentUserID)
+      paramIndex = paramIndex + 1
+      
+      If userGroup.Trim <> "" Then
+        statsPS.BindType(paramIndex, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+        statsPS.Bind(paramIndex, "%" + userGroup + "%")
+        paramIndex = paramIndex + 1
+      End If
+    Next
+    
+    Var statsRS As RowSet = statsPS.SelectSQL
+    
+    If statsRS <> Nil And Not statsRS.AfterLastRow Then
+      Var totalCases As Integer = statsRS.Column("total_cases").IntegerValue
+      Var completed As Integer = statsRS.Column("completed").IntegerValue
+      Var inProgress As Integer = statsRS.Column("in_progress").IntegerValue
+      Var notStarted As Integer = totalCases - completed - inProgress
+      
+      lblTotalCases.Text = "Total Cases Available: " + Str(totalCases)
+      lblCompleted.Text = "Completed: " + Str(completed)
+      lblInProgress.Text = "In Progress: " + Str(inProgress)
+      lblNotStarted.Text = "Not Started: " + Str(notStarted)
+      
+      ' Average score
+      If statsRS.Column("avg_score").Value <> Nil Then
+        Var avgScore As Double = statsRS.Column("avg_score").DoubleValue
+        lblAverageScore.Text = "Average Score: " + Format(avgScore, "#0.0") + " / 13"
+      Else
+        lblAverageScore.Text = "Average Score: --"
+      End If
+    End If
+    
+  Catch e As DatabaseException
+    System.DebugLog("Error loading progress stats: " + e.Message)
+  End Try
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub DoublePressed(row As Integer, column As Integer)
+   btnStartCase.Press
+End Sub
+
+' ─────────────────────────────────────────────────────────────────
+' Event
+' ─────────────────────────────────────────────────────────────────
+Sub Pressed()
+  ' *******************************************************************************
+  ' btnStartCase.Pressed Event
+  ' *******************************************************************************
+  If lstCases.SelectedRowIndex < 0 Then
+    MessageBox("Please select a case")
+    Return
+  End If
+  
+  Var caseID As Integer = lstCases.RowTagAt(lstCases.SelectedRowIndex)
+  
+  Var caseReview As New wc_CaseReview
+  caseReview.CaseID = caseID
+  caseReview.ContainerID = "CaseReview"
+  caseReview.Position = wc_Base.PositionEnum.TopLeft
+  Session.Navigation.NavigateTo(caseReview)
+End Sub

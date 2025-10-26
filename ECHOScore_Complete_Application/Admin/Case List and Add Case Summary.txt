@@ -1,0 +1,33 @@
+=============================================================================
+Case List and Add Case Summary:
+=============================================================================
+
+wc_CaseList:
+- Displays all cases in a two-column list
+- Serial Number (e.g., "Case001") | Description
+- Double-click to open case details
+- Add New Case button opens dialog
+- Refresh button reloads the list
+
+dlg_AddCase:
+- Modal dialog for creating new cases
+- Auto-generates serial numbers (Case001, Case002, etc.)
+- User enters case description only
+- Raises CaseAdded event with new case_id
+- Automatically navigates to new case details
+
+WORKFLOW:
+1. Admin clicks "Add New Case" on wc_CaseList
+2. dlg_AddCase opens
+3. Admin enters description
+4. Dialog creates case with auto-generated serial number
+5. Dialog closes and raises CaseAdded event
+6. wc_CaseList refreshes and navigates to wc_CaseDetails
+7. Admin can now add videos and set correct answers
+
+SERIAL NUMBER FORMAT:
+- Case001, Case002, Case003, etc.
+- Auto-increments from highest existing number
+- Format ensures proper sorting
+
+=============================================================================

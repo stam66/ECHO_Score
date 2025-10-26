@@ -536,7 +536,7 @@ Begin wc_base wc_EmailConfig
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   206
+      Left            =   354
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -553,36 +553,6 @@ Begin wc_base wc_EmailConfig
       Top             =   558
       Visible         =   True
       Width           =   178
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnBack
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Back"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   392
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   16
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   558
-      Visible         =   True
-      Width           =   140
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblMessage
@@ -630,6 +600,12 @@ End
 		  ' *******************************************************************************
 		  LoadEmailConfig
 		  lblMessage.Visible = False
+		  
+		  Self.EnableBackButton = True
+		  Self.EnableLogoutButton = True
+		  Self.SectionTitle = "Configure Email Settings"
+		  
+		  UpdateNavigation // update shell page data
 		End Sub
 	#tag EndEvent
 
@@ -752,14 +728,31 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnBack
-	#tag Event
-		Sub Pressed()
-		  Session.Navigation.NavigateBack
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableBackButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EnableLogoutButton"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
