@@ -92,6 +92,7 @@ Begin WebPage wp_MainShell
          Parent          =   "Rectangle2"
          Scope           =   0
          TabIndex        =   0
+         TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "ECHOScore "
          TextAlignment   =   0
@@ -114,7 +115,7 @@ Begin WebPage wp_MainShell
          Index           =   -2147483648
          Indicator       =   ""
          Italic          =   False
-         Left            =   710
+         Left            =   887
          LockBottom      =   False
          LockedInPosition=   False
          LockHorizontal  =   False
@@ -127,6 +128,7 @@ Begin WebPage wp_MainShell
          Parent          =   "Rectangle2"
          Scope           =   0
          TabIndex        =   1
+         TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Logged In User"
          TextAlignment   =   3
@@ -135,7 +137,43 @@ Begin WebPage wp_MainShell
          Top             =   68
          Underline       =   False
          Visible         =   False
-         Width           =   401
+         Width           =   224
+         _mPanelIndex    =   -1
+      End
+      Begin WebLabel lblSectionTitle
+         Bold            =   False
+         ControlID       =   ""
+         CSSClasses      =   ""
+         Enabled         =   True
+         FontName        =   ""
+         FontSize        =   15.0
+         Height          =   27
+         Index           =   -2147483648
+         Indicator       =   ""
+         Italic          =   False
+         Left            =   111
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockHorizontal  =   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         LockVertical    =   False
+         Multiline       =   False
+         PanelIndex      =   0
+         Parent          =   "Rectangle2"
+         Scope           =   0
+         TabIndex        =   11
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Section Title"
+         TextAlignment   =   1
+         TextColor       =   &cFFFFFF00
+         Tooltip         =   ""
+         Top             =   61
+         Underline       =   False
+         Visible         =   True
+         Width           =   368
          _mPanelIndex    =   -1
       End
    End
@@ -332,6 +370,41 @@ Begin WebPage wp_MainShell
       Width           =   401
       _mPanelIndex    =   -1
    End
+   Begin WebLabel lblVersionCopyright
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   11.0
+      Height          =   27
+      Index           =   -2147483648
+      Indicator       =   ""
+      Italic          =   True
+      Left            =   833
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Parent          =   "nil"
+      Scope           =   0
+      TabIndex        =   12
+      TabStop         =   True
+      Text            =   "Version 1.0	©️Dr S. Kapetanakis, 2025"
+      TextAlignment   =   3
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   677
+      Underline       =   False
+      Visible         =   True
+      Width           =   285
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebPage
 
@@ -342,6 +415,7 @@ End
 		  btnBack.Enabled = False
 		  btnLogout.Enabled = False
 		  lblUserName.Text = "Not logged in"
+		  lblSectionTitle.Text = "Login page"
 		End Sub
 	#tag EndEvent
 
@@ -373,7 +447,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowNavigation(enableBack As Boolean, enableLogout As Boolean)
+		Sub ShowNavigation(enableBack as Boolean, enableLogout as Boolean, currentSection as string)
 		  btnBack.Enabled = enableBack
 		  btnLogout.Enabled = enableLogout
 		  
@@ -381,6 +455,7 @@ End
 		  If Session.CurrentUserName <> "" Then
 		    lblUserName.Text = "Logged in as: " + Session.CurrentUserName
 		    lblUserNameFooter.Text = "Logged in as: " + Session.CurrentUserName
+		    lblSectionTitle.Text = currentSection
 		  Else
 		    lblUserName.Text = "Not logged in"
 		    lblUserNameFooter.Text = "Not logged in"

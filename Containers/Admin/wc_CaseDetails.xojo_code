@@ -1117,6 +1117,40 @@ Begin wc_base wc_CaseDetails
       Width           =   495
       _mPanelIndex    =   -1
    End
+   Begin WebLabel lblVideoPreview2
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   12.0
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Italic          =   False
+      Left            =   708
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   51
+      TabStop         =   True
+      Text            =   "Full Screen"
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
+      Tooltip         =   ""
+      Top             =   287
+      Underline       =   True
+      Visible         =   True
+      Width           =   110
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebContainerControl
 
@@ -1516,33 +1550,61 @@ End
 		  Var videoURL As String = wf.URL
 		  System.DebugLog("Loading video in preview: " + videoURL)
 		  
-		  ' HTML with max-width and max-height constraints
+		  ' HTML without native controls (to avoid grey overlay)
 		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
 		  html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
 		  html = html + "<style>"
 		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
 		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: #f5f5f5; }"
-		  
 		  ' Wrapper centers the video
 		  html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
-		  
 		  ' Container with max dimensions and 4:3 aspect ratio
 		  html = html + ".video-container { position: relative; width: 100%; max-width: 495px; max-height: 373px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
-		  
 		  ' Video fills container
-		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
-		  
+		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
 		  html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
-		  
 		  html = html + "</style></head><body>"
 		  html = html + "<div class='video-wrapper'>"
-		  html = html + "<div class='video-container'>"
-		  html = html + "<video controls loop autoplay playsinline>"
+		  html = html + "<div class='video-container' id='videoContainer'>"
+		  html = html + "<video id='mainVideo' loop autoplay playsinline muted>"
 		  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
 		  html = html + "Your browser does not support video.</video>"
 		  html = html + "<div class='info'>" + videoFilename + "</div>"
 		  html = html + "</div></div>"
+		  html = html + "<script>"
+		  html = html + "document.getElementById('mainVideo').addEventListener('click', function() {"
+		  html = html + "  if (this.paused) { this.play(); } else { this.pause(); }"
+		  html = html + "});"
+		  html = html + "</script>"
 		  html = html + "</body></html>"
+		  
+		  ' ' HTML with max-width and max-height constraints
+		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		  ' html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		  ' html = html + "<style>"
+		  ' html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		  ' html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: #f5f5f5; }"
+		  ' 
+		  ' ' Wrapper centers the video
+		  ' html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
+		  ' 
+		  ' ' Container with max dimensions and 4:3 aspect ratio
+		  ' html = html + ".video-container { position: relative; width: 100%; max-width: 495px; max-height: 373px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  ' 
+		  ' ' Video fills container
+		  ' html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
+		  ' 
+		  ' html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
+		  ' 
+		  ' html = html + "</style></head><body>"
+		  ' html = html + "<div class='video-wrapper'>"
+		  ' html = html + "<div class='video-container'>"
+		  ' html = html + "<video controls loop autoplay playsinline>"
+		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+		  ' html = html + "Your browser does not support video.</video>"
+		  ' html = html + "<div class='info'>" + videoFilename + "</div>"
+		  ' html = html + "</div></div>"
+		  ' html = html + "</body></html>"
 		  
 		  htmlVideoPreview.LoadHTML(html)
 		End Sub
@@ -2361,6 +2423,14 @@ End
 		  Catch e As DatabaseException
 		    MessageBox("Error undoing change: " + e.Message)
 		  End Try
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events lblVideoPreview2
+	#tag Event
+		Sub Pressed()
+		  htmlVideoPreview.ExecuteJavaScript("var c = document.getElementById('videoContainer'); if (c.requestFullscreen) { c.requestFullscreen(); } else if (c.webkitRequestFullscreen) { c.webkitRequestFullscreen(); }")
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents

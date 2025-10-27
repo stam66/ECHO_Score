@@ -1,5 +1,5 @@
 #tag WebContainerControl
-Begin wc_base wc_AdminHome
+Begin wc_base wc_ResultsReview
    Compatibility   =   ""
    ControlCount    =   0
    ControlID       =   ""
@@ -21,22 +21,22 @@ Begin wc_base wc_AdminHome
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   590
+   Width           =   1098
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
-   Begin WebLabel lblWelcome
+   Begin WebLabel lblTitle
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       FontName        =   ""
-      FontSize        =   0.0
+      FontSize        =   24.0
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   10
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -49,64 +49,73 @@ Begin wc_base wc_AdminHome
       Scope           =   0
       TabIndex        =   0
       TabStop         =   True
-      Text            =   "Admin panel"
+      Text            =   "Review Submitted Results"
       TextAlignment   =   2
       TextColor       =   &c000000FF
       Tooltip         =   ""
       Top             =   20
       Underline       =   False
       Visible         =   True
-      Width           =   572
+      Width           =   1058
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnManageUsers
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Manage Users"
+   Begin WebListBox lstResults
+      ColumnCount     =   6
+      ColumnWidths    =   "10%,20%,20%,20%,20%,10%"
       ControlID       =   ""
       CSSClasses      =   ""
-      Default         =   False
       Enabled         =   True
-      Height          =   38
+      HasHeader       =   True
+      Height          =   400
+      HighlightedRows()=   ""
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   197
-      LockBottom      =   False
+      Indicator       =   ""
+      InitialValue    =   "ID	User	Case	Submission Date	Score	Details"
+      LastAddedRowIndex=   0
+      LastRowIndex    =   0
+      Left            =   20
+      LockBottom      =   True
       LockedInPosition=   False
-      LockHorizontal  =   True
-      LockLeft        =   False
-      LockRight       =   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      NoRowsMessage   =   "No results submitted yet"
       PanelIndex      =   0
+      RowCount        =   0
+      RowSelectionType=   1
       Scope           =   0
+      SearchCriteria  =   ""
+      SelectedRowColor=   &c00B30000
+      SelectedRowIndex=   -1
       TabIndex        =   1
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   147
+      Top             =   66
       Visible         =   True
-      Width           =   195
+      Width           =   1058
+      _mInitialValue  =   "ID\tUser\tCase\tSubmission Date\tScore\tDetails"
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnManageCases
+   Begin WebButton btnViewDetails
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Manage Cases"
+      Caption         =   "View Details"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
-      Enabled         =   True
+      Enabled         =   False
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   197
-      LockBottom      =   False
+      Indicator       =   1
+      Left            =   938
+      LockBottom      =   True
       LockedInPosition=   False
-      LockHorizontal  =   True
+      LockHorizontal  =   False
       LockLeft        =   False
-      LockRight       =   False
-      LockTop         =   True
+      LockRight       =   True
+      LockTop         =   False
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
@@ -114,69 +123,9 @@ Begin wc_base wc_AdminHome
       TabIndex        =   2
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   221
+      Top             =   474
       Visible         =   True
-      Width           =   195
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnEmailConfig
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Email configuration"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   197
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   True
-      LockLeft        =   False
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   3
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   294
-      Visible         =   True
-      Width           =   195
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnLogout
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Log out"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   197
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   True
-      LockLeft        =   False
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   4
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   367
-      Visible         =   True
-      Width           =   195
+      Width           =   140
       _mPanelIndex    =   -1
    End
 End
@@ -185,75 +134,87 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  lblWelcome.Text = "Admin Dashboard - Welcome, " + Session.CurrentUserName
-		  
-		  
-		  Self.EnableBackButton = False
+		  Self.EnableBackButton = True
 		  Self.EnableLogoutButton = True
-		  UpdateNavigation ' update status of back/login buttons & logged in user
+		  Self.SectionTitle = "Review Results"
+		  
+		  UpdateNavigation
+		  
+		  LoadResults
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub LoadResults()
+		  lstResults.RemoveAllRows
+		  
+		  Var sql As String = "SELECT r.result_id, u.username, c.serial_number, r.submission_date, r.score " + _
+		  "FROM user_results r " + _
+		  "JOIN users u ON r.user_id = u.user_id " + _
+		  "JOIN cases c ON r.case_id = c.case_id " + _
+		  "ORDER BY r.submission_date DESC"
+		  
+		  Try
+		    Var rs As RowSet = Session.DB.SelectSQL(sql)
+		    
+		    While Not rs.AfterLastRow
+		      lstResults.AddRow(rs.Column("result_id").StringValue, _
+		      rs.Column("username").StringValue, _
+		      rs.Column("serial_number").StringValue, _
+		      rs.Column("submission_date").StringValue, _
+		      rs.Column("score").StringValue, _
+		      "View")
+		      
+		      rs.MoveToNextRow
+		    Wend
+		    
+		  Catch e As DatabaseException
+		    MessageBox("Error loading results: " + e.Message)
+		  End Try
+		End Sub
+	#tag EndMethod
 
 
 #tag EndWindowCode
 
-#tag Events btnManageUsers
+#tag Events lstResults
 	#tag Event
-		Sub Pressed()
-		  ' *******************************************************************************
-		  ' btnManageUsers.Pressed Event
-		  ' *******************************************************************************
-		  Var userAdmin As New wc_UserAdmin
-		  userAdmin.ContainerID = "UserAdmin"
-		  userAdmin.Position = wc_Base.PositionEnum.TopLeft
-		  Session.Navigation.NavigateTo(userAdmin)
+		Sub SelectionChanged(Row As Integer)
+		  btnViewDetails.Enabled = (Me.SelectedRowIndex <> -1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(Row As Integer, Column As Integer)
+		  If Column = 5 Then // "View" column
+		    // Navigate to detailed view (implement wc_ResultDetails if needed)
+		    Var resultID As Integer = Val(Me.CellTextAt(Row, 0))
+		    MessageBox("Viewing details for result ID: " + Str(resultID))
+		    // Add navigation to a new wc_ResultDetails here
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnManageCases
+#tag Events btnViewDetails
 	#tag Event
 		Sub Pressed()
-		  ' *******************************************************************************
-		  ' btnManageCases.Pressed Event
-		  ' *******************************************************************************
-		  Var caseList As New wc_CaseList
-		  caseList.ContainerID = "CaseList"
-		  caseList.Position = wc_Base.PositionEnum.TopLeft
-		  Session.Navigation.NavigateTo(caseList)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events btnEmailConfig
-	#tag Event
-		Sub Pressed()
-		  ' *******************************************************************************
-		  ' btnEmailConfig.Pressed Event
-		  ' *******************************************************************************
-		  Var emailConfig As New wc_EmailConfig
-		  emailConfig.ContainerID = "EmailConfig"
-		  emailConfig.Position = wc_Base.PositionEnum.TopLeft
-		  Session.Navigation.NavigateTo(emailConfig)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events btnLogout
-	#tag Event
-		Sub Pressed()
-		  ' *******************************************************************************
-		  ' btnLogout.Pressed Event
-		  ' *******************************************************************************
-		  Session.CurrentUserID = 0
-		  Session.CurrentUserName = ""
-		  Session.IsAdmin = False
-		  
-		  Var login As New wc_Login
-		  login.ContainerID = "Login"
-		  login.Position = wc_Base.PositionEnum.Center
-		  Session.Navigation.NavigateTo(login)
+		  If lstResults.SelectedRowIndex <> -1 Then
+		    Var resultID As Integer = Val(lstResults.CellTextAt(lstResults.SelectedRowIndex, 0))
+		    MessageBox("Viewing details for result ID: " + Str(resultID))
+		    // Add navigation to a new wc_ResultDetails here if detailed view is needed
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="SectionTitle"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EnableBackButton"
 		Visible=false
@@ -509,21 +470,5 @@ End
 			"8 - Dark"
 			"9 - Link"
 		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=false
-		Group=""
-		InitialValue="250"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=false
-		Group=""
-		InitialValue="250"
-		Type="Integer"
-		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

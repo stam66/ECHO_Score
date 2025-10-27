@@ -866,6 +866,36 @@ Begin wc_base wc_CaseReview
       Width           =   154
       _mPanelIndex    =   -1
    End
+   Begin WebButton Button1
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Full Screen"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   406
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   30
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   66
+      Visible         =   True
+      Width           =   129
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebContainerControl
 
@@ -929,17 +959,34 @@ End
 		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
 		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
 		  html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
-		  html = html + ".video-container { position: relative; width: 100%; max-width: 800px; max-height: 600px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
-		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; outline: none; }"
-		  html = html + "video::-webkit-media-controls-panel { background-color: transparent !important; }"
+		  html = html + ".video-container { width: 100%; max-width: 800px; max-height: 600px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
 		  html = html + "</style></head><body>"
 		  html = html + "<div class='video-wrapper'>"
-		  html = html + "<div class='video-container'>"
+		  html = html + "<div class='video-container' id='videoContainer'>"
 		  html = html + "<video id='mainVideo' autoplay muted loop playsinline>"
 		  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
-		  html = html + "Your browser does not support the video tag.</video>"
+		  html = html + "</video>"
 		  html = html + "</div></div>"
 		  html = html + "</body></html>"
+		  
+		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		  ' html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		  ' html = html + "<style>"
+		  ' html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		  ' html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		  ' html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
+		  ' html = html + ".video-container { position: relative; width: 100%; max-width: 800px; max-height: 600px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  ' html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; outline: none; }"
+		  ' html = html + "video::-webkit-media-controls-panel { background-color: transparent !important; }"
+		  ' html = html + "</style></head><body>"
+		  ' html = html + "<div class='video-wrapper'>"
+		  ' html = html + "<div class='video-container'>"
+		  ' html = html + "<video id='mainVideo' autoplay muted loop playsinline>"
+		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+		  ' html = html + "Your browser does not support the video tag.</video>"
+		  ' html = html + "</div></div>"
+		  ' html = html + "</body></html>"
 		  
 		  ' ' FIXED: Light background, proper viewport sizing
 		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
@@ -1867,6 +1914,15 @@ End
 		  End If
 		  
 		  NavigateToCase(AvailableCaseIDs(CurrentCasePosition))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Button1
+	#tag Event
+		Sub Pressed()
+		  ' Request fullscreen
+		  htmlVideoPlayer.ExecuteJavaScript("var c = document.getElementById('videoContainer'); if (c.requestFullscreen) { c.requestFullscreen(); } else if (c.webkitRequestFullscreen) { c.webkitRequestFullscreen(); }")
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -25,7 +25,7 @@ Begin WebPage wp_MainShell
    PanelIndex      =   0
    ScaleFactor     =   0.0
    TabIndex        =   0
-   Title           =   "ECHOscore"
+   Title           =   "Untitled"
    Top             =   0
    Visible         =   True
    Width           =   1138

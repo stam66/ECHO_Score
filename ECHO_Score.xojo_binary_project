@@ -44,6 +44,7 @@ WebContainer=wc_EnterOTP;Containers/App/wc_EnterOTP.xojo_code;&h00000000715ABFFF
 WebContainer=wc_NewPassword;Containers/App/wc_NewPassword.xojo_code;&h000000007BDAEFFF;&h0000000060699FFF;false
 WebContainer=wc_AdminHome;Containers/Admin/wc_AdminHome.xojo_code;&h0000000050A667FF;&h00000000320E0FFF;false
 WebContainer=wc_UserAdmin;Containers/Admin/wc_UserAdmin.xojo_code;&h0000000012F377FF;&h00000000320E0FFF;false
+WebContainer=wc_ProgressReview;Containers/Admin/wc_ProgressReview.xojo_code;&h000000003FBB1FFF;&h00000000320E0FFF;false
 WebContainer=wc_CaseList;Containers/Admin/wc_CaseList.xojo_code;&h000000005624AFFF;&h00000000320E0FFF;false
 WebContainer=wc_CaseDetails;Containers/Admin/wc_CaseDetails.xojo_code;&h000000003ADC97FF;&h00000000320E0FFF;false
 WebContainer=wc_EmailConfig;Containers/Admin/wc_EmailConfig.xojo_code;&h0000000012F1D7FF;&h00000000320E0FFF;false

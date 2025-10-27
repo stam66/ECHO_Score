@@ -114,7 +114,7 @@ Begin wc_base wc_AdminHome
       TabIndex        =   2
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   221
+      Top             =   223
       Visible         =   True
       Width           =   195
       _mPanelIndex    =   -1
@@ -144,7 +144,37 @@ Begin wc_base wc_AdminHome
       TabIndex        =   3
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   294
+      Top             =   299
+      Visible         =   True
+      Width           =   195
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnProgressReview
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Progress Review"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   197
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   True
+      LockLeft        =   False
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   4
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   374
       Visible         =   True
       Width           =   195
       _mPanelIndex    =   -1
@@ -205,6 +235,19 @@ End
 		  emailConfig.ContainerID = "EmailConfig"
 		  emailConfig.Position = wc_Base.PositionEnum.Center
 		  Session.Navigation.NavigateTo(emailConfig)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnProgressReview
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnProgressReview.Pressed Event
+		  ' *******************************************************************************
+		  Var progressReview As New wc_ProgressReview
+		  progressReview.ContainerID = "ProgressReview"
+		  progressReview.Position = wc_Base.PositionEnum.TopLeft
+		  Session.Navigation.NavigateTo(progressReview)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
