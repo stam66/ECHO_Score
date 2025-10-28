@@ -491,7 +491,7 @@ End
 #tag Events btnCancel
 	#tag Event
 		Sub Pressed()
-		   Self.Close
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents

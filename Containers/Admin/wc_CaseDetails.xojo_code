@@ -2641,8 +2641,7 @@ End
 #tag Events lblVideoPreview2
 	#tag Event
 		Sub Pressed()
-		  htmlVideoPreview.ExecuteJavaScript("var c = document.getElementById('videoContainer'); if (c.requestFullscreen) { c.requestFullscreen(); } else if (c.webkitRequestFullscreen) { c.webkitRequestFullscreen(); }")
-		  
+		  htmlVideoPreview.ExecuteJavaScript("(function() { var v = document.getElementById('mainVideo'); if (v) { if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } else { if (v.requestFullscreen) { v.requestFullscreen(); } else if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); } else if (v.mozRequestFullScreen) { v.mozRequestFullScreen(); } else if (v.msRequestFullscreen) { v.msRequestFullscreen(); } } } })();")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
