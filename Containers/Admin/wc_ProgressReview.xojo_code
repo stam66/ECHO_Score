@@ -579,6 +579,9 @@ End
 #tag Events lstProgress
 	#tag Event
 		Sub DoublePressed(row As Integer, column As Integer)
+		  #Pragma Unused row
+		  #Pragma Unused column
+		  
 		  If Me.SelectedRowIndex < 0 Then Return
 		  
 		  Var userID As Integer = Me.RowTagAt(Me.SelectedRowIndex)

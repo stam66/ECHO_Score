@@ -384,6 +384,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NavigateToLogin(t as Timer)
+		  #Pragma Unused t
+		  
 		  Var login As New wc_Login
 		  login.ContainerID = "Login"
 		  login.Position = wc_Base.PositionEnum.Center

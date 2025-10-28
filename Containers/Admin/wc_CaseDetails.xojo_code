@@ -37,7 +37,7 @@ Begin wc_base wc_CaseDetails
       HasBorder       =   True
       HasHeader       =   True
       HeaderHeight    =   0
-      Height          =   388
+      Height          =   437
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
@@ -45,7 +45,7 @@ Begin wc_base wc_CaseDetails
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
-      Left            =   0
+      Left            =   2
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -65,43 +65,9 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   25
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   105
+      Top             =   39
       Visible         =   True
       Width           =   542
-      _mPanelIndex    =   -1
-   End
-   Begin WebLabel lblCaseInfo
-      Bold            =   True
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   24.0
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Italic          =   False
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   0
-      TabStop         =   True
-      Text            =   "Case Information"
-      TextAlignment   =   0
-      TextColor       =   &c0087FE00
-      Tooltip         =   ""
-      Top             =   0
-      Underline       =   False
-      Visible         =   True
-      Width           =   477
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtSerialNumber
@@ -116,7 +82,7 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   578
+      Left            =   580
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -133,7 +99,7 @@ Begin wc_base wc_CaseDetails
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   105
+      Top             =   39
       Visible         =   True
       Width           =   240
       _mPanelIndex    =   -1
@@ -149,7 +115,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   578
+      Left            =   580
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -166,7 +132,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   151
+      Top             =   85
       Underline       =   False
       Visible         =   True
       Width           =   90
@@ -184,7 +150,7 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   578
+      Left            =   580
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -201,7 +167,7 @@ Begin wc_base wc_CaseDetails
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   190
+      Top             =   124
       Visible         =   True
       Width           =   240
       _mPanelIndex    =   -1
@@ -228,7 +194,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   21
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   660
+      Top             =   647
       Value           =   False
       Visible         =   True
       Width           =   167
@@ -256,7 +222,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   22
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   694
+      Top             =   681
       Value           =   False
       Visible         =   True
       Width           =   200
@@ -334,7 +300,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   0
+      Left            =   2
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -351,7 +317,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   66
+      Top             =   0
       Underline       =   False
       Visible         =   True
       Width           =   199
@@ -368,7 +334,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   578
+      Left            =   580
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -385,7 +351,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   287
+      Top             =   255
       Underline       =   False
       Visible         =   True
       Width           =   122
@@ -402,7 +368,7 @@ Begin wc_base wc_CaseDetails
       Height          =   41
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   222
+      Left            =   354
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -416,7 +382,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   33
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   501
+      Top             =   484
       Visible         =   True
       Width           =   90
       _mPanelIndex    =   -1
@@ -446,7 +412,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   34
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   501
+      Top             =   484
       Visible         =   True
       Width           =   90
       _mPanelIndex    =   -1
@@ -512,14 +478,14 @@ Begin wc_base wc_CaseDetails
       _mPanelIndex    =   -1
    End
    Begin WebFileUploader uplVideo
-      Caption         =   "Select video"
+      Caption         =   "+"
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       Filter          =   "video/mp4,video/*"
       HasFileNameField=   True
       Height          =   41
-      Hint            =   ""
+      Hint            =   "Click to select video to upload"
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   0
@@ -537,10 +503,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   40
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   501
+      Top             =   484
       UploadTimeout   =   0
       Visible         =   True
-      Width           =   220
+      Width           =   346
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblGroupAssignment
@@ -554,7 +520,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   842
+      Left            =   844
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -571,7 +537,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   66
+      Top             =   0
       Underline       =   False
       Visible         =   True
       Width           =   64
@@ -587,7 +553,7 @@ Begin wc_base wc_CaseDetails
       InitialValue    =   ""
       LastAddedRowIndex=   0
       LastRowIndex    =   0
-      Left            =   842
+      Left            =   844
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -603,7 +569,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   43
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   188
+      Top             =   122
       Visible         =   True
       Width           =   240
       _mPanelIndex    =   -1
@@ -611,7 +577,7 @@ Begin wc_base wc_CaseDetails
    Begin WebButton btnAddGroup
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Add Group"
+      Caption         =   "+ Group"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -619,7 +585,7 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   842
+      Left            =   844
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -627,15 +593,15 @@ Begin wc_base wc_CaseDetails
       LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   44
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   234
+      Top             =   168
       Visible         =   True
-      Width           =   109
+      Width           =   95
       _mPanelIndex    =   -1
    End
    Begin WebListBox lstAssignedGroups
@@ -658,7 +624,7 @@ Begin wc_base wc_CaseDetails
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
-      Left            =   842
+      Left            =   844
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -678,7 +644,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   46
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   103
+      Top             =   37
       Visible         =   True
       Width           =   240
       _mPanelIndex    =   -1
@@ -686,7 +652,7 @@ Begin wc_base wc_CaseDetails
    Begin WebButton btnRemoveGroup
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Remove"
+      Caption         =   "- Group"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -694,7 +660,7 @@ Begin wc_base wc_CaseDetails
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   973
+      Left            =   995
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -702,15 +668,15 @@ Begin wc_base wc_CaseDetails
       LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   47
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   234
+      Top             =   168
       Visible         =   True
-      Width           =   109
+      Width           =   89
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkLVSizeDilated
@@ -735,7 +701,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   11
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   592
+      Top             =   579
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -763,7 +729,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   626
+      Top             =   613
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -791,7 +757,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   13
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   660
+      Top             =   647
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -819,7 +785,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   14
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   694
+      Top             =   681
       Value           =   False
       Visible         =   True
       Width           =   212
@@ -847,7 +813,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   15
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   592
+      Top             =   579
       Value           =   False
       Visible         =   True
       Width           =   161
@@ -875,7 +841,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   16
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   628
+      Top             =   615
       Value           =   False
       Visible         =   True
       Width           =   161
@@ -903,7 +869,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   17
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   662
+      Top             =   649
       Value           =   False
       Visible         =   True
       Width           =   161
@@ -931,7 +897,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   18
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   696
+      Top             =   683
       Value           =   False
       Visible         =   True
       Width           =   161
@@ -959,7 +925,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   19
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   592
+      Top             =   579
       Value           =   False
       Visible         =   True
       Width           =   148
@@ -987,40 +953,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   20
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   626
+      Top             =   613
       Value           =   False
       Visible         =   True
       Width           =   148
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnUndoVideoEdit
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Undo edit"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   False
-      Height          =   41
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   320
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   39
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   501
-      Visible         =   True
-      Width           =   112
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblVideoPreview1
@@ -1051,7 +987,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   560
+      Top             =   547
       Underline       =   False
       Visible         =   True
       Width           =   167
@@ -1068,7 +1004,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   578
+      Left            =   580
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -1085,7 +1021,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   66
+      Top             =   0
       Underline       =   False
       Visible         =   True
       Width           =   199
@@ -1095,10 +1031,10 @@ Begin wc_base wc_CaseDetails
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   373
+      Height          =   386
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   587
+      Left            =   569
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -1111,10 +1047,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   50
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   319
+      Top             =   287
       UseSandbox      =   False
       Visible         =   True
-      Width           =   495
+      Width           =   515
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblVideoPreview2
@@ -1128,7 +1064,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   708
+      Left            =   710
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -1145,10 +1081,44 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   287
+      Top             =   255
       Underline       =   True
       Visible         =   True
       Width           =   110
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel DisplayedMessage
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   12.0
+      Height          =   29
+      Index           =   -2147483648
+      Indicator       =   ""
+      Italic          =   False
+      Left            =   7
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      Multiline       =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   52
+      TabStop         =   True
+      Text            =   "Message"
+      TextAlignment   =   1
+      TextColor       =   &c0087FE00
+      Tooltip         =   ""
+      Top             =   523
+      Underline       =   False
+      Visible         =   False
+      Width           =   535
       _mPanelIndex    =   -1
    End
 End
@@ -1174,7 +1144,7 @@ End
 		  mCaseInfoChanged = False
 		  mAnswersChanged = False
 		  mGroupsChanged = False
-		  btnUndoVideoEdit.Enabled = False
+		  ' btnUndoVideoEdit.Enabled = False
 		  btnStartUpload.Enabled = False
 		  
 		  Self.EnableBackButton = True
@@ -1228,19 +1198,54 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleDeleteVideoConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
+		  
 		  ' ******************************************************************
-		  ' HandleDeleteVideoConfirm Method
+		  ' HandleDeleteVideoConfirm Method - FIXED to delete physical file
 		  ' ******************************************************************
 		  Select Case button
 		  Case dialog.ActionButton
 		    Var videoID As Integer = lstVideos.RowTagAt(lstVideos.SelectedRowIndex)
-		    Var sql As String = "DELETE FROM case_videos WHERE video_id = ?"
 		    
 		    Try
+		      ' FIRST: Get the filename from database before deleting the record
+		      Var getFilenameSQL As String = "SELECT video_filename FROM case_videos WHERE video_id = ?"
+		      Var psGetFile As MySQLPreparedStatement = Session.DB.Prepare(getFilenameSQL)
+		      psGetFile.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      psGetFile.Bind(0, videoID)
+		      Var rsFile As RowSet = psGetFile.SelectSQL
+		      
+		      If rsFile = Nil Or rsFile.AfterLastRow Then
+		        MessageBox("Error: Video not found in database")
+		        Return
+		      End If
+		      
+		      Var videoFilename As String = rsFile.Column("video_filename").StringValue
+		      System.DebugLog("Deleting video: " + videoFilename)
+		      
+		      ' SECOND: Delete the physical file from CaseVideos folder
+		      Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		      If videoFolder.Exists Then
+		        Var videoFile As FolderItem = videoFolder.Child(videoFilename)
+		        
+		        If videoFile.Exists Then
+		          Try
+		            videoFile.Remove
+		            System.DebugLog("Physical file deleted: " + videoFile.NativePath)
+		          Catch fileError As IOException
+		            System.DebugLog("Warning: Could not delete physical file: " + fileError.Message)
+		            ' Continue with database deletion even if file deletion fails
+		          End Try
+		        Else
+		          System.DebugLog("Warning: Physical file not found: " + videoFilename)
+		          ' Continue with database deletion even if file doesn't exist
+		        End If
+		      End If
+		      
+		      ' THIRD: Delete the database record
+		      Var sql As String = "DELETE FROM case_videos WHERE video_id = ?"
 		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      ps.Bind(0, videoID)
-		      
 		      ps.ExecuteSQL
 		      
 		      MessageBox("Video deleted successfully!")
@@ -1249,8 +1254,35 @@ End
 		      
 		    Catch e As DatabaseException
 		      MessageBox("Error deleting video: " + e.Message)
+		    Catch e As RuntimeException
+		      MessageBox("Error deleting video: " + e.Message)
 		    End Try
 		  End Select
+		  
+		  
+		  ' ' ******************************************************************
+		  ' ' HandleDeleteVideoConfirm Method
+		  ' ' ******************************************************************
+		  ' Select Case button
+		  ' Case dialog.ActionButton
+		  ' Var videoID As Integer = lstVideos.RowTagAt(lstVideos.SelectedRowIndex)
+		  ' Var sql As String = "DELETE FROM case_videos WHERE video_id = ?"
+		  ' 
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, videoID)
+		  ' 
+		  ' ps.ExecuteSQL
+		  ' 
+		  ' MessageBox("Video deleted successfully!")
+		  ' LoadCaseVideos
+		  ' htmlVideoPreview.LoadHTML("")  // Clear the video preview
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error deleting video: " + e.Message)
+		  ' End Try
+		  ' End Select
 		End Sub
 	#tag EndMethod
 
@@ -1555,12 +1587,9 @@ End
 		  html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
 		  html = html + "<style>"
 		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
-		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: #f5f5f5; }"
-		  ' Wrapper centers the video
-		  html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
-		  ' Container with max dimensions and 4:3 aspect ratio
-		  html = html + ".video-container { position: relative; width: 100%; max-width: 495px; max-height: 373px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
-		  ' Video fills container
+		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		  html = html + ".video-wrapper { display: flex; align-items: center; justify-content: flex-end; height: 100%; width: 100%; padding: 10px; background: transparent; }"
+		  html = html + ".video-container { position: relative; width: auto; max-width: 100%; height: 100%; max-height: 360px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
 		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
 		  html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
 		  html = html + "</style></head><body>"
@@ -1607,6 +1636,12 @@ End
 		  ' html = html + "</body></html>"
 		  
 		  htmlVideoPreview.LoadHTML(html)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RightAlignVideo()
+		  htmlVideoPreview.Left = self.Width - htmlVideoPreview.Width
 		End Sub
 	#tag EndMethod
 
@@ -1761,7 +1796,7 @@ End
 		      ps.ExecuteSQL
 		      
 		      System.DebugLog("Video metadata updated in database: video_id=" + Str(videoID) + ", new value: '" + newValue + "'")
-		      btnUndoVideoEdit.Enabled = True
+		      ' btnUndoVideoEdit.Enabled = True
 		      
 		      ' If order was changed, reload to re-sort
 		      If column = 2 Then
@@ -2060,21 +2095,27 @@ End
 		Sub FileAdded(filename As String, bytes As UInt64, mimeType As String)
 		  ' ******************************************************************
 		  ' uplVideo.FileAdded Event
-		  ' ******************************************************************
 		  ' Enable upload button when file is selected
+		  ' ******************************************************************
+		  #Pragma Unused mimeType
+		  
 		  btnStartUpload.Enabled = True
-		  System.DebugLog("File selected: " + filename + " (" + Str(bytes) + " bytes)")
+		  session.DisplayMessage("File selected: " + filename + " (" + Str(bytes) + " bytes)", self.DisplayedMessage)
 		  
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub FileRemoved(filename As String)
-		  ' ******************************************************************
-		  ' uplVideo.FileRemoved Event
-		  ' ******************************************************************
-		  ' Disable upload button when file is removed
 		  btnStartUpload.Enabled = False
-		  System.DebugLog("File removed: " + filename)
+		  session.DisplayMessage("File removed: " + filename, self.DisplayedMessage)
+		  
+		  
+		  ' ' ******************************************************************
+		  ' ' uplVideo.FileRemoved Event
+		  ' ' ******************************************************************
+		  ' ' Disable upload button when file is removed
+		  ' btnStartUpload.Enabled = False
+		  ' System.DebugLog("File removed: " + filename)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2088,49 +2129,56 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub UploadFinished(files() As WebUploadedFile)
-		  ' ******************************************************************
-		  ' uplVideo.UploadFinished Event
-		  '    Get the first (and only, since AllowMultipleFiles = False) file
-		  ' ******************************************************************
-		  Var uploadedFile As WebUploadedFile = files(0)
+		  session.DisplayMessage("UPLOAD FINISHED EVENT CALLED - Processing " + Str(files.Count) + " files", self.DisplayedMessage)
 		  
 		  Try
+		    If files.Count = 0 Then
+		      MessageBox("ERROR: No files received")
+		      Return
+		    End If
+		    
+		    Var uploadedFile As WebUploadedFile = files(0)
+		    
+		    If uploadedFile = Nil Then
+		      MessageBox("ERROR: uploadedFile is Nil")
+		      Return
+		    End If
+		    
+		    If uploadedFile.Data = Nil Then
+		      MessageBox("ERROR: uploadedFile.Data is Nil")
+		      Return
+		    End If
+		    
+		    session.DisplayMessage("Processing file: " + uploadedFile.Name + ", " + "Size: " + Str(uploadedFile.Data.Size) + " bytes", self.DisplayedMessage)
+		    
 		    ' Get or create the CaseVideos folder
 		    Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
 		    If Not targetFolder.Exists Then
 		      targetFolder.CreateFolder
-		      System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
 		    End If
-		    
-		    System.DebugLog("Target folder: " + targetFolder.NativePath)
 		    
 		    ' Create the target file
 		    Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
 		    
 		    ' If file already exists, delete it first
 		    If targetFile.Exists Then
-		      System.DebugLog("File already exists, deleting: " + targetFile.NativePath)
 		      Try
 		        targetFile.Remove
 		      Catch deleteError As IOException
-		        MessageBox("Error: Cannot overwrite existing file. " + deleteError.Message)
+		        MessageBox("ERROR: Cannot overwrite existing file. " + deleteError.Message)
 		        Return
 		      End Try
 		    End If
 		    
-		    System.DebugLog("Writing file: " + targetFile.NativePath)
-		    
 		    ' Create and write to the file
 		    Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
 		    If outputStream = Nil Then
-		      MessageBox("Error: Could not create output stream for " + uploadedFile.Name)
+		      MessageBox("ERROR: Could not create output stream for " + uploadedFile.Name)
 		      Return
 		    End If
 		    
 		    outputStream.Write(uploadedFile.Data)
 		    outputStream.Close
-		    
-		    System.DebugLog("Video saved successfully: " + targetFile.NativePath)
 		    
 		    ' Get next order number
 		    Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
@@ -2143,7 +2191,7 @@ End
 		      videoOrder = orderRS.Column("next_order").IntegerValue
 		    End If
 		    
-		    ' Insert into database (video_purpose can be empty or used for other purposes)
+		    ' Insert into database
 		    Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -2155,24 +2203,249 @@ End
 		    ps.Bind(0, CaseID)
 		    ps.Bind(1, uploadedFile.Name)
 		    ps.Bind(2, "")
-		    ps.Bind(3, "")  ' video_purpose left empty (reserved for future use)
+		    ps.Bind(3, "")
 		    ps.Bind(4, videoOrder)
 		    
 		    ps.ExecuteSQL
 		    
-		    MessageBox("Video uploaded successfully!")
+		    session.DisplayMessage("Video uploaded successfully!", self.DisplayedMessage)
 		    LoadCaseVideos
 		    
 		    uplVideo.RemoveAllFiles
 		    btnStartUpload.Enabled = False
 		    
 		  Catch e As IOException
-		    System.DebugLog("IOException: " + e.Message)
-		    MessageBox("Error saving video file: " + e.Message + EndOfLine + EndOfLine + _
-		    "This may be a permissions issue. Check the console for details.")
+		    MessageBox("IOException: " + e.Message)
 		  Catch e As DatabaseException
-		    MessageBox("Error saving video to database: " + e.Message)
+		    MessageBox("DatabaseException: " + e.Message)
+		  Catch e As RuntimeException
+		    MessageBox("RuntimeException: " + e.Message + " (Code: " + Str(e.ErrorNumber) + ")")
 		  End Try
+		  
+		  me.Hint = "Click to select video to upload"
+		  
+		  ' 
+		  ' ' ******************************************************************
+		  ' ' uplVideo.UploadFinished Event
+		  ' '    Get the first (and only, since AllowMultipleFiles = False) file
+		  ' ' ******************************************************************
+		  ' 
+		  ' Try
+		  ' ' Step 1: Validate array
+		  ' If files.Count = 0 Then
+		  ' MessageBox("STEP 1 FAILED: No files in array")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' ' Step 2: Get file
+		  ' Var uploadedFile As WebUploadedFile = files(0)
+		  ' If uploadedFile = Nil Then
+		  ' MessageBox("STEP 2 FAILED: uploadedFile is Nil")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' ' Step 3: Check data
+		  ' If uploadedFile.Data = Nil Then
+		  ' MessageBox("STEP 3 FAILED: Data is Nil")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var fileSize As Integer = uploadedFile.Data.Size
+		  ' MessageBox("STEP 3 OK: File received" + EndOfLine + _
+		  ' "Name: " + uploadedFile.Name + EndOfLine + _
+		  ' "Size: " + Str(fileSize) + " bytes")
+		  ' 
+		  ' ' Step 4: Get folder
+		  ' Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		  ' If Not targetFolder.Exists Then
+		  ' targetFolder.CreateFolder
+		  ' End If
+		  ' 
+		  ' If Not targetFolder.Exists Then
+		  ' MessageBox("STEP 4 FAILED: Cannot access CaseVideos folder")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' ' Step 5: Create file
+		  ' Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+		  ' If targetFile.Exists Then
+		  ' targetFile.Remove
+		  ' End If
+		  ' 
+		  ' ' Step 6: Write file
+		  ' Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
+		  ' If outputStream = Nil Then
+		  ' MessageBox("STEP 6 FAILED: Cannot create output stream")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' outputStream.Write(uploadedFile.Data)
+		  ' outputStream.Close
+		  ' outputStream = Nil  ' Explicit cleanup
+		  ' 
+		  ' MessageBox("STEP 6 OK: File written to disk")
+		  ' 
+		  ' ' Step 7: Database insert
+		  ' Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
+		  ' Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
+		  ' orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' orderPS.Bind(0, CaseID)
+		  ' Var orderRS As RowSet = orderPS.SelectSQL
+		  ' Var videoOrder As Integer = 0
+		  ' If orderRS <> Nil And Not orderRS.AfterLastRow Then
+		  ' videoOrder = orderRS.Column("next_order").IntegerValue
+		  ' End If
+		  ' 
+		  ' Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' 
+		  ' ps.Bind(0, CaseID)
+		  ' ps.Bind(1, uploadedFile.Name)
+		  ' ps.Bind(2, "")
+		  ' ps.Bind(3, "")
+		  ' ps.Bind(4, videoOrder)
+		  ' 
+		  ' ps.ExecuteSQL
+		  ' 
+		  ' MessageBox("SUCCESS: Video uploaded!" + EndOfLine + _
+		  ' "Order: " + Str(videoOrder))
+		  ' 
+		  ' LoadCaseVideos
+		  ' uplVideo.RemoveAllFiles
+		  ' btnStartUpload.Enabled = False
+		  ' 
+		  ' Catch e As IOException
+		  ' MessageBox("IOException:" + EndOfLine + e.Message)
+		  ' Catch e As DatabaseException
+		  ' MessageBox("DatabaseException:" + EndOfLine + e.Message)
+		  ' Catch e As RuntimeException
+		  ' MessageBox("RuntimeException:" + EndOfLine + _
+		  ' e.Message + EndOfLine + _
+		  ' "Code: " + Str(e.ErrorNumber))
+		  ' End Try
+		  ' 
+		  ' 
+		  ' ' ' ******************************************************************
+		  ' ' ' uplVideo.UploadFinished Event
+		  ' ' '    Get the first (and only, since AllowMultipleFiles = False) file
+		  ' ' ' ******************************************************************
+		  ' ' Var uploadedFile As WebUploadedFile = files(0)
+		  ' ' 
+		  ' ' Try
+		  ' ' ' Get or create the CaseVideos folder
+		  ' ' Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		  ' ' If Not targetFolder.Exists Then
+		  ' ' targetFolder.CreateFolder
+		  ' ' System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
+		  ' ' End If
+		  ' ' 
+		  ' ' System.DebugLog("Target folder: " + targetFolder.NativePath)
+		  ' ' 
+		  ' ' ' Create the target file
+		  ' ' Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+		  ' ' 
+		  ' ' ' If file already exists, delete it first
+		  ' ' If targetFile.Exists Then
+		  ' ' System.DebugLog("File already exists, deleting: " + targetFile.NativePath)
+		  ' ' Try
+		  ' ' targetFile.Remove
+		  ' ' Catch deleteError As IOException
+		  ' ' MessageBox("Error: Cannot overwrite existing file. " + deleteError.Message)
+		  ' ' Return
+		  ' ' End Try
+		  ' ' End If
+		  ' ' 
+		  ' ' System.DebugLog("Writing file: " + targetFile.NativePath)
+		  ' ' 
+		  ' ' ' Create and write to the file
+		  ' ' Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
+		  ' ' If outputStream = Nil Then
+		  ' ' MessageBox("Error: Could not create output stream for " + uploadedFile.Name)
+		  ' ' Return
+		  ' ' End If
+		  ' ' 
+		  ' ' outputStream.Write(uploadedFile.Data)
+		  ' ' outputStream.Close
+		  ' ' 
+		  ' ' System.DebugLog("Video saved successfully: " + targetFile.NativePath)
+		  ' ' 
+		  ' ' ' Get next order number
+		  ' ' Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
+		  ' ' Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
+		  ' ' orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ' orderPS.Bind(0, CaseID)
+		  ' ' Var orderRS As RowSet = orderPS.SelectSQL
+		  ' ' Var videoOrder As Integer = 0
+		  ' ' If orderRS <> Nil And Not orderRS.AfterLastRow Then
+		  ' ' videoOrder = orderRS.Column("next_order").IntegerValue
+		  ' ' End If
+		  ' ' 
+		  ' ' ' Insert into database (video_purpose can be empty or used for other purposes)
+		  ' ' Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
+		  ' ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ' ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ' ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ' ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ' 
+		  ' ' ps.Bind(0, CaseID)
+		  ' ' ps.Bind(1, uploadedFile.Name)
+		  ' ' ps.Bind(2, "")
+		  ' ' ps.Bind(3, "")  ' video_purpose left empty (reserved for future use)
+		  ' ' ps.Bind(4, videoOrder)
+		  ' ' 
+		  ' ' ps.ExecuteSQL
+		  ' ' 
+		  ' ' MessageBox("Video uploaded successfully!")
+		  ' ' LoadCaseVideos
+		  ' ' 
+		  ' ' uplVideo.RemoveAllFiles
+		  ' ' btnStartUpload.Enabled = False
+		  ' ' 
+		  ' ' Catch e As IOException
+		  ' ' System.DebugLog("IOException: " + e.Message)
+		  ' ' MessageBox("Error saving video file: " + e.Message + EndOfLine + EndOfLine + _
+		  ' ' "This may be a permissions issue. Check the console for details.")
+		  ' ' Catch e As DatabaseException
+		  ' ' MessageBox("Error saving video to database: " + e.Message)
+		  ' ' End Try
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UploadStarted(fileCount As Integer)
+		  #Pragma Unused fileCount
+		  
+		  session.DisplayMessage("Upload started...", self.DisplayedMessage)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UploadProgressed(percent As Integer)
+		  ' This fires during upload - be careful, can spam message boxes
+		  ' Only show at 25%, 50%, 75%, 100%
+		  If percent = 25 Or percent = 50 Or percent = 75 Or percent = 100 Then
+		    session.DisplayMessage("UPLOAD PROGRESS: " + Str(percent) + "%", self.DisplayedMessage)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UploadAborted()
+		  ' The upload was cancelled (by user or system)
+		  session.DisplayMessage("The upload was cancelled by the browser or the system.", self.DisplayedMessage)
+		  btnStartUpload.Enabled = True
+		  
+		  
+		  
+		  
+		  
+		  
+		  ' MessageBox("UPLOAD ABORTED!" + EndOfLine + _
+		  ' "The upload was cancelled by the browser or system.")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2207,11 +2480,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events lstAssignedGroups
-	#tag Event
-		Sub SelectionChanged(rows() As Integer)
-		  
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer, value As Variant)
 		  ' ******************************************************************
@@ -2269,7 +2537,7 @@ End
 		        ps.ExecuteSQL
 		        
 		        System.DebugLog("Video metadata updated: video_id=" + Str(videoID))
-		        btnUndoVideoEdit.Enabled = True
+		        ' btnUndoVideoEdit.Enabled = True
 		        
 		      Catch e As DatabaseException
 		        MessageBox("Error updating video: " + e.Message)
@@ -2367,62 +2635,6 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  TrackAnswerChange
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events btnUndoVideoEdit
-	#tag Event
-		Sub Pressed()
-		  '******************************************************************
-		  ' btnUndoVideoEdit.Pressed Event
-		  ' ******************************************************************
-		  If mLastVideoID = 0 Then
-		    MessageBox("No change to undo")
-		    Return
-		  End If
-		  
-		  Var sql As String
-		  Select Case mLastColumn
-		  Case 1
-		    sql = "UPDATE case_videos SET view_description = ? WHERE video_id = ?"
-		  Case 2
-		    sql = "UPDATE case_videos SET video_order = ? WHERE video_id = ?"
-		  Else
-		    Return
-		  End Select
-		  
-		  Try
-		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		    
-		    If mLastColumn = 2 Then
-		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		      Var orderValue As Integer = Val(mLastOldValue)
-		      If orderValue < 0 Then orderValue = 0
-		      ps.Bind(0, orderValue)
-		    Else
-		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.Bind(0, mLastOldValue)
-		    End If
-		    
-		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		    ps.Bind(1, mLastVideoID)
-		    
-		    ps.ExecuteSQL
-		    
-		    System.DebugLog("Video metadata change undone: video_id=" + Str(mLastVideoID) + ", restored to: '" + mLastOldValue + "'")
-		    
-		    ' Always reload to refresh the display (especially important for order changes)
-		    LoadCaseVideos()
-		    
-		    btnUndoVideoEdit.Enabled = False
-		    mLastVideoID = 0
-		    mLastColumn = 0
-		    mLastOldValue = ""
-		    mLastNewValue = ""
-		    
-		  Catch e As DatabaseException
-		    MessageBox("Error undoing change: " + e.Message)
-		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents

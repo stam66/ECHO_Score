@@ -24,6 +24,7 @@ Begin wc_base wc_CaseList
    Width           =   1044
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblTitle
       Bold            =   True
@@ -381,6 +382,12 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown()
+		  LoadCases
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub HandleAddCaseDialogClosed(sender As dlg_AddCase)
@@ -627,6 +634,9 @@ End
 		  ' ******************************************************************
 		  ' lstCases.DoublePressed Event
 		  ' ******************************************************************
+		  #Pragma Unused row
+		  #Pragma Unused column
+		  
 		  If mSelectedCaseID = 0 Then Return
 		  
 		  Var caseDetails As New wc_CaseDetails

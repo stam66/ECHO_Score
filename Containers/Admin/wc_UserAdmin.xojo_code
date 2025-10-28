@@ -24,41 +24,8 @@ Begin wc_base wc_UserAdmin
    Width           =   1044
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
-   Begin WebLabel lblTitle
-      Bold            =   True
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   0.0
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   0
-      TabStop         =   True
-      Text            =   "User Management"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   20
-      Underline       =   False
-      Visible         =   True
-      Width           =   199
-      _mPanelIndex    =   -1
-   End
    Begin WebListBox lstUsers
       AllowRowReordering=   False
       ColumnCount     =   5
@@ -71,7 +38,7 @@ Begin wc_base wc_UserAdmin
       HasBorder       =   True
       HasHeader       =   True
       HeaderHeight    =   0
-      Height          =   534
+      Height          =   563
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
@@ -99,7 +66,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   1
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   141
+      Top             =   79
       Visible         =   True
       Width           =   702
       _mPanelIndex    =   -1
@@ -132,7 +99,7 @@ Begin wc_base wc_UserAdmin
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   128
+      Top             =   66
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -167,7 +134,7 @@ Begin wc_base wc_UserAdmin
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   167
+      Top             =   105
       Visible         =   True
       Width           =   276
       _mPanelIndex    =   -1
@@ -200,7 +167,7 @@ Begin wc_base wc_UserAdmin
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   213
+      Top             =   151
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -235,7 +202,7 @@ Begin wc_base wc_UserAdmin
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   252
+      Top             =   190
       Visible         =   True
       Width           =   276
       _mPanelIndex    =   -1
@@ -268,7 +235,7 @@ Begin wc_base wc_UserAdmin
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   298
+      Top             =   236
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -303,7 +270,7 @@ Begin wc_base wc_UserAdmin
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   337
+      Top             =   275
       Visible         =   True
       Width           =   276
       _mPanelIndex    =   -1
@@ -336,7 +303,7 @@ Begin wc_base wc_UserAdmin
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   383
+      Top             =   321
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -371,7 +338,7 @@ Begin wc_base wc_UserAdmin
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   422
+      Top             =   360
       Visible         =   True
       Width           =   276
       _mPanelIndex    =   -1
@@ -398,7 +365,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   10
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   482
+      Top             =   420
       Value           =   False
       Visible         =   True
       Width           =   276
@@ -407,7 +374,7 @@ Begin wc_base wc_UserAdmin
    Begin WebButton btnAddUser
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Add User"
+      Caption         =   "New User"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -415,12 +382,12 @@ Begin wc_base wc_UserAdmin
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
+      Left            =   748
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -429,7 +396,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   11
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   82
+      Top             =   20
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -459,7 +426,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   630
+      Top             =   595
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -474,7 +441,7 @@ Begin wc_base wc_UserAdmin
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
+      Indicator       =   4
       Left            =   899
       LockBottom      =   False
       LockedInPosition=   False
@@ -489,7 +456,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   13
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   630
+      Top             =   595
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -522,7 +489,7 @@ Begin wc_base wc_UserAdmin
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   529
+      Top             =   467
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -557,53 +524,86 @@ Begin wc_base wc_UserAdmin
       TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
-      Top             =   568
+      Top             =   506
       Visible         =   True
       Width           =   276
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnFilterByGroup
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Filter by Group"
+   Begin WebLabel lblDisplayedMessage
+      Bold            =   False
       ControlID       =   ""
       CSSClasses      =   ""
-      Default         =   False
       Enabled         =   True
-      Height          =   38
+      FontName        =   ""
+      FontSize        =   14.0
+      Height          =   31
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   153
-      LockBottom      =   False
+      Indicator       =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
+      LockRight       =   True
+      LockTop         =   False
       LockVertical    =   False
-      Outlined        =   False
+      Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   17
+      TabIndex        =   19
       TabStop         =   True
+      Text            =   "Message"
+      TextAlignment   =   0
+      TextColor       =   &c0096FF00
       Tooltip         =   ""
-      Top             =   82
-      Visible         =   True
-      Width           =   170
+      Top             =   657
+      Underline       =   False
+      Visible         =   False
+      Width           =   702
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnClearFilter
+   Begin WebButton btnSaveNewUser
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Show All"
+      Caption         =   "Save New User"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
+      Enabled         =   False
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   881
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   20
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Visible         =   True
+      Width           =   143
+      _mPanelIndex    =   -1
+   End
+   Begin WebPopupMenu popGroupFilter
+      ControlID       =   ""
+      CSSClasses      =   ""
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   331
+      InitialValue    =   ""
+      LastAddedRowIndex=   0
+      LastRowIndex    =   0
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -611,15 +611,17 @@ Begin wc_base wc_UserAdmin
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
       PanelIndex      =   0
+      RowCount        =   0
       Scope           =   0
-      TabIndex        =   18
+      SelectedRowIndex=   0
+      SelectedRowText =   ""
+      TabIndex        =   21
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   82
+      Top             =   20
       Visible         =   True
-      Width           =   125
+      Width           =   272
       _mPanelIndex    =   -1
    End
 End
@@ -658,6 +660,45 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GetUserName() As String
+		  var username as string
+		  var words() as string = txtName.Text.Trim.Split(" ")
+		  
+		  if words.Count  = 0 then 
+		    return ""
+		  end If
+		  
+		  if words.Count = 1 then 
+		    username = words(0)
+		  else
+		    username = words(0).Left(1).Uppercase + words(words.LastIndex).Titlecase
+		  end if
+		  
+		  var x as integer = 1
+		  var i as integer = 0
+		  While x = 1
+		    var sql as string = "SELECT COUNT(username) as UserNameCount from users where username = ?" 
+		    var ps as MySQLPreparedStatement =  Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.Bind(0, username)
+		    var rs as rowset = ps.SelectSQL
+		    if rs <> nil then
+		      if rs.Column("UserNameCount").IntegerValue > 0 then
+		        i = i+1
+		        username = username + i.ToString
+		      else
+		        return username
+		      end if
+		    else 
+		      return username
+		    end If
+		  Wend
+		  
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub HandleDeleteUserConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
 		  ' *******************************************************************************
@@ -676,7 +717,7 @@ End
 		      
 		      ps.ExecuteSQL
 		      
-		      MessageBox("User deleted successfully!")
+		      session.DisplayMessage("User deleted successfully!", self.lblDisplayedMessage)
 		      ClearFields
 		      LoadUsers("")
 		      
@@ -694,6 +735,10 @@ End
 		  ' LoadUserGroups Method
 		  ' *******************************************************************************
 		  cmbUserGroup.RemoveAllRows
+		  popGroupFilter.RemoveAllRows
+		  
+		  ' Add "All" as first option in filter
+		  popGroupFilter.AddRow("All Groups")
 		  
 		  ' Add common groups
 		  Var currentYear As Integer = DateTime.Now.Year
@@ -713,7 +758,7 @@ End
 		    While Not rs.AfterLastRow
 		      Var existingGroup As String = rs.Column("user_group").StringValue
 		      If existingGroup.Trim <> "" Then
-		        ' Add if not already in list
+		        ' Add to cmbUserGroup if not already in list
 		        Var found As Boolean = False
 		        For i As Integer = 0 To cmbUserGroup.RowCount - 1
 		          If cmbUserGroup.RowTextAt(i) = existingGroup Then
@@ -724,12 +769,72 @@ End
 		        If Not found Then
 		          cmbUserGroup.AddRow(existingGroup)
 		        End If
+		        
+		        ' Add to popGroupFilter if not already in list
+		        found = False
+		        For i As Integer = 0 To popGroupFilter.RowCount - 1
+		          If popGroupFilter.RowTextAt(i) = existingGroup Then
+		            found = True
+		            Exit For i
+		          End If
+		        Next
+		        If Not found Then
+		          popGroupFilter.AddRow(existingGroup)
+		        End If
 		      End If
 		      rs.MoveToNextRow
 		    Wend
 		  Catch e As DatabaseException
 		    ' Ignore error
 		  End Try
+		  
+		  ' Set filter to "All" by default
+		  popGroupFilter.SelectedRowIndex = 0
+		  
+		  
+		  
+		  
+		  
+		  ' ' *******************************************************************************
+		  ' ' LoadUserGroups Method
+		  ' ' *******************************************************************************
+		  ' cmbUserGroup.RemoveAllRows
+		  ' 
+		  ' ' Add common groups
+		  ' Var currentYear As Integer = DateTime.Now.Year
+		  ' Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
+		  ' Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+		  ' 
+		  ' For Each specialty As String In specialties
+		  ' For Each quarter As String In quarters
+		  ' cmbUserGroup.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
+		  ' Next
+		  ' Next
+		  ' 
+		  ' ' Also load existing groups from database
+		  ' Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL ORDER BY user_group DESC"
+		  ' Try
+		  ' Var rs As RowSet = Session.DB.SelectSQL(sql)
+		  ' While Not rs.AfterLastRow
+		  ' Var existingGroup As String = rs.Column("user_group").StringValue
+		  ' If existingGroup.Trim <> "" Then
+		  ' ' Add if not already in list
+		  ' Var found As Boolean = False
+		  ' For i As Integer = 0 To cmbUserGroup.RowCount - 1
+		  ' If cmbUserGroup.RowTextAt(i) = existingGroup Then
+		  ' found = True
+		  ' Exit For i
+		  ' End If
+		  ' Next
+		  ' If Not found Then
+		  ' cmbUserGroup.AddRow(existingGroup)
+		  ' End If
+		  ' End If
+		  ' rs.MoveToNextRow
+		  ' Wend
+		  ' Catch e As DatabaseException
+		  ' ' Ignore error
+		  ' End Try
 		End Sub
 	#tag EndMethod
 
@@ -796,6 +901,10 @@ End
 		    Return
 		  End If
 		  
+		  btnSaveNewUser.Enabled = False
+		  btnUpdateUser.Enabled = True
+		  btnDeleteUser.Enabled = True
+		  
 		  Var userID As Integer = Me.RowTagAt(Me.SelectedRowIndex)
 		  mSelectedUserID = userID  ' Store for later use
 		  
@@ -822,46 +931,43 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events txtName
+	#tag Event
+		Sub TextChanged()
+		  txtUsername.Text = GetUserName
+		  
+		  
+		  btnSaveNewUser.Enabled = (lstUsers.SelectedRowIndex = -1 and txtName.Text.Trim <> "" and txtEmail.Text.Trim <> ""  )
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events txtEmail
+	#tag Event
+		Sub TextChanged()
+		  btnSaveNewUser.Enabled = (lstUsers.SelectedRowIndex = -1 and txtName.Text.Trim <> "" and txtEmail.Text.Trim <> ""  )
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events txtUsername
+	#tag Event
+		Sub TextChanged()
+		  btnSaveNewUser.Enabled = (lstUsers.SelectedRowIndex = -1 and txtName.Text.Trim <> "" and txtEmail.Text.Trim <> ""  )
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events btnAddUser
 	#tag Event
 		Sub Pressed()
 		  ' *******************************************************************************
 		  ' btnAddUser.Pressed Event
 		  ' *******************************************************************************
-		  
-		  If txtName.Text.Trim = "" Or txtEmail.Text.Trim = "" Or txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
-		    MessageBox("Please fill all fields")
-		    Return
-		  End If
-		  
-		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?)"
-		  
-		  Try
-		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    
-		    ps.Bind(0, txtName.Text.Trim)
-		    ps.Bind(1, txtEmail.Text.Trim)
-		    ps.Bind(2, txtUsername.Text.Trim)
-		    ps.Bind(3, txtPassword.Text.Trim)
-		    ps.Bind(4, chkIsAdmin.Value)
-		    ps.Bind(5, cmbUserGroup.Text.Trim)
-		    
-		    ps.ExecuteSQL
-		    
-		    MessageBox("User added successfully!")
-		    ClearFields
-		    LoadUsers("")
-		    LoadUserGroups  ' Refresh groups in case new one was added
-		    
-		  Catch e As DatabaseException
-		    MessageBox("Error adding user: " + e.Message)
-		  End Try
+		  lstUsers.SelectedRowIndex = -1
+		  txtName.SetFocus
+		  btnUpdateUser.Enabled = false
+		  btnDeleteUser.Enabled = false
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -873,12 +979,13 @@ End
 		  ' *******************************************************************************
 		  ' Check if a user is selected
 		  If mSelectedUserID = 0 Then
-		    MessageBox("Please select a user to update")
+		    ' MessageBox("Please select a user to update")
+		    session.DisplayMessage("Please select a user to update.", self.lblDisplayedMessage)
 		    Return
 		  End If
 		  
 		  If txtName.Text.Trim = "" Or txtEmail.Text.Trim = "" Or txtUsername.Text.Trim = "" Then
-		    MessageBox("Please fill name, email, and username fields")
+		    session.DisplayMessage("Please fill name, email, and username fields", self.lblDisplayedMessage)
 		    Return
 		  End If
 		  
@@ -951,7 +1058,7 @@ End
 		      
 		      ps.ExecuteSQL
 		      
-		      MessageBox("User updated successfully!")
+		      session.DisplayMessage("User updated successfully!", self.lblDisplayedMessage)
 		      LoadUsers("")
 		      LoadUserGroups
 		      
@@ -983,7 +1090,7 @@ End
 		      
 		      ps.ExecuteSQL
 		      
-		      MessageBox("User updated successfully!")
+		      session.DisplayMessage("User updated successfully!", self.lblDisplayedMessage)
 		      LoadUsers("")
 		      LoadUserGroups
 		      
@@ -1001,7 +1108,7 @@ End
 		  ' btnDeleteUser.Pressed Event
 		  ' *******************************************************************************
 		  If lstUsers.SelectedRowIndex < 0 Then
-		    MessageBox("Please select a user to delete")
+		    session.DisplayMessage("Please select a user to delete", self.lblDisplayedMessage)
 		    Return
 		  End If
 		  
@@ -1024,26 +1131,64 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnFilterByGroup
+#tag Events btnSaveNewUser
 	#tag Event
 		Sub Pressed()
 		  ' *******************************************************************************
-		  ' btnFilterByGroup.Pressed Event
+		  ' btnSaveNewUser.Pressed Event
 		  ' *******************************************************************************
-		  If cmbUserGroup.Text.Trim <> "" Then
-		    LoadUsers(cmbUserGroup.Text.Trim)
+		  
+		  If txtName.Text.Trim = "" Or txtEmail.Text.Trim = "" Or txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
+		    MessageBox("Please fill all fields")
+		    Return
 		  End If
+		  
+		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?)"
+		  
+		  Try
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    
+		    ps.Bind(0, txtName.Text.Trim)
+		    ps.Bind(1, txtEmail.Text.Trim)
+		    ps.Bind(2, txtUsername.Text.Trim)
+		    ps.Bind(3, txtPassword.Text.Trim)
+		    ps.Bind(4, chkIsAdmin.Value)
+		    ps.Bind(5, cmbUserGroup.Text.Trim)
+		    
+		    ps.ExecuteSQL
+		    
+		    session.DisplayMessage("User added successfully!", self.lblDisplayedMessage)
+		    ClearFields
+		    LoadUsers("")
+		    LoadUserGroups  ' Refresh groups in case new one was added
+		    
+		  Catch e As DatabaseException
+		    MessageBox("Error adding user: " + e.Message)
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnClearFilter
+#tag Events popGroupFilter
 	#tag Event
-		Sub Pressed()
+		Sub SelectionChanged(item As WebMenuItem)
 		  ' *******************************************************************************
-		  ' btnClearFilter.Pressed Event
+		  ' popGroupFilter.SelectionChanged Event
 		  ' *******************************************************************************
-		  LoadUsers("")
-		  cmbUserGroup.SelectedRowIndex = -1
+		  #Pragma Unused item
+		  
+		  If Me.SelectedRowIndex = 0 Then
+		    ' "All Groups" selected
+		    LoadUsers("")
+		  Else
+		    ' Specific group selected
+		    LoadUsers(Me.RowTextAt(Me.SelectedRowIndex))
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

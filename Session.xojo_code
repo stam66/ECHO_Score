@@ -63,6 +63,23 @@ Inherits WebSession
 
 
 	#tag Method, Flags = &h0
+		Sub DisplayMessage(message as string, label as WebLabel)
+		  label.Text = message
+		  label.Visible = True
+		  
+		  Timer.CallLater (2000, AddressOf HideMessage, label)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub HideMessage(value as Variant)
+		  Var label As WebLabel = WebLabel(value)
+		  label.Text = ""
+		  label.Visible = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ServeVideo(filename As String) As WebFile
 		  ' *******************************************************************************
 		  ' Method: ServeVideo
@@ -414,6 +431,14 @@ Inherits WebSession
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LastCreatedCaseGroup"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CurrentSection"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

@@ -562,6 +562,9 @@ End
 #tag Events lstCases
 	#tag Event
 		Sub DoublePressed(row As Integer, column As Integer)
+		  #Pragma Unused row
+		  #Pragma Unused column
+		  
 		  btnStartCase.Press
 		End Sub
 	#tag EndEvent
