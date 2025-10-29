@@ -397,7 +397,7 @@ Begin wc_base wc_CaseDetails
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
-      Indicator       =   0
+      Indicator       =   4
       Left            =   452
       LockBottom      =   True
       LockedInPosition=   False
@@ -406,7 +406,7 @@ Begin wc_base wc_CaseDetails
       LockRight       =   False
       LockTop         =   False
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   34
