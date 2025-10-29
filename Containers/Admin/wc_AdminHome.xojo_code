@@ -67,10 +67,10 @@ Begin wc_base wc_AdminHome
       CSSClasses      =   ""
       Default         =   False
       Enabled         =   True
-      Height          =   38
+      Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   197
+      Left            =   168
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -84,9 +84,9 @@ Begin wc_base wc_AdminHome
       TabIndex        =   1
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   147
+      Top             =   120
       Visible         =   True
-      Width           =   195
+      Width           =   255
       _mPanelIndex    =   -1
    End
    Begin WebButton btnManageCases
@@ -97,10 +97,10 @@ Begin wc_base wc_AdminHome
       CSSClasses      =   ""
       Default         =   False
       Enabled         =   True
-      Height          =   38
+      Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   197
+      Left            =   168
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -114,9 +114,9 @@ Begin wc_base wc_AdminHome
       TabIndex        =   2
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   223
+      Top             =   215
       Visible         =   True
-      Width           =   195
+      Width           =   255
       _mPanelIndex    =   -1
    End
    Begin WebButton btnEmailConfig
@@ -127,10 +127,10 @@ Begin wc_base wc_AdminHome
       CSSClasses      =   ""
       Default         =   False
       Enabled         =   True
-      Height          =   38
+      Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   197
+      Left            =   168
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -144,9 +144,9 @@ Begin wc_base wc_AdminHome
       TabIndex        =   3
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   299
+      Top             =   310
       Visible         =   True
-      Width           =   195
+      Width           =   255
       _mPanelIndex    =   -1
    End
    Begin WebButton btnProgressReview
@@ -157,10 +157,10 @@ Begin wc_base wc_AdminHome
       CSSClasses      =   ""
       Default         =   False
       Enabled         =   True
-      Height          =   38
+      Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   197
+      Left            =   168
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -174,9 +174,9 @@ Begin wc_base wc_AdminHome
       TabIndex        =   4
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   374
+      Top             =   404
       Visible         =   True
-      Width           =   195
+      Width           =   255
       _mPanelIndex    =   -1
    End
 End

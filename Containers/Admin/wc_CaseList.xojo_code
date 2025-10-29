@@ -24,42 +24,7 @@ Begin wc_base wc_CaseList
    Width           =   1044
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
-   Begin WebLabel lblTitle
-      Bold            =   True
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   0.0
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   0
-      TabStop         =   True
-      Text            =   "Case Management"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   20
-      Underline       =   False
-      Visible         =   True
-      Width           =   199
-      _mPanelIndex    =   -1
-   End
    Begin WebListBox lstCases
       AllowRowReordering=   False
       ColumnCount     =   4
@@ -72,7 +37,7 @@ Begin wc_base wc_CaseList
       HasBorder       =   True
       HasHeader       =   True
       HeaderHeight    =   0
-      Height          =   412
+      Height          =   488
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
@@ -100,7 +65,7 @@ Begin wc_base wc_CaseList
       TabIndex        =   1
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   210
+      Top             =   134
       Visible         =   True
       Width           =   1004
       _mPanelIndex    =   -1
@@ -130,7 +95,7 @@ Begin wc_base wc_CaseList
       TabIndex        =   11
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   82
+      Top             =   0
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -145,7 +110,7 @@ Begin wc_base wc_CaseList
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
+      Indicator       =   4
       Left            =   153
       LockBottom      =   False
       LockedInPosition=   False
@@ -154,13 +119,13 @@ Begin wc_base wc_CaseList
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   2
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   82
+      Top             =   0
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -175,7 +140,7 @@ Begin wc_base wc_CaseList
       Height          =   38
       Index           =   -2147483648
       Indicator       =   ""
-      Italic          =   False
+      Italic          =   True
       Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
@@ -191,7 +156,7 @@ Begin wc_base wc_CaseList
       TabStop         =   True
       Text            =   "Double-click a case to view details and manage videos"
       TextAlignment   =   0
-      TextColor       =   &c000000FF
+      TextColor       =   &c66666600
       Tooltip         =   ""
       Top             =   630
       Underline       =   False
@@ -227,7 +192,7 @@ Begin wc_base wc_CaseList
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   150
+      Top             =   88
       Underline       =   False
       Visible         =   True
       Width           =   124
@@ -259,7 +224,7 @@ Begin wc_base wc_CaseList
       TabIndex        =   21
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   150
+      Top             =   88
       Visible         =   True
       Width           =   190
       _mPanelIndex    =   -1
@@ -292,7 +257,7 @@ Begin wc_base wc_CaseList
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   150
+      Top             =   88
       Underline       =   False
       Visible         =   True
       Width           =   65
@@ -327,7 +292,7 @@ Begin wc_base wc_CaseList
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   150
+      Top             =   88
       Visible         =   True
       Width           =   196
       _mPanelIndex    =   -1
@@ -357,7 +322,7 @@ Begin wc_base wc_CaseList
       TabIndex        =   24
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   150
+      Top             =   88
       Visible         =   True
       Width           =   131
       _mPanelIndex    =   -1
