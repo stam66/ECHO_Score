@@ -516,7 +516,7 @@ Begin wc_base wc_CaseDetails
       Enabled         =   True
       FontName        =   ""
       FontSize        =   0.0
-      Height          =   38
+      Height          =   22
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
@@ -543,67 +543,6 @@ Begin wc_base wc_CaseDetails
       Width           =   64
       _mPanelIndex    =   -1
    End
-   Begin WebPopupMenu popAvailableGroups
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      InitialValue    =   ""
-      LastAddedRowIndex=   0
-      LastRowIndex    =   0
-      Left            =   844
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      PanelIndex      =   0
-      RowCount        =   0
-      Scope           =   0
-      SelectedRowIndex=   0
-      SelectedRowText =   ""
-      TabIndex        =   43
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   122
-      Visible         =   True
-      Width           =   240
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnAddGroup
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "+ Group"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   844
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   True
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   44
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   168
-      Visible         =   True
-      Width           =   95
-      _mPanelIndex    =   -1
-   End
    Begin WebListBox lstAssignedGroups
       AllowRowReordering=   False
       ColumnCount     =   1
@@ -616,7 +555,7 @@ Begin wc_base wc_CaseDetails
       HasBorder       =   True
       HasHeader       =   False
       HeaderHeight    =   0
-      Height          =   72
+      Height          =   100
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
@@ -632,11 +571,11 @@ Begin wc_base wc_CaseDetails
       LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      NoRowsMessage   =   ""
+      NoRowsMessage   =   "No groups assigned"
       PanelIndex      =   0
       ProcessingMessage=   ""
       RowCount        =   0
-      RowSelectionType=   1
+      RowSelectionType=   0
       Scope           =   0
       SearchCriteria  =   ""
       SelectedRowColor=   &c0d6efd
@@ -644,39 +583,9 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   46
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   37
+      Top             =   24
       Visible         =   True
       Width           =   240
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton btnRemoveGroup
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "- Group"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   995
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   True
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   47
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   168
-      Visible         =   True
-      Width           =   89
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkLVSizeDilated
@@ -1121,6 +1030,36 @@ Begin wc_base wc_CaseDetails
       Width           =   535
       _mPanelIndex    =   -1
    End
+   Begin WebButton btnManageGroups
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Manage..."
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   32
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   844
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   True
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   53
+      TabStop         =   True
+      Tooltip         =   "Manage group assignments"
+      Top             =   132
+      Visible         =   True
+      Width           =   101
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebContainerControl
 
@@ -1138,7 +1077,6 @@ End
 		  lstVideos.ColumnTypeAt(1) = WebListBox.CellTypes.TextField
 		  lstVideos.ColumnTypeAt(2) = WebListBox.CellTypes.TextField
 		  
-		  LoadAvailableGroups
 		  LoadCaseDetails
 		  LoadCaseVideos
 		  mCaseInfoChanged = False
@@ -1309,79 +1247,29 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub LoadAvailableGroups()
+		Sub LoadAvailableGroupsForDialog(dlg As dlg_ManageGroups)
 		  ' ******************************************************************
-		  ' LoadAvailableGroups Method
+		  ' LoadAvailableGroupsForDialog Method - Populate dialog's popup menu
 		  ' ******************************************************************
-		  popAvailableGroups.RemoveAllRows
+		  dlg.popAvailableGroups.RemoveAllRows
 		  
-		  ' Add common groups
-		  Var currentYear As Integer = DateTime.Now.Year
-		  Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
-		  Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
-		  
-		  For Each specialty As String In specialties
-		    For Each quarter As String In quarters
-		      popAvailableGroups.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
-		    Next
-		  Next
-		  
-		  ' Load existing groups from database (from both user_group and case_groups)
-		  Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL AND user_group <> '' UNION SELECT DISTINCT case_groups FROM cases WHERE case_groups IS NOT NULL AND case_groups <> '' ORDER BY 1"
+		  ' Load from database instead of hard-coding
+		  Var sql As String = "SELECT group_name FROM available_groups WHERE is_active = TRUE ORDER BY display_order, group_name"
 		  
 		  Try
 		    Var rs As RowSet = Session.DB.SelectSQL(sql)
-		    Var uniqueGroups() As String
 		    
 		    While Not rs.AfterLastRow
-		      Var groupText As String = rs.ColumnAt(0).StringValue
-		      
-		      ' Split comma-separated groups
-		      If groupText.Trim <> "" Then
-		        Var groups() As String = groupText.Split(",")
-		        For Each group As String In groups
-		          Var cleanGroup As String = group.Trim
-		          If cleanGroup <> "" Then
-		            ' Add if not already in list
-		            Var found As Boolean = False
-		            For Each existing As String In uniqueGroups
-		              If existing = cleanGroup Then
-		                found = True
-		                Exit For existing
-		              End If
-		            Next
-		            If Not found Then
-		              uniqueGroups.Add(cleanGroup)
-		            End If
-		          End If
-		        Next
-		      End If
-		      
+		      dlg.popAvailableGroups.AddRow(rs.Column("group_name").StringValue)
 		      rs.MoveToNextRow
 		    Wend
 		    
-		    ' Add unique groups to popup
-		    For Each group As String In uniqueGroups
-		      ' Check if already in popup
-		      Var alreadyExists As Boolean = False
-		      For i As Integer = 0 To popAvailableGroups.RowCount - 1
-		        If popAvailableGroups.RowTextAt(i) = group Then
-		          alreadyExists = True
-		          Exit For i
-		        End If
-		      Next
-		      
-		      If Not alreadyExists Then
-		        popAvailableGroups.AddRow(group)
-		      End If
-		    Next
-		    
 		  Catch e As DatabaseException
-		    System.DebugLog("Error loading groups: " + e.Message)
+		    System.DebugLog("Error loading available groups: " + e.Message)
 		  End Try
 		  
-		  If popAvailableGroups.RowCount > 0 Then
-		    popAvailableGroups.SelectedRowIndex = 0
+		  If dlg.popAvailableGroups.RowCount > 0 Then
+		    dlg.popAvailableGroups.SelectedRowIndex = 0
 		  End If
 		End Sub
 	#tag EndMethod
@@ -2449,36 +2337,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnAddGroup
-	#tag Event
-		Sub Pressed()
-		  ' ******************************************************************
-		  ' btnAddGroup.Pressed Event
-		  ' ******************************************************************
-		  If popAvailableGroups.SelectedRowIndex < 0 Then
-		    MessageBox("Please select a group to add")
-		    Return
-		  End If
-		  
-		  Var selectedGroup As String = popAvailableGroups.RowTextAt(popAvailableGroups.SelectedRowIndex)
-		  
-		  ' Check if already assigned
-		  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
-		    If lstAssignedGroups.CellTextAt(i, 0) = selectedGroup Then
-		      MessageBox("This group is already assigned")
-		      Return
-		    End If
-		  Next
-		  
-		  ' Add to list
-		  lstAssignedGroups.AddRow(selectedGroup)
-		  mGroupsChanged = True
-		  
-		  TrackCaseInfoChange
-		  System.DebugLog("Group added: " + selectedGroup)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events lstAssignedGroups
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer, value As Variant)
@@ -2545,26 +2403,6 @@ End
 		      End Try
 		    End If
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events btnRemoveGroup
-	#tag Event
-		Sub Pressed()
-		  ' ******************************************************************
-		  ' btnRemoveGroup.Pressed Event
-		  ' ******************************************************************
-		  If lstAssignedGroups.SelectedRowIndex < 0 Then
-		    MessageBox("Please select a group to remove")
-		    Return
-		  End If
-		  
-		  Var selectedGroup As String = lstAssignedGroups.CellTextAt(lstAssignedGroups.SelectedRowIndex, 0)
-		  lstAssignedGroups.RemoveRowAt(lstAssignedGroups.SelectedRowIndex)
-		  mGroupsChanged = True
-		  
-		  TrackCaseInfoChange
-		  System.DebugLog("Group removed: " + selectedGroup)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2642,6 +2480,47 @@ End
 	#tag Event
 		Sub Pressed()
 		  htmlVideoPreview.ExecuteJavaScript("(function() { var v = document.getElementById('mainVideo'); if (v) { if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } else { if (v.requestFullscreen) { v.requestFullscreen(); } else if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); } else if (v.mozRequestFullScreen) { v.mozRequestFullScreen(); } else if (v.msRequestFullscreen) { v.msRequestFullscreen(); } } } })();")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnManageGroups
+	#tag Event
+		Sub Pressed()
+		  ' ******************************************************************
+		  ' btnManageGroups.Pressed - Open group management dialog
+		  ' ******************************************************************
+		  Var dlg As New dlg_ManageGroups
+		  
+		  ' Pass current groups to dialog
+		  dlg.AssignedGroups.ResizeTo(-1)
+		  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+		    dlg.AssignedGroups.Add(lstAssignedGroups.CellTextAt(i, 0))
+		  Next
+		  
+		  ' Load available groups into dialog's popup
+		  LoadAvailableGroupsForDialog(dlg)
+		  
+		  ' Populate dialog's assigned groups list
+		  For Each group As String In dlg.AssignedGroups
+		    dlg.lstAssignedGroups.AddRow(group)
+		  Next
+		  
+		  ' Show dialog
+		  dlg.Show
+		  
+		  ' When dialog closes, check if groups changed
+		  If dlg.GroupsChanged Then
+		    ' Update the main list
+		    lstAssignedGroups.RemoveAllRows
+		    For Each group As String In dlg.AssignedGroups
+		      lstAssignedGroups.AddRow(group)
+		    Next
+		    
+		    mGroupsChanged = True
+		    TrackCaseInfoChange
+		    System.DebugLog("Groups updated via dialog")
+		  End If
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
