@@ -5,7 +5,7 @@ Begin wc_base wc_AdminHome
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   500
+   Height          =   572
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,7 +21,7 @@ Begin wc_base wc_AdminHome
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   590
+   Width           =   698
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
@@ -56,7 +56,7 @@ Begin wc_base wc_AdminHome
       Top             =   20
       Underline       =   False
       Visible         =   True
-      Width           =   572
+      Width           =   680
       _mPanelIndex    =   -1
    End
    Begin WebButton btnManageUsers
@@ -70,7 +70,7 @@ Begin wc_base wc_AdminHome
       Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   168
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -84,7 +84,7 @@ Begin wc_base wc_AdminHome
       TabIndex        =   1
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   120
+      Top             =   111
       Visible         =   True
       Width           =   255
       _mPanelIndex    =   -1
@@ -100,7 +100,7 @@ Begin wc_base wc_AdminHome
       Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   168
+      Left            =   423
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -114,15 +114,15 @@ Begin wc_base wc_AdminHome
       TabIndex        =   2
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   215
+      Top             =   111
       Visible         =   True
       Width           =   255
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnEmailConfig
+   Begin WebButton btnManageGroups
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Email configuration"
+      Caption         =   "Manage Groups"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -130,7 +130,7 @@ Begin wc_base wc_AdminHome
       Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   168
+      Left            =   423
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -144,7 +144,7 @@ Begin wc_base wc_AdminHome
       TabIndex        =   3
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   310
+      Top             =   193
       Visible         =   True
       Width           =   255
       _mPanelIndex    =   -1
@@ -160,7 +160,7 @@ Begin wc_base wc_AdminHome
       Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   168
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -174,7 +174,37 @@ Begin wc_base wc_AdminHome
       TabIndex        =   4
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   404
+      Top             =   193
+      Visible         =   True
+      Width           =   255
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnEmailConfig
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Email configuration"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   48
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   221
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   True
+      LockLeft        =   False
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   5
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   407
       Visible         =   True
       Width           =   255
       _mPanelIndex    =   -1
@@ -225,16 +255,15 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnEmailConfig
+#tag Events btnManageGroups
 	#tag Event
 		Sub Pressed()
 		  ' *******************************************************************************
-		  ' btnEmailConfig.Pressed Event
+		  ' btnManageGroups.Pressed Event
 		  ' *******************************************************************************
-		  Var emailConfig As New wc_EmailConfig
-		  emailConfig.ContainerID = "EmailConfig"
-		  emailConfig.Position = wc_Base.PositionEnum.Center
-		  Session.Navigation.NavigateTo(emailConfig)
+		  Var groupDlg As New dlg_ManageAvailableGroups
+		  ' Don't set ParentDialog - it's optional
+		  groupDlg.Show
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -248,6 +277,19 @@ End
 		  progressReview.ContainerID = "ProgressReview"
 		  progressReview.Position = wc_Base.PositionEnum.TopLeft
 		  Session.Navigation.NavigateTo(progressReview)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnEmailConfig
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnEmailConfig.Pressed Event
+		  ' *******************************************************************************
+		  Var emailConfig As New wc_EmailConfig
+		  emailConfig.ContainerID = "EmailConfig"
+		  emailConfig.Position = wc_Base.PositionEnum.Center
+		  Session.Navigation.NavigateTo(emailConfig)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

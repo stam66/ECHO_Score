@@ -349,7 +349,17 @@ End
 
 	#tag Event
 		Sub Shown()
-		  LoadCases
+		  ' Check if we need to refresh (e.g., after saving in case details)
+		  If Session.CaseListNeedsRefresh Then
+		    LoadGroupFilter
+		    LoadCases
+		    Session.CaseListNeedsRefresh = False
+		  Else
+		    ' Normal refresh
+		    LoadCases
+		  End If
+		  
+		  ' LoadCases
 		End Sub
 	#tag EndEvent
 

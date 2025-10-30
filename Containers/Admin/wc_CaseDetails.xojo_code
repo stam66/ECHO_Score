@@ -1564,8 +1564,8 @@ End
 		Private mCaseInfoChanged As Boolean = False
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mGroupsChanged As Boolean = False
+	#tag Property, Flags = &h0
+		mGroupsChanged As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1948,6 +1948,9 @@ End
 		      For i As Integer = 0 To lstAssignedGroups.RowCount - 1
 		        mOriginalGroups.Add(lstAssignedGroups.CellTextAt(i, 0))
 		      Next
+		      
+		      ' Flag that case list needs refresh when navigating back
+		      Session.CaseListNeedsRefresh = True
 		    End If
 		    
 		  Catch e As DatabaseException
@@ -2491,6 +2494,9 @@ End
 		  ' ******************************************************************
 		  Var dlg As New dlg_ManageGroups
 		  
+		  ' Store reference to this container
+		  dlg.ParentContainer = Self
+		  
 		  ' Pass current groups to dialog
 		  dlg.AssignedGroups.ResizeTo(-1)
 		  For i As Integer = 0 To lstAssignedGroups.RowCount - 1
@@ -2505,21 +2511,45 @@ End
 		    dlg.lstAssignedGroups.AddRow(group)
 		  Next
 		  
-		  ' Show dialog
+		  ' Show dialog (it will update us when it closes)
 		  dlg.Show
 		  
-		  ' When dialog closes, check if groups changed
-		  If dlg.GroupsChanged Then
-		    ' Update the main list
-		    lstAssignedGroups.RemoveAllRows
-		    For Each group As String In dlg.AssignedGroups
-		      lstAssignedGroups.AddRow(group)
-		    Next
-		    
-		    mGroupsChanged = True
-		    TrackCaseInfoChange
-		    System.DebugLog("Groups updated via dialog")
-		  End If
+		  
+		  
+		  
+		  
+		  
+		  ' Var dlg As New dlg_ManageGroups
+		  ' 
+		  ' ' Pass current groups to dialog
+		  ' dlg.AssignedGroups.ResizeTo(-1)
+		  ' For i As Integer = 0 To lstAssignedGroups.RowCount - 1
+		  ' dlg.AssignedGroups.Add(lstAssignedGroups.CellTextAt(i, 0))
+		  ' Next
+		  ' 
+		  ' ' Load available groups into dialog's popup
+		  ' LoadAvailableGroupsForDialog(dlg)
+		  ' 
+		  ' ' Populate dialog's assigned groups list
+		  ' For Each group As String In dlg.AssignedGroups
+		  ' dlg.lstAssignedGroups.AddRow(group)
+		  ' Next
+		  ' 
+		  ' ' Show dialog
+		  ' dlg.Show
+		  ' 
+		  ' ' When dialog closes, check if groups changed
+		  ' If dlg.GroupsChanged Then
+		  ' ' Update the main list
+		  ' lstAssignedGroups.RemoveAllRows
+		  ' For Each group As String In dlg.AssignedGroups
+		  ' lstAssignedGroups.AddRow(group)
+		  ' Next
+		  ' 
+		  ' mGroupsChanged = True
+		  ' TrackCaseInfoChange
+		  ' System.DebugLog("Groups updated via dialog")
+		  ' End If
 		  
 		End Sub
 	#tag EndEvent
@@ -2811,6 +2841,14 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="mGroupsChanged"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

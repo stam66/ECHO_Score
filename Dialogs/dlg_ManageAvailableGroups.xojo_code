@@ -499,7 +499,7 @@ End
 		  ClearForm
 		  
 		  
-		    ' Configure list columns
+		  ' Configure list columns
 		  lstAvailableGroups.ColumnTypeAt(0) = WebListBox.CellTypes.TextField  ' Group Name
 		  lstAvailableGroups.ColumnTypeAt(1) = WebListBox.CellTypes.TextField  ' Category
 		  lstAvailableGroups.ColumnTypeAt(2) = WebListBox.CellTypes.TextField  ' Order
@@ -632,6 +632,10 @@ End
 		GroupsModified As Boolean = False
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		ParentDialog As dlg_ManageGroups
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private SelectedGroupID As Integer = -1
 	#tag EndProperty
@@ -674,9 +678,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer, value As Variant)
-		  ' Handle inline editing of Active checkbox (column 3)
+		  Var groupID As Integer = Me.RowTagAt(row)
+		  
+		  ' Handle checkbox (column 3)
 		  If column = 3 Then
-		    Var groupID As Integer = Me.RowTagAt(row)
 		    Var isActive As Boolean = value.BooleanValue
 		    
 		    ' Update database
@@ -692,13 +697,81 @@ End
 		      GroupsModified = True
 		      lblStatus.Text = "Group " + If(isActive, "activated", "deactivated")
 		      
+		      ' Notify parent dialog
+		      If ParentDialog <> Nil Then
+		        ParentDialog.ReloadAvailableGroups
+		      End If
+		      
 		    Catch e As DatabaseException
 		      MessageBox("Error updating active status: " + e.Message)
-		      ' Revert the checkbox using CORRECT method
 		      Me.CellCheckboxValueAt(row, column) = Not isActive
 		    End Try
+		    
+		    ' Handle text fields (columns 0, 1, 2)
+		  ElseIf column >= 0 And column <= 2 Then
+		    Var newValue As String = value.StringValue.Trim
+		    
+		    ' Validate group name
+		    If column = 0 And newValue = "" Then
+		      MessageBox("Group name cannot be empty")
+		      LoadAvailableGroupsList  ' Reload to revert change
+		      Return
+		    End If
+		    
+		    ' Validate order
+		    If column = 2 Then
+		      Var orderValue As Integer = Val(newValue)
+		      If orderValue < 0 Then orderValue = 0
+		      newValue = Str(orderValue)
+		    End If
+		    
+		    ' Update database
+		    Var sql As String
+		    Select Case column
+		    Case 0
+		      sql = "UPDATE available_groups SET group_name = ? WHERE group_id = ?"
+		    Case 1
+		      sql = "UPDATE available_groups SET group_category = ? WHERE group_id = ?"
+		    Case 2
+		      sql = "UPDATE available_groups SET display_order = ? WHERE group_id = ?"
+		    End Select
+		    
+		    Try
+		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		      
+		      If column = 2 Then
+		        ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        ps.Bind(0, Val(newValue))
+		      Else
+		        ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		        ps.Bind(0, newValue)
+		      End If
+		      
+		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      ps.Bind(1, groupID)
+		      ps.ExecuteSQL
+		      
+		      GroupsModified = True
+		      lblStatus.Text = "Group updated"
+		      
+		      ' Update the cell display
+		      Me.CellTextAt(row, column) = newValue
+		      
+		      ' Notify parent dialog to reload popup
+		      If ParentDialog <> Nil Then
+		        ParentDialog.ReloadAvailableGroups
+		      End If
+		      
+		      ' Reload list to reflect new sort order if display_order changed
+		      If column = 2 Then
+		        LoadAvailableGroupsList
+		      End If
+		      
+		    Catch e As DatabaseException
+		      MessageBox("Error updating group: " + e.Message)
+		      LoadAvailableGroupsList  ' Reload to revert change
+		    End Try
 		  End If
-		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -877,6 +950,9 @@ End
 #tag Events btnClose
 	#tag Event
 		Sub Pressed()
+		  If GroupsModified And ParentDialog <> Nil Then
+		    ParentDialog.ReloadAvailableGroups
+		  End If
 		  Self.Close
 		End Sub
 	#tag EndEvent
@@ -1123,5 +1199,13 @@ End
 			"2 - TopToBottom"
 			"3 - BottomToTop"
 		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="GroupsModified"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

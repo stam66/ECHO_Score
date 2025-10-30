@@ -317,7 +317,7 @@ Begin WebDialog dlg_ManageGroups
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   2
       TabIndex        =   8
@@ -362,8 +362,8 @@ End
 #tag EndWebPage
 
 #tag WindowCode
-	#tag Method, Flags = &h21
-		Private Sub ReloadAvailableGroups()
+	#tag Method, Flags = &h0
+		Sub ReloadAvailableGroups()
 		  ' Save current selection
 		  Var currentSelection As String = ""
 		  If popAvailableGroups.SelectedRowIndex >= 0 Then
@@ -410,6 +410,10 @@ End
 
 	#tag Property, Flags = &h0
 		GroupsChanged As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ParentContainer As wc_CaseDetails
 	#tag EndProperty
 
 
@@ -516,6 +520,17 @@ End
 		  ' ******************************************************************
 		  ' btnDone.Pressed - Close dialog
 		  ' ******************************************************************
+		  ' Notify parent container if groups changed
+		  If GroupsChanged And ParentContainer <> Nil Then
+		    ' Update the parent's list
+		    ParentContainer.lstAssignedGroups.RemoveAllRows
+		    For Each group As String In AssignedGroups
+		      ParentContainer.lstAssignedGroups.AddRow(group)
+		    Next
+		    ParentContainer.mGroupsChanged = True
+		    ParentContainer.TrackCaseInfoChange
+		  End If
+		  
 		  Self.Close
 		End Sub
 	#tag EndEvent
@@ -524,13 +539,8 @@ End
 	#tag Event
 		Sub Pressed()
 		  Var adminDlg As New dlg_ManageAvailableGroups
+		  adminDlg.ParentDialog = Self  ' CRITICAL: Set the parent reference
 		  adminDlg.Show
-		  
-		  ' When admin dialog closes, refresh our popup if groups were modified
-		  If adminDlg.GroupsModified Then
-		    ' Reload the available groups popup
-		    ReloadAvailableGroups
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

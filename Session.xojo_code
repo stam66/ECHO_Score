@@ -135,6 +135,10 @@ Inherits WebSession
 
 
 	#tag Property, Flags = &h0
+		CaseListNeedsRefresh As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		CurrentSection As String
 	#tag EndProperty
 
@@ -443,7 +447,7 @@ Inherits WebSession
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
