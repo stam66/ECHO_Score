@@ -10,3 +10,5 @@ Debug*/Debug*\ Libs
 *.xojo_uistate
 *.obsolete*
 ECHO_Score code/.DS_Store
+# macOS Finder metadata
+.DS_Store
