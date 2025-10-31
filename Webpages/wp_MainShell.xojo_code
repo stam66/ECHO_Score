@@ -395,7 +395,7 @@ Begin WebPage wp_MainShell
       Scope           =   0
       TabIndex        =   12
       TabStop         =   True
-      Text            =   "Version 1.0	©️Dr S. Kapetanakis, 2025"
+      Text            =   "Version 1.0 RC1        ©️Dr S. Kapetanakis, 2025"
       TextAlignment   =   3
       TextColor       =   &c000000FF
       Tooltip         =   ""
