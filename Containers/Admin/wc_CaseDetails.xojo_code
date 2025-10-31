@@ -1090,6 +1090,9 @@ End
 		  Self.SectionTitle = "Case Data"
 		  
 		  UpdateNavigation // update shell page data
+		  
+		  btnSaveAll.Enabled = False
+		  btnCancelChanges.Enabled = False
 		End Sub
 	#tag EndEvent
 
@@ -1115,6 +1118,9 @@ End
 		  chkIVCHighPressure.Value = False
 		  txtCorrectConclusions.Text = ""
 		  chkRequiresFullEcho.Value = False
+		  
+		  btnSaveAll.Enabled = False
+		  btnCancelChanges.Enabled = False
 		End Sub
 	#tag EndMethod
 
@@ -1393,6 +1399,9 @@ End
 		  Catch e As DatabaseException
 		    MessageBox("Error loading case details: " + e.Message)
 		  End Try
+		  
+		  btnSaveAll.Enabled = False
+		  btnCancelChanges.Enabled = False
 		End Sub
 	#tag EndMethod
 
@@ -1539,6 +1548,9 @@ End
 		  ' Track changes to answers
 		  ' ******************************************************************
 		  mAnswersChanged = True
+		  
+		  btnSaveAll.Enabled = True
+		  btnCancelChanges.Enabled = True
 		End Sub
 	#tag EndMethod
 
@@ -1548,6 +1560,9 @@ End
 		  ' Track changes to case info
 		  ' ******************************************************************
 		  mCaseInfoChanged = True
+		  
+		  btnSaveAll.Enabled = True
+		  btnCancelChanges.Enabled = True
 		End Sub
 	#tag EndMethod
 
@@ -1953,9 +1968,15 @@ End
 		      Session.CaseListNeedsRefresh = True
 		    End If
 		    
+		    btnSaveAll.Enabled = False
+		    btnCancelChanges.Enabled = False
+		    
 		  Catch e As DatabaseException
 		    Session.DB.RollbackTransaction
 		    MessageBox("Error saving changes: " + e.Message)
+		    
+		    btnSaveAll.Enabled = True
+		    btnCancelChanges.Enabled = True
 		  End Try
 		  
 		  ' =============================================================================
@@ -1978,6 +1999,9 @@ End
 		  mCaseInfoChanged = False
 		  mAnswersChanged = False
 		  mGroupsChanged = False
+		  
+		  btnSaveAll.Enabled = False
+		  btnCancelChanges.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

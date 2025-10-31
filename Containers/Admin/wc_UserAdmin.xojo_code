@@ -27,7 +27,7 @@ Begin wc_base wc_UserAdmin
    _mPanelIndex    =   -1
    Begin WebListBox lstUsers
       AllowRowReordering=   False
-      ColumnCount     =   5
+      ColumnCount     =   6
       ColumnWidths    =   ""
       ControlID       =   ""
       CSSClasses      =   ""
@@ -41,7 +41,7 @@ Begin wc_base wc_UserAdmin
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
-      InitialValue    =   "Name	Email	Username	Admin	Group"
+      InitialValue    =   "Name	Email	Username	Admin	Group	Active"
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
@@ -67,7 +67,7 @@ Begin wc_base wc_UserAdmin
       Tooltip         =   ""
       Top             =   79
       Visible         =   True
-      Width           =   702
+      Width           =   720
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblName
@@ -81,7 +81,7 @@ Begin wc_base wc_UserAdmin
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -116,7 +116,7 @@ Begin wc_base wc_UserAdmin
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -135,7 +135,7 @@ Begin wc_base wc_UserAdmin
       Tooltip         =   ""
       Top             =   105
       Visible         =   True
-      Width           =   276
+      Width           =   249
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblEmail
@@ -149,7 +149,7 @@ Begin wc_base wc_UserAdmin
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -184,7 +184,7 @@ Begin wc_base wc_UserAdmin
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -203,7 +203,7 @@ Begin wc_base wc_UserAdmin
       Tooltip         =   ""
       Top             =   190
       Visible         =   True
-      Width           =   276
+      Width           =   249
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblUsername
@@ -217,7 +217,7 @@ Begin wc_base wc_UserAdmin
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -252,7 +252,7 @@ Begin wc_base wc_UserAdmin
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -271,7 +271,7 @@ Begin wc_base wc_UserAdmin
       Tooltip         =   ""
       Top             =   275
       Visible         =   True
-      Width           =   276
+      Width           =   249
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblPassword
@@ -285,7 +285,7 @@ Begin wc_base wc_UserAdmin
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -320,7 +320,7 @@ Begin wc_base wc_UserAdmin
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -339,7 +339,7 @@ Begin wc_base wc_UserAdmin
       Tooltip         =   ""
       Top             =   360
       Visible         =   True
-      Width           =   276
+      Width           =   249
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkIsAdmin
@@ -351,7 +351,7 @@ Begin wc_base wc_UserAdmin
       Indeterminate   =   False
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -367,7 +367,7 @@ Begin wc_base wc_UserAdmin
       Top             =   420
       Value           =   False
       Visible         =   True
-      Width           =   276
+      Width           =   125
       _mPanelIndex    =   -1
    End
    Begin WebButton btnAddUser
@@ -380,8 +380,8 @@ Begin wc_base wc_UserAdmin
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   748
+      Indicator       =   8
+      Left            =   750
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -395,9 +395,9 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   11
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   0
       Visible         =   True
-      Width           =   125
+      Width           =   143
       _mPanelIndex    =   -1
    End
    Begin WebButton btnUpdateUser
@@ -410,8 +410,8 @@ Begin wc_base wc_UserAdmin
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   748
+      Indicator       =   3
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -419,13 +419,13 @@ Begin wc_base wc_UserAdmin
       LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   595
+      Top             =   604
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -441,7 +441,7 @@ Begin wc_base wc_UserAdmin
       Height          =   38
       Index           =   -2147483648
       Indicator       =   4
-      Left            =   899
+      Left            =   907
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -455,7 +455,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   13
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   595
+      Top             =   604
       Visible         =   True
       Width           =   125
       _mPanelIndex    =   -1
@@ -471,7 +471,7 @@ Begin wc_base wc_UserAdmin
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -488,7 +488,7 @@ Begin wc_base wc_UserAdmin
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   467
+      Top             =   476
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -506,7 +506,7 @@ Begin wc_base wc_UserAdmin
       InitialValue    =   ""
       LastAddedRowIndex=   0
       LastRowIndex    =   0
-      Left            =   748
+      Left            =   774
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -523,9 +523,9 @@ Begin wc_base wc_UserAdmin
       TabStop         =   True
       Text            =   ""
       Tooltip         =   ""
-      Top             =   506
+      Top             =   515
       Visible         =   True
-      Width           =   276
+      Width           =   249
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblDisplayedMessage
@@ -572,8 +572,8 @@ Begin wc_base wc_UserAdmin
       Enabled         =   False
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   881
+      Indicator       =   8
+      Left            =   901
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -587,7 +587,7 @@ Begin wc_base wc_UserAdmin
       TabIndex        =   20
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   0
       Visible         =   True
       Width           =   143
       _mPanelIndex    =   -1
@@ -621,6 +621,34 @@ Begin wc_base wc_UserAdmin
       Top             =   20
       Visible         =   True
       Width           =   272
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkIsActive
+      Caption         =   "Active User"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   34
+      Indeterminate   =   False
+      Index           =   -2147483648
+      Indicator       =   ""
+      Left            =   907
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   22
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   420
+      Value           =   False
+      Visible         =   True
+      Width           =   125
       _mPanelIndex    =   -1
    End
 End
@@ -844,11 +872,29 @@ End
 		  ' *******************************************************************************
 		  lstUsers.RemoveAllRows
 		  
+		  // ---- Choose base colours based on dark / light mode -----------------
+		  Var darkMode As Boolean = session.IsDarkMode
+		  Var activeStyle   As New WebStyle
+		  Var inactiveStyle As New WebStyle
+		  
+		  ' If darkMode Then
+		  ' // Dark background → light text
+		  ' activeStyle.ForegroundColor   = Color.White
+		  ' inactiveStyle.ForegroundColor = Color.LightGray // &cAAAAAA   // light gray
+		  ' Else
+		  ' // Light background → dark text
+		  ' activeStyle.ForegroundColor   = Color.Black
+		  ' inactiveStyle.ForegroundColor = Color.LightGray // &c808080   // gray
+		  ' End If
+		  
+		  activeStyle.ForegroundColor = if(darkMode, color.White, color.Black)
+		  inactiveStyle.ForegroundColor = color.LightGray
+		  
 		  Var sql As String
 		  If filterGroup = "" Then
-		    sql = "SELECT user_id, full_name, email, username, is_admin, user_group FROM users ORDER BY full_name"
+		    sql = "SELECT user_id, full_name, email, username, is_admin, is_active, user_group FROM users ORDER BY full_name"
 		  Else
-		    sql = "SELECT user_id, full_name, email, username, is_admin, user_group FROM users WHERE user_group = ? ORDER BY full_name"
+		    sql = "SELECT user_id, full_name, email, username, is_admin, is_active, user_group FROM users WHERE user_group = ? ORDER BY full_name"
 		  End If
 		  
 		  Try
@@ -863,18 +909,81 @@ End
 		    End If
 		    
 		    While Not rs.AfterLastRow
-		      lstUsers.AddRow(rs.Column("full_name").StringValue)
-		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 1) = rs.Column("email").StringValue
-		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 2) = rs.Column("username").StringValue
-		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 3) = If(rs.Column("is_admin").BooleanValue, "Yes", "No")
-		      lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 4) = rs.Column("user_group").StringValue
-		      lstUsers.RowTagAt(lstUsers.LastAddedRowIndex) = rs.Column("user_id").IntegerValue
+		      ' Add empty row first
+		      lstUsers.AddRow()  // CORRECT: No parameters!
+		      Var rowIdx As Integer = lstUsers.LastAddedRowIndex
+		      
+		      ' Read data
+		      Var fullName As String = rs.Column("full_name").StringValue
+		      Var email As String = rs.Column("email").StringValue
+		      Var username As String = rs.Column("username").StringValue
+		      Var isAdmin As Boolean = rs.Column("is_admin").BooleanValue
+		      Var isActive As Boolean = rs.Column("is_active").BooleanValue
+		      Var userGroup As String = rs.Column("user_group").StringValue
+		      Var userId As Integer = rs.Column("user_id").IntegerValue
+		      
+		      ' Store primary key
+		      lstUsers.RowTagAt(rowIdx) = userId
+		      
+		      ' Choose style
+		      Var cellStyle As WebStyle = If(isActive, activeStyle, inactiveStyle)
+		      
+		      ' Apply styled text to every column
+		      lstUsers.CellValueAt(rowIdx, 0) = New WebListBoxStyleRenderer(cellStyle, fullName)
+		      lstUsers.CellValueAt(rowIdx, 1) = New WebListBoxStyleRenderer(cellStyle, email)
+		      lstUsers.CellValueAt(rowIdx, 2) = New WebListBoxStyleRenderer(cellStyle, username)
+		      lstUsers.CellValueAt(rowIdx, 3) = New WebListBoxStyleRenderer(cellStyle, If(isAdmin, "Yes", "No"))
+		      lstUsers.CellValueAt(rowIdx, 4) = New WebListBoxStyleRenderer(cellStyle, userGroup)
+		      lstUsers.CellValueAt(rowIdx, 5) = New WebListBoxStyleRenderer(cellStyle, If(isActive, "Active", "Inactive"))
 		      
 		      rs.MoveToNextRow
 		    Wend
+		    
 		  Catch e As DatabaseException
 		    MessageBox("Error loading users: " + e.Message)
 		  End Try
+		  
+		  
+		  ' ' *******************************************************************************
+		  ' ' LoadUsers Method
+		  ' ' *******************************************************************************
+		  ' lstUsers.RemoveAllRows
+		  ' 
+		  ' Var sql As String
+		  ' If filterGroup = "" Then
+		  ' sql = "SELECT user_id, full_name, email, username, is_admin, is_active, user_group FROM users ORDER BY full_name"
+		  ' Else
+		  ' sql = "SELECT user_id, full_name, email, username, is_admin, is_active, user_group FROM users WHERE user_group = ? ORDER BY full_name"
+		  ' End If
+		  ' 
+		  ' Try
+		  ' Var rs As RowSet
+		  ' If filterGroup = "" Then
+		  ' rs = Session.DB.SelectSQL(sql)
+		  ' Else
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.Bind(0, filterGroup)
+		  ' rs = ps.SelectSQL
+		  ' End If
+		  ' 
+		  ' While Not rs.AfterLastRow
+		  ' lstUsers.AddRow(rs.Column("full_name").StringValue)
+		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 1) = rs.Column("email").StringValue
+		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 2) = rs.Column("username").StringValue
+		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 3) = If(rs.Column("is_admin").BooleanValue, "Yes", "No")
+		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 4) = rs.Column("user_group").StringValue
+		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 5) = If(rs.Column("is_active").BooleanValue, "Active", "Inactive")
+		  ' lstUsers.RowTagAt(lstUsers.LastAddedRowIndex) = rs.Column("user_id").IntegerValue
+		  ' 
+		  ' rs.MoveToNextRow
+		  ' Wend
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error loading users: " + e.Message)
+		  ' End Try
+		  ' 
+		  ' 
+		  '  
 		End Sub
 	#tag EndMethod
 
@@ -907,7 +1016,7 @@ End
 		  Var userID As Integer = Me.RowTagAt(Me.SelectedRowIndex)
 		  mSelectedUserID = userID  ' Store for later use
 		  
-		  Var sql As String = "SELECT full_name, email, username, is_admin, user_group FROM users WHERE user_id = ?"
+		  Var sql As String = "SELECT full_name, email, username, is_admin, is_active, user_group FROM users WHERE user_id = ?"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -922,6 +1031,7 @@ End
 		      txtUsername.Text = rs.Column("username").StringValue
 		      txtPassword.Text = ""
 		      chkIsAdmin.Value = rs.Column("is_admin").BooleanValue
+		      chkIsActive.Value = rs.Column("is_active").BooleanValue 
 		      cmbUserGroup.Text = rs.Column("user_group").StringValue
 		    End If
 		  Catch e As DatabaseException
@@ -1037,7 +1147,7 @@ End
 		  
 		  If txtPassword.Text.Trim = "" Then
 		    ' Update without changing password
-		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, is_admin = ?, user_group = ? WHERE user_id = ?"
+		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, is_admin = ?, is_active = ?, user_group = ? WHERE user_id = ?"
 		    
 		    Try
 		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -1045,15 +1155,17 @@ End
 		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		      ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      
 		      ps.Bind(0, txtName.Text.Trim)
 		      ps.Bind(1, txtEmail.Text.Trim)
 		      ps.Bind(2, txtUsername.Text.Trim)
 		      ps.Bind(3, chkIsAdmin.Value)
-		      ps.Bind(4, cmbUserGroup.Text.Trim)
-		      ps.Bind(5, mSelectedUserID)
+		      ps.Bind(4, chkIsActive.Value)
+		      ps.Bind(5, cmbUserGroup.Text.Trim)
+		      ps.Bind(6, mSelectedUserID)
 		      
 		      ps.ExecuteSQL
 		      
@@ -1067,7 +1179,7 @@ End
 		    
 		  Else
 		    ' Update including password
-		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, password_hash = SHA2(?, 256), is_admin = ?, user_group = ? WHERE user_id = ?"
+		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, password_hash = SHA2(?, 256), is_admin = ?, is_active = ?, user_group = ? WHERE user_id = ?"
 		    
 		    Try
 		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -1077,7 +1189,8 @@ End
 		      ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		      ps.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      
 		      ps.Bind(0, txtName.Text.Trim)
 		      ps.Bind(1, txtEmail.Text.Trim)
@@ -1085,7 +1198,8 @@ End
 		      ps.Bind(3, txtPassword.Text.Trim)
 		      ps.Bind(4, chkIsAdmin.Value)
 		      ps.Bind(5, cmbUserGroup.Text.Trim)
-		      ps.Bind(6, mSelectedUserID)
+		      ps.Bind(6, chkIsActive.Value)
+		      ps.Bind(7, mSelectedUserID)
 		      
 		      ps.ExecuteSQL
 		      
@@ -1142,7 +1256,7 @@ End
 		    Return
 		  End If
 		  
-		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?)"
+		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, ?)"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -1151,14 +1265,16 @@ End
 		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    
 		    ps.Bind(0, txtName.Text.Trim)
 		    ps.Bind(1, txtEmail.Text.Trim)
 		    ps.Bind(2, txtUsername.Text.Trim)
 		    ps.Bind(3, txtPassword.Text.Trim)
 		    ps.Bind(4, chkIsAdmin.Value)
-		    ps.Bind(5, cmbUserGroup.Text.Trim)
+		    ps.Bind(5, chkIsActive.Value)
+		    ps.Bind(6, cmbUserGroup.Text.Trim)
 		    
 		    ps.ExecuteSQL
 		    

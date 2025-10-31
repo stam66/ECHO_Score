@@ -330,7 +330,7 @@ End
 		    Return
 		  End If
 		  
-		  Var sql As String = "SELECT user_id, full_name, email, is_admin FROM users WHERE username = ? AND password_hash = SHA2(?, 256)"
+		  Var sql As String = "SELECT user_id, full_name, email, is_admin FROM users WHERE username = ? AND password_hash = SHA2(?, 256) AND is_active = 1"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
