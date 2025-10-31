@@ -1166,7 +1166,31 @@ End
 		    Var rs As RowSet = ps.SelectSQL
 		    
 		    If rs <> Nil And Not rs.AfterLastRow Then
-		      lblCaseTitle.Text = rs.Column("serial_number").StringValue + " - " + rs.Column("case_label").StringValue
+		      ' Check if user has completed this case
+		      Var hasCompleted As Boolean = False
+		      Var checkSQL As String = "SELECT is_completed FROM user_responses WHERE user_id = ? AND case_id = ?"
+		      
+		      Try
+		        Var checkPS As MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
+		        checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        checkPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        checkPS.Bind(0, Session.CurrentUserID)
+		        checkPS.Bind(1, CaseID)
+		        
+		        Var checkRS As RowSet = checkPS.SelectSQL
+		        If checkRS <> Nil And Not checkRS.AfterLastRow Then
+		          hasCompleted = checkRS.Column("is_completed").BooleanValue
+		        End If
+		      Catch e As DatabaseException
+		        System.DebugLog("Error checking completion status: " + e.Message)
+		      End Try
+		      
+		      ' Only show case description AFTER user has submitted
+		      If hasCompleted Then
+		        lblCaseTitle.Text = rs.Column("serial_number").StringValue + " - " + rs.Column("case_label").StringValue
+		      Else
+		        lblCaseTitle.Text = rs.Column("serial_number").StringValue
+		      End If
 		    Else
 		      lblCaseTitle.Text = "Case Not Found"
 		    End If
@@ -1180,9 +1204,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LoadExistingResponse()
-		  ' *******************************************************************************
-		  ' LoadExistingResponse Method
-		  ' *******************************************************************************
 		  ' *******************************************************************************
 		  ' LoadExistingResponse Method
 		  ' *******************************************************************************
@@ -1414,8 +1435,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ResetUI()
+		  
+		  ' Set checkbox text color based on dark/light mode
 		  Var defaultStyle As New WebStyle
-		  defaultStyle.ForegroundColor = &c000000  // black
+		  defaultStyle.ForegroundColor = If(Session.IsDarkMode, Color.White, Color.Black)
+		  
+		  For Each cb As WebCheckBox In Array(_
+		    chkLVSizeDilated, chkLVFunctionImpaired, chkRVSizeDilated, chkRVFunctionImpaired, _
+		    chkAorticStenosis, chkAorticRegurgitation, chkMitralStenosis, chkMitralRegurgitation, _
+		    chkTricuspidStenosis, chkTricuspidRegurgitation, chkPericardialEffusion, chkIVCHighPressure, _
+		    chkRequiresFullEcho)
+		    
+		    cb.Style = defaultStyle
+		  Next
 		  
 		  For Each cb As WebCheckBox In Array( _
 		    chkLVSizeDilated, chkLVFunctionImpaired, chkRVSizeDilated, chkRVFunctionImpaired, _
