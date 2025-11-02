@@ -1478,6 +1478,35 @@ End
 		  ' Saves student's responses (draft or submitted)
 		  ' *******************************************************************************
 		  
+		  ' Validation: If submitting (not just saving draft), all checkboxes must have definite answers
+		  If isCompleted Then
+		    Var incompleteFields() As String
+		    
+		    If chkLVSizeDilated.Indeterminate Then incompleteFields.Add("LV Size")
+		    If chkLVFunctionImpaired.Indeterminate Then incompleteFields.Add("LV Function")
+		    If chkRVSizeDilated.Indeterminate Then incompleteFields.Add("RV Size")
+		    If chkRVFunctionImpaired.Indeterminate Then incompleteFields.Add("RV Function")
+		    If chkAorticStenosis.Indeterminate Then incompleteFields.Add("Aortic Stenosis")
+		    If chkAorticRegurgitation.Indeterminate Then incompleteFields.Add("Aortic Regurgitation")
+		    If chkMitralStenosis.Indeterminate Then incompleteFields.Add("Mitral Stenosis")
+		    If chkMitralRegurgitation.Indeterminate Then incompleteFields.Add("Mitral Regurgitation")
+		    If chkTricuspidStenosis.Indeterminate Then incompleteFields.Add("Tricuspid Stenosis")
+		    If chkTricuspidRegurgitation.Indeterminate Then incompleteFields.Add("Tricuspid Regurgitation")
+		    If chkPericardialEffusion.Indeterminate Then incompleteFields.Add("Pericardial Effusion")
+		    If chkIVCHighPressure.Indeterminate Then incompleteFields.Add("IVC High Pressure")
+		    If chkRequiresFullEcho.Indeterminate Then incompleteFields.Add("Requires Full Echo")
+		    
+		    If incompleteFields.Count > 0 Then
+		      Var errorMsg As String = "Please answer all questions before submitting." + EndOfLine + EndOfLine
+		      errorMsg = errorMsg + "The following fields are incomplete:" + EndOfLine
+		      For Each field As String In incompleteFields
+		        errorMsg = errorMsg + "• " + field + EndOfLine
+		      Next
+		      MessageBox(errorMsg)
+		      Return
+		    End If
+		  End If
+		  
 		  Var sql As String
 		  Var checkSQL As String = "SELECT response_id FROM user_responses WHERE user_id = ? AND case_id = ?"
 		  Var responseExists As Boolean = False
@@ -1629,19 +1658,21 @@ End
 		    ps.Bind(p, isCompleted)
 		    p = p + 1
 		    
-		    ' Bind completion flag for timestamp update
-		    ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		    ps.Bind(p, isCompleted)
-		    p = p + 1
-		    
 		    ' Bind WHERE clause parameters for UPDATE or VALUES for INSERT
 		    If responseExists Then
+		      ' Bind completion flag for timestamp update (only needed for UPDATE)
+		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		      ps.Bind(p, isCompleted)
+		      p = p + 1
+		      
+		      ' Bind WHERE clause
 		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      ps.Bind(p, Session.CurrentUserID)
 		      p = p + 1
 		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      ps.Bind(p, CaseID)
 		    Else
+		      ' For INSERT, just bind user_id and case_id
 		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		      ps.Bind(p, Session.CurrentUserID)
 		      p = p + 1
@@ -1669,9 +1700,12 @@ End
 		  
 		  ' =============================================================================
 		  ' Notes:
+		  ' * Validates all checkboxes have definite answers when submitting (isCompleted=True)
 		  ' * FIXED: Uses MYSQL_TYPE_NULL when binding Nil for indeterminate checkboxes
 		  ' * Uses MYSQL_TYPE_TINY when binding actual boolean values
 		  ' * All 13 checkboxes properly handle indeterminate state
+		  ' * FIXED: Completion flag for timestamp only bound on UPDATE (not INSERT)
+		  ' * UPDATE needs 18 parameters, INSERT needs 17 parameters
 		  ' * This method handles both Save Draft (isCompleted=False) and Submit (isCompleted=True)
 		  ' =============================================================================
 		  

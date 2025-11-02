@@ -359,7 +359,8 @@ End
 		    LoadCases
 		  End If
 		  
-		  ' LoadCases
+		  lstCases.Visible = False
+		  RestoreLastSelection
 		End Sub
 	#tag EndEvent
 
@@ -577,6 +578,26 @@ End
 		    System.DebugLog("Error loading groups: " + e.Message)
 		  End Try
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RestoreLastSelection()
+		  If mSelectedCaseID <= 0 Then
+		    lstCases.Visible = True
+		    Return
+		  End If
+		  
+		  ' Find the row with the matching case ID
+		  For i As Integer = 0 To lstCases.RowCount - 1
+		    If lstCases.RowTagAt(i) = mSelectedCaseID Then
+		      lstCases.SelectedRowIndex = i  // ← This happens AFTER delay
+		      mSelectedCaseID = 0  // Clear after restoring
+		      Exit For i
+		    End If
+		  Next
+		  
+		  lstCases.Visible = True
 		End Sub
 	#tag EndMethod
 

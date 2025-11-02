@@ -316,13 +316,10 @@ End
 	#tag EndEvent
 
 
-#tag EndWindowCode
-
-#tag Events btnLogin
-	#tag Event
-		Sub Pressed()
+	#tag Method, Flags = &h21
+		Private Sub PerformLogin()
 		  ' *******************************************************************************
-		  ' btnLogin.Pressed Event:
+		  ' Shared authentication logic
 		  ' *******************************************************************************
 		  If txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
 		    lblError.Text = "Please enter username and password"
@@ -377,6 +374,23 @@ End
 		    lblError.Text = "Database error: " + e.Message
 		    lblError.Visible = True
 		  End Try
+		End Sub
+	#tag EndMethod
+
+
+#tag EndWindowCode
+
+#tag Events btnLogin
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnLogin.Pressed Event:
+		  ' *******************************************************************************
+		  ' Force input sync then authenticate
+		  Me.ExecuteJavaScript("document.getElementById('" + txtUsername.ControlID + "').dispatchEvent(new Event('input', { bubbles: true }));" + _
+		  "document.getElementById('" + txtPassword.ControlID + "').dispatchEvent(new Event('input', { bubbles: true }));")
+		  
+		  WebTimer.CallLater(50, AddressOf PerformLogin)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

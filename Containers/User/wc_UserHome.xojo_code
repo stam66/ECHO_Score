@@ -356,6 +356,10 @@ End
 		  Self.SectionTitle = "Welcome, " + Session.CurrentUserName
 		  
 		  UpdateNavigation // update shell page data
+		  
+		  
+		  lstCases.SetFocus
+		  lstCases.SelectedRowIndex = -1
 		End Sub
 	#tag EndEvent
 
@@ -363,6 +367,10 @@ End
 		Sub Shown()
 		  LoadProgressStats
 		  LoadCases
+		  
+		  lstCases.Visible = false
+		  RestoreLastSelection
+		  
 		End Sub
 	#tag EndEvent
 
@@ -556,6 +564,31 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub RestoreLastSelection()
+		  If mLastViewedCaseID <= 0 Then
+		    lstCases.Visible = True
+		    Return
+		  End If
+		  
+		  ' Find the row with the matching case ID
+		  For i As Integer = 0 To lstCases.RowCount - 1
+		    If lstCases.RowTagAt(i) = mLastViewedCaseID Then
+		      lstCases.SelectedRowIndex = i  // ← This happens AFTER delay
+		      mLastViewedCaseID = 0  // Clear after restoring
+		      Exit For i
+		    End If
+		  Next
+		  
+		  lstCases.Visible = True
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mLastViewedCaseID As Integer = 0
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
@@ -581,6 +614,7 @@ End
 		  End If
 		  
 		  Var caseID As Integer = lstCases.RowTagAt(lstCases.SelectedRowIndex)
+		  mLastViewedCaseID = caseID
 		  
 		  Var caseReview As New wc_CaseReview
 		  caseReview.CaseID = caseID
