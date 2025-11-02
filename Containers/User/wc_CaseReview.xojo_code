@@ -1521,9 +1521,9 @@ End
 		    responseExists = (checkRS <> Nil And Not checkRS.AfterLastRow)
 		    
 		    If responseExists Then
-		      sql = "UPDATE user_responses SET lv_size_dilated=?, lv_function_impaired=?, rv_size_dilated=?, rv_function_impaired=?, aortic_stenosis_significant=?, aortic_regurgitation_significant=?, mitral_stenosis_significant=?, mitral_regurgitation_significant=?, tricuspid_stenosis_significant=?, tricuspid_regurgitation_significant=?, pericardial_effusion_significant=?, ivc_high_ra_pressure=?, user_conclusions=?, requires_full_echo=?, is_completed=?, completed_at=IF(?=1,NOW(),completed_at) WHERE user_id=? AND case_id=?"
+		      sql = "UPDATE user_responses SET lv_size_dilated=?, lv_function_impaired=?, rv_size_dilated=?, rv_function_impaired=?, aortic_stenosis_significant=?, aortic_regurgitation_significant=?, mitral_stenosis_significant=?, mitral_regurgitation_significant=?, tricuspid_stenosis_significant=?, tricuspid_regurgitation_significant=?, pericardial_effusion_significant=?, ivc_high_ra_pressure=?, user_conclusions=?, requires_full_echo=?, is_completed=?, score=?, completed_at=IF(?=1,NOW(),completed_at) WHERE user_id=? AND case_id=?"
 		    Else
-		      sql = "INSERT INTO user_responses (lv_size_dilated, lv_function_impaired, rv_size_dilated, rv_function_impaired, aortic_stenosis_significant, aortic_regurgitation_significant, mitral_stenosis_significant, mitral_regurgitation_significant, tricuspid_stenosis_significant, tricuspid_regurgitation_significant, pericardial_effusion_significant, ivc_high_ra_pressure, user_conclusions, requires_full_echo, is_completed, user_id, case_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+		      sql = "INSERT INTO user_responses (lv_size_dilated, lv_function_impaired, rv_size_dilated, rv_function_impaired, aortic_stenosis_significant, aortic_regurgitation_significant, mitral_stenosis_significant, mitral_regurgitation_significant, tricuspid_stenosis_significant, tricuspid_regurgitation_significant, pericardial_effusion_significant, ivc_high_ra_pressure, user_conclusions, requires_full_echo, is_completed, score, user_id, case_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 		    End If
 		    
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -1658,6 +1658,48 @@ End
 		    ps.Bind(p, isCompleted)
 		    p = p + 1
 		    
+		    ' REGRESSION FIX: Calculate and bind score
+		    Var calculatedScore As Integer = 0
+		    If isCompleted Then
+		      ' Get correct answers to calculate score
+		      Try
+		        Var scoreSQL As String = "SELECT * FROM cases WHERE case_id = ?"
+		        Var scorePS As MySQLPreparedStatement = Session.DB.Prepare(scoreSQL)
+		        scorePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        scorePS.Bind(0, CaseID)
+		        Var scoreRS As RowSet = scorePS.SelectSQL
+		        
+		        If scoreRS <> Nil And Not scoreRS.AfterLastRow Then
+		          ' Compare each answer - only count if correct answer exists
+		          If scoreRS.Column("lv_size_dilated").Value <> Nil And chkLVSizeDilated.Value = scoreRS.Column("lv_size_dilated").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("lv_function_impaired").Value <> Nil And chkLVFunctionImpaired.Value = scoreRS.Column("lv_function_impaired").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("rv_size_dilated").Value <> Nil And chkRVSizeDilated.Value = scoreRS.Column("rv_size_dilated").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("rv_function_impaired").Value <> Nil And chkRVFunctionImpaired.Value = scoreRS.Column("rv_function_impaired").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("aortic_stenosis_significant").Value <> Nil And chkAorticStenosis.Value = scoreRS.Column("aortic_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("aortic_regurgitation_significant").Value <> Nil And chkAorticRegurgitation.Value = scoreRS.Column("aortic_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("mitral_stenosis_significant").Value <> Nil And chkMitralStenosis.Value = scoreRS.Column("mitral_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("mitral_regurgitation_significant").Value <> Nil And chkMitralRegurgitation.Value = scoreRS.Column("mitral_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("tricuspid_stenosis_significant").Value <> Nil And chkTricuspidStenosis.Value = scoreRS.Column("tricuspid_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("tricuspid_regurgitation_significant").Value <> Nil And chkTricuspidRegurgitation.Value = scoreRS.Column("tricuspid_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("pericardial_effusion_significant").Value <> Nil And chkPericardialEffusion.Value = scoreRS.Column("pericardial_effusion_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("ivc_high_ra_pressure").Value <> Nil And chkIVCHighPressure.Value = scoreRS.Column("ivc_high_ra_pressure").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("requires_full_echo").Value <> Nil And chkRequiresFullEcho.Value = scoreRS.Column("requires_full_echo").BooleanValue Then calculatedScore = calculatedScore + 1
+		        End If
+		      Catch e As DatabaseException
+		        System.DebugLog("Error calculating score: " + e.Message)
+		      End Try
+		    End If
+		    
+		    ' Bind score
+		    If isCompleted Then
+		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      ps.Bind(p, calculatedScore)
+		    Else
+		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+		      ps.Bind(p, Nil)
+		    End If
+		    p = p + 1
+		    
 		    ' Bind WHERE clause parameters for UPDATE or VALUES for INSERT
 		    If responseExists Then
 		      ' Bind completion flag for timestamp update (only needed for UPDATE)
@@ -1685,11 +1727,23 @@ End
 		    If isCompleted Then
 		      MessageBox("Test submitted successfully!")
 		      ShowCorrectAnswers
-		      ' btnSubmit.Enabled = False
-		      btnSave.Visible = False // new
-		      btnSubmit.Visible = False // new
+		      btnSave.Visible = False
+		      btnSubmit.Visible = False
 		      IsReviewMode = True
-		      LoadCase
+		      
+		      ' Update case title without resetting UI (was calling LoadCase which calls ResetUI)
+		      Try
+		        Var titleSQL As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
+		        Var titlePS As MySQLPreparedStatement = Session.DB.Prepare(titleSQL)
+		        titlePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        titlePS.Bind(0, CaseID)
+		        Var titleRS As RowSet = titlePS.SelectSQL
+		        If titleRS <> Nil And Not titleRS.AfterLastRow Then
+		          lblCaseTitle.Text = titleRS.Column("serial_number").StringValue + " - " + titleRS.Column("case_label").StringValue
+		        End If
+		      Catch e As DatabaseException
+		        System.DebugLog("Error updating title: " + e.Message)
+		      End Try
 		    Else
 		      MessageBox("Progress saved!")
 		    End If
@@ -1705,7 +1759,7 @@ End
 		  ' * Uses MYSQL_TYPE_TINY when binding actual boolean values
 		  ' * All 13 checkboxes properly handle indeterminate state
 		  ' * FIXED: Completion flag for timestamp only bound on UPDATE (not INSERT)
-		  ' * UPDATE needs 18 parameters, INSERT needs 17 parameters
+		  ' * UPDATE needs 19 parameters (added score back), INSERT needs 18 parameters
 		  ' * This method handles both Save Draft (isCompleted=False) and Submit (isCompleted=True)
 		  ' =============================================================================
 		  
