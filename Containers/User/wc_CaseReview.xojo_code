@@ -932,6 +932,9 @@ End
 		  ' *******************************************************************************
 		  If CurrentVideoIndex < 0 Or CurrentVideoIndex >= TotalVideos Then Return
 		  
+		  ' Ensure the video player is visible
+		  htmlVideoPlayer.Visible = True
+		  
 		  Var videoFilename As String = VideoFilenames(CurrentVideoIndex)
 		  
 		  ' Get WebFile URL for the video
@@ -939,8 +942,8 @@ End
 		  
 		  If wf = Nil Then
 		    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		    errorHTML = errorHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#e74c3c;font-family:Arial,sans-serif;text-align:center;}"
-		    errorHTML = errorHTML + ".error{background:#fff;padding:30px;border-radius:8px;border-left:4px solid #e74c3c;max-width:600px;margin:50px auto;}"
+		    errorHTML = errorHTML + "* { margin: 0; padding: 0; box-sizing: border-box; } html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; } body{display:flex;align-items:center;justify-content:center;padding:20px;}"
+		    errorHTML = errorHTML + ".error{background:#fff;padding:30px;border-radius:8px;border-left:4px solid #e74c3c;max-width:600px;box-shadow:0 2px 10px rgba(0,0,0,0.1);} h3{color:#e74c3c;margin-bottom:10px;font-family:Arial,sans-serif;} p{color:#666;font-family:Arial,sans-serif;line-height:1.5;} strong{color:#333;}"
 		    errorHTML = errorHTML + "</style></head><body><div class='error'>"
 		    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
 		    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
@@ -969,44 +972,6 @@ End
 		  html = html + "</video>"
 		  html = html + "</div></div>"
 		  html = html + "</body></html>"
-		  
-		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
-		  ' html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-		  ' html = html + "<style>"
-		  ' html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
-		  ' html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
-		  ' html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
-		  ' html = html + ".video-container { position: relative; width: 100%; max-width: 800px; max-height: 600px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
-		  ' html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; outline: none; }"
-		  ' html = html + "video::-webkit-media-controls-panel { background-color: transparent !important; }"
-		  ' html = html + "</style></head><body>"
-		  ' html = html + "<div class='video-wrapper'>"
-		  ' html = html + "<div class='video-container'>"
-		  ' html = html + "<video id='mainVideo' autoplay muted loop playsinline>"
-		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
-		  ' html = html + "Your browser does not support the video tag.</video>"
-		  ' html = html + "</div></div>"
-		  ' html = html + "</body></html>"
-		  
-		  ' ' FIXED: Light background, proper viewport sizing
-		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
-		  ' html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-		  ' html = html + "<style>"
-		  ' html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
-		  ' html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
-		  ' html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
-		  ' html = html + ".video-container { position: relative; width: 100%; max-width: 800px; max-height: 600px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
-		  ' html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
-		  ' html = html + "</style></head><body>"
-		  ' html = html + "<div class='video-wrapper'>"
-		  ' html = html + "<div class='video-container'>"
-		  ' ' Key change: muted + loop + autoplay + playsinline
-		  ' html = html + "<video id='mainVideo' controls autoplay muted loop playsinline>"
-		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
-		  ' html = html + "Your browser does not support the video tag.</video>"
-		  ' html = html + "</div></div>"
-		  ' html = html + "</body></html>"
-		  
 		  
 		  htmlVideoPlayer.LoadHTML(html)
 		  UpdateVideoNavigation
@@ -1335,6 +1300,10 @@ End
 		  ' LoadVideos Method
 		  ' Loads videos filtered by user's group membership
 		  ' *******************************************************************************
+		  
+		  ' CRITICAL: Clear the HTMLViewer first to prevent white overlay when no videos
+		  htmlVideoPlayer.LoadHTML("")
+		  
 		  ' Get user's group for filtering
 		  Var userGroup As String = ""
 		  Try
@@ -1393,22 +1362,101 @@ End
 		    CurrentVideoIndex = 0
 		    
 		    If TotalVideos > 0 Then
+		      htmlVideoPlayer.Visible = True
 		      DisplayCurrentVideo
 		    Else
-		      Var noVideosHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		      noVideosHTML = noVideosHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#666;font-family:Arial,sans-serif;text-align:center;}"
-		      noVideosHTML = noVideosHTML + ".message{background:#fff;padding:30px;border-radius:8px;border-left:4px solid #3498db;max-width:600px;margin:50px auto;}"
-		      noVideosHTML = noVideosHTML + "</style></head><body><div class='message'>"
-		      noVideosHTML = noVideosHTML + "<h3>ℹ️ No Videos Available</h3>"
-		      noVideosHTML = noVideosHTML + "<p>No videos are currently available for this case.</p>"
-		      noVideosHTML = noVideosHTML + "</div></body></html>"
-		      
-		      htmlVideoPlayer.LoadHTML(noVideosHTML)
+		      ' Hide the video player when there are no videos
+		      htmlVideoPlayer.Visible = False
+		      System.DebugLog("No videos available for case " + Str(CaseID))
 		    End If
 		    
 		  Catch e As DatabaseException
 		    MessageBox("Error loading videos: " + e.Message)
 		  End Try
+		  
+		  
+		  
+		  
+		  ' *******************************************************************************
+		  ' LoadVideos Method
+		  ' Loads videos filtered by user's group membership
+		  ' *******************************************************************************
+		  ' htmlVideoPlayer.LoadHTML("")
+		  ' 
+		  ' ' Get user's group for filtering
+		  ' Var userGroup As String = ""
+		  ' Try
+		  ' Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
+		  ' Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
+		  ' userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' userPS.Bind(0, Session.CurrentUserID)
+		  ' Var userRS As RowSet = userPS.SelectSQL
+		  ' 
+		  ' If userRS <> Nil And Not userRS.AfterLastRow Then
+		  ' userGroup = If(userRS.Column("user_group").Value = Nil, "", userRS.Column("user_group").StringValue.Trim)
+		  ' End If
+		  ' Catch e As DatabaseException
+		  ' System.DebugLog("Error getting user group: " + e.Message)
+		  ' End Try
+		  ' 
+		  ' ' Build SQL with multi-group filtering
+		  ' Var sql As String = "SELECT video_filename FROM case_videos WHERE case_id = ? "
+		  ' 
+		  ' If userGroup <> "" Then
+		  ' ' User has a group - filter accordingly
+		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
+		  ' sql = sql + "AND (video_purpose IS NULL OR video_purpose = '' "
+		  ' sql = sql + "OR FIND_IN_SET(?, REPLACE(video_purpose, ' ', '')) > 0 "
+		  ' sql = sql + "OR video_purpose LIKE ?) "
+		  ' Else
+		  ' ' No group - only show videos with no purpose set
+		  ' sql = sql + "AND (video_purpose IS NULL OR video_purpose = '') "
+		  ' End If
+		  ' 
+		  ' sql = sql + "ORDER BY video_order"
+		  ' 
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, CaseID)
+		  ' 
+		  ' If userGroup <> "" Then
+		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
+		  ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.Bind(1, trimmedGroup)
+		  ' ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.Bind(2, "%" + userGroup + "%")
+		  ' End If
+		  ' 
+		  ' Var rs As RowSet = ps.SelectSQL
+		  ' 
+		  ' ' Collect filenames
+		  ' Redim VideoFilenames(-1)
+		  ' While rs <> Nil And Not rs.AfterLastRow
+		  ' VideoFilenames.Add(rs.Column("video_filename").StringValue)
+		  ' rs.MoveToNextRow
+		  ' Wend
+		  ' 
+		  ' TotalVideos = VideoFilenames.Count
+		  ' CurrentVideoIndex = 0
+		  ' 
+		  ' If TotalVideos > 0 Then
+		  ' DisplayCurrentVideo
+		  ' Else
+		  ' Var noVideosHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		  ' noVideosHTML = noVideosHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#666;font-family:Arial,sans-serif;text-align:center;}"
+		  ' noVideosHTML = noVideosHTML + ".message{background:#fff;padding:30px;border-radius:8px;border-left:4px solid #3498db;max-width:600px;margin:50px auto;}"
+		  ' noVideosHTML = noVideosHTML + "</style></head><body><div class='message'>"
+		  ' noVideosHTML = noVideosHTML + "<h3>ℹ️ No Videos Available</h3>"
+		  ' noVideosHTML = noVideosHTML + "<p>No videos are currently available for this case.</p>"
+		  ' noVideosHTML = noVideosHTML + "</div></body></html>"
+		  ' 
+		  ' htmlVideoPlayer.LoadHTML(noVideosHTML)
+		  ' End If
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error loading videos: " + e.Message)
+		  ' End Try
 		End Sub
 	#tag EndMethod
 
@@ -1894,7 +1942,7 @@ End
 		  System.DebugLog("UpdateVideoNavigation called - TotalVideos: " + Str(TotalVideos) + ", CurrentVideoIndex: " + Str(CurrentVideoIndex))
 		  
 		  If TotalVideos = 0 Then 
-		    lblVideoCounter.Text = "No videos available"
+		    lblVideoCounter.Text = "No videos"
 		    btnPreviousVideo.Enabled = False
 		    btnNextVideo.Enabled = False
 		    Return
