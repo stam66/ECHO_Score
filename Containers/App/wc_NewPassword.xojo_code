@@ -262,7 +262,7 @@ Begin wc_base wc_NewPassword
       Enabled         =   True
       FontName        =   ""
       FontSize        =   0.0
-      Height          =   59
+      Height          =   126
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
@@ -374,18 +374,18 @@ End
 		  txtNewPassword.SetFocus
 		  
 		  Self.EnableBackButton = False
-		  Self.EnableLogoutButton = True
+		  Self.EnableLogoutButton = False
 		  Self.SectionTitle = "Enter new password"
 		  
 		  UpdateNavigation // update shell page data
+		  
+		  txtNewPassword.SetFocus
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub NavigateToLogin(t as Timer)
-		  #Pragma Unused t
-		  
+		Sub NavigateToLogin()
 		  Var login As New wc_Login
 		  login.ContainerID = "Login"
 		  login.Position = wc_Base.PositionEnum.Center
@@ -404,23 +404,38 @@ End
 
 	#tag Method, Flags = &h0
 		Function ValidatePassword(password As String) As Boolean
-		  If password.Length < 8 Then Return False
+		  System.DebugLog("Validating password: " + password)
+		  System.DebugLog("Password length: " + password.Length.ToString)
+		  
+		  If password.Length < 8 Then 
+		    System.DebugLog("Failed: Length < 8")
+		    Return False
+		  End If
 		  
 		  Var hasUpper As Boolean = False
 		  Var hasLower As Boolean = False
 		  Var hasNumber As Boolean = False
 		  
-		  For i As Integer = 0 To password.Length - 1
+		  For i As Integer = 0 To password.Length - 1  // Changed back to 0-based
 		    Var c As String = password.Middle(i, 1)
+		    Var charCode As Integer = Asc(c)
+		    System.DebugLog("Character " + i.ToString + ": '" + c + "' (code: " + charCode.ToString + ")")
 		    
-		    If c >= "A" And c <= "Z" Then
+		    If charCode >= 65 And charCode <= 90 Then  // A-Z
 		      hasUpper = True
-		    ElseIf c >= "a" And c <= "z" Then
+		      System.DebugLog("  Found uppercase")
+		    ElseIf charCode >= 97 And charCode <= 122 Then  // a-z
 		      hasLower = True
-		    ElseIf c >= "0" And c <= "9" Then
+		      System.DebugLog("  Found lowercase")
+		    ElseIf charCode >= 48 And charCode <= 57 Then  // 0-9
 		      hasNumber = True
+		      System.DebugLog("  Found number")
 		    End If
 		  Next
+		  
+		  System.DebugLog("hasUpper: " + hasUpper.ToString)
+		  System.DebugLog("hasLower: " + hasLower.ToString)
+		  System.DebugLog("hasNumber: " + hasNumber.ToString)
 		  
 		  Return hasUpper And hasLower And hasNumber
 		End Function
@@ -474,13 +489,7 @@ End
 		  
 		  If PasswordResetHelper.ResetPassword(TokenID, UserID, txtNewPassword.Text) Then
 		    ShowMessage("Password reset successfully! Redirecting to login...", True)
-		    
-		    Var t As New Timer
-		    t.Period = 2000
-		    t.Mode = Timer.ModeOff
-		    AddHandler t.Action, AddressOf NavigateToLogin
-		    t.RunMode = Timer.RunModes.Single
-		    t.Enabled = True
+		    WebTimer.CallLater(2000, AddressOf NavigateToLogin)
 		    
 		  Else
 		    ShowMessage("Failed to reset password. Please try again.", False)

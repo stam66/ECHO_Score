@@ -1075,8 +1075,9 @@ End
 		  ' *******************************************************************************
 		  lstUsers.SelectedRowIndex = -1
 		  txtName.SetFocus
-		  btnUpdateUser.Enabled = false
-		  btnDeleteUser.Enabled = false
+		  btnUpdateUser.Enabled = False
+		  btnDeleteUser.Enabled = False
+		  chkIsActive.Value = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

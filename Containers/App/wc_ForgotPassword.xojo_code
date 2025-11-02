@@ -268,17 +268,19 @@ End
 		  lblMessage.Visible = False
 		  
 		  Self.EnableBackButton = False
-		  Self.EnableLogoutButton = True
+		  Self.EnableLogoutButton = False
 		  Self.SectionTitle = "Forgot Password"
 		  
 		  UpdateNavigation // update shell page data
+		  
+		  txtEmail.SetFocus
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub NavigateToOTPEntry(t as Timer)
-		  #Pragma Unused t
+		Sub NavigateToOTPEntry()
+		  
 		  
 		  Var otpEntry As New wc_EnterOTP
 		  otpEntry.ContainerID = "EnterOTP"
@@ -367,12 +369,8 @@ End
 		    If EmailHelper.SendPasswordResetEmail(userEmail, userName, otp, resetLink) Then
 		      ShowMessage("A password reset code has been sent to your email.", True)
 		      
-		      Var t As New Timer
-		      t.Period = 2000
-		      t.Mode = Timer.ModeOff
-		      AddHandler t.Action, AddressOf NavigateToOTPEntry
-		      t.RunMode = Timer.RunModes.Single
-		      t.Enabled = True
+		      // Use WebTimer.CallLater for delayed navigation
+		      WebTimer.CallLater(2000, AddressOf NavigateToOTPEntry)
 		      
 		    Else
 		      ShowMessage("Failed to send email. Please try again later.", False)

@@ -299,7 +299,7 @@ End
 		  lblMessage.Visible = False
 		  
 		  Self.EnableBackButton = False
-		  Self.EnableLogoutButton = True
+		  Self.EnableLogoutButton = False
 		  Self.SectionTitle = "Enter one-time password"
 		  
 		  UpdateNavigation // update shell page data
