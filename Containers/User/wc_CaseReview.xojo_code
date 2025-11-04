@@ -961,8 +961,8 @@ End
 		  html = html + "<style>"
 		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
 		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
-		  html = html + ".video-wrapper { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }"
-		  html = html + ".video-container { width: 100%; max-width: 800px; max-height: 600px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		  html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
 		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
 		  html = html + "</style></head><body>"
 		  html = html + "<div class='video-wrapper'>"
@@ -1047,71 +1047,6 @@ End
 		  Catch e As DatabaseException
 		    System.DebugLog("Error loading available cases: " + e.Message)
 		  End Try
-		  
-		  
-		  
-		  ' ' Get user's group
-		  ' Var userGroup As String = ""
-		  ' Try
-		  ' Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
-		  ' Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
-		  ' userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		  ' userPS.Bind(0, Session.CurrentUserID)
-		  ' Var userRS As RowSet = userPS.SelectSQL
-		  ' 
-		  ' If userRS <> Nil And Not userRS.AfterLastRow Then
-		  ' userGroup = If(userRS.Column("user_group").Value = Nil, "", userRS.Column("user_group").StringValue.Trim)
-		  ' End If
-		  ' Catch e As DatabaseException
-		  ' System.DebugLog("Error getting user group: " + e.Message)
-		  ' End Try
-		  ' 
-		  ' ' Build SQL to get all cases with videos accessible to this user
-		  ' Var sql As String = "SELECT DISTINCT c.case_id, c.serial_number FROM cases c "
-		  ' sql = sql + "INNER JOIN case_videos cv ON c.case_id = cv.case_id "
-		  ' 
-		  ' If userGroup <> "" Then
-		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
-		  ' sql = sql + "WHERE (cv.video_purpose IS NULL OR cv.video_purpose = '' "
-		  ' sql = sql + "OR FIND_IN_SET(?, REPLACE(cv.video_purpose, ' ', '')) > 0 "
-		  ' sql = sql + "OR cv.video_purpose LIKE ?) "
-		  ' Else
-		  ' sql = sql + "WHERE (cv.video_purpose IS NULL OR cv.video_purpose = '') "
-		  ' End If
-		  ' 
-		  ' sql = sql + "ORDER BY c.serial_number"
-		  ' 
-		  ' Try
-		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		  ' 
-		  ' If userGroup <> "" Then
-		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
-		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		  ' ps.Bind(0, trimmedGroup)
-		  ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		  ' ps.Bind(1, "%" + userGroup + "%")
-		  ' End If
-		  ' 
-		  ' Var rs As RowSet = ps.SelectSQL
-		  ' 
-		  ' ' Collect all available case IDs
-		  ' Redim AvailableCaseIDs(-1)
-		  ' While rs <> Nil And Not rs.AfterLastRow
-		  ' AvailableCaseIDs.Add(rs.Column("case_id").IntegerValue)
-		  ' rs.MoveToNextRow
-		  ' Wend
-		  ' 
-		  ' ' Find current case position in the list
-		  ' For i As Integer = 0 To AvailableCaseIDs.LastIndex
-		  ' If AvailableCaseIDs(i) = CaseID Then
-		  ' CurrentCasePosition = i
-		  ' Exit For i
-		  ' End If
-		  ' Next
-		  ' 
-		  ' Catch e As DatabaseException
-		  ' System.DebugLog("Error loading available cases: " + e.Message)
-		  ' End Try
 		End Sub
 	#tag EndMethod
 
@@ -1373,90 +1308,6 @@ End
 		  Catch e As DatabaseException
 		    MessageBox("Error loading videos: " + e.Message)
 		  End Try
-		  
-		  
-		  
-		  
-		  ' *******************************************************************************
-		  ' LoadVideos Method
-		  ' Loads videos filtered by user's group membership
-		  ' *******************************************************************************
-		  ' htmlVideoPlayer.LoadHTML("")
-		  ' 
-		  ' ' Get user's group for filtering
-		  ' Var userGroup As String = ""
-		  ' Try
-		  ' Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
-		  ' Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
-		  ' userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		  ' userPS.Bind(0, Session.CurrentUserID)
-		  ' Var userRS As RowSet = userPS.SelectSQL
-		  ' 
-		  ' If userRS <> Nil And Not userRS.AfterLastRow Then
-		  ' userGroup = If(userRS.Column("user_group").Value = Nil, "", userRS.Column("user_group").StringValue.Trim)
-		  ' End If
-		  ' Catch e As DatabaseException
-		  ' System.DebugLog("Error getting user group: " + e.Message)
-		  ' End Try
-		  ' 
-		  ' ' Build SQL with multi-group filtering
-		  ' Var sql As String = "SELECT video_filename FROM case_videos WHERE case_id = ? "
-		  ' 
-		  ' If userGroup <> "" Then
-		  ' ' User has a group - filter accordingly
-		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
-		  ' sql = sql + "AND (video_purpose IS NULL OR video_purpose = '' "
-		  ' sql = sql + "OR FIND_IN_SET(?, REPLACE(video_purpose, ' ', '')) > 0 "
-		  ' sql = sql + "OR video_purpose LIKE ?) "
-		  ' Else
-		  ' ' No group - only show videos with no purpose set
-		  ' sql = sql + "AND (video_purpose IS NULL OR video_purpose = '') "
-		  ' End If
-		  ' 
-		  ' sql = sql + "ORDER BY video_order"
-		  ' 
-		  ' Try
-		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		  ' ps.Bind(0, CaseID)
-		  ' 
-		  ' If userGroup <> "" Then
-		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
-		  ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		  ' ps.Bind(1, trimmedGroup)
-		  ' ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		  ' ps.Bind(2, "%" + userGroup + "%")
-		  ' End If
-		  ' 
-		  ' Var rs As RowSet = ps.SelectSQL
-		  ' 
-		  ' ' Collect filenames
-		  ' Redim VideoFilenames(-1)
-		  ' While rs <> Nil And Not rs.AfterLastRow
-		  ' VideoFilenames.Add(rs.Column("video_filename").StringValue)
-		  ' rs.MoveToNextRow
-		  ' Wend
-		  ' 
-		  ' TotalVideos = VideoFilenames.Count
-		  ' CurrentVideoIndex = 0
-		  ' 
-		  ' If TotalVideos > 0 Then
-		  ' DisplayCurrentVideo
-		  ' Else
-		  ' Var noVideosHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		  ' noVideosHTML = noVideosHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#666;font-family:Arial,sans-serif;text-align:center;}"
-		  ' noVideosHTML = noVideosHTML + ".message{background:#fff;padding:30px;border-radius:8px;border-left:4px solid #3498db;max-width:600px;margin:50px auto;}"
-		  ' noVideosHTML = noVideosHTML + "</style></head><body><div class='message'>"
-		  ' noVideosHTML = noVideosHTML + "<h3>ℹ️ No Videos Available</h3>"
-		  ' noVideosHTML = noVideosHTML + "<p>No videos are currently available for this case.</p>"
-		  ' noVideosHTML = noVideosHTML + "</div></body></html>"
-		  ' 
-		  ' htmlVideoPlayer.LoadHTML(noVideosHTML)
-		  ' End If
-		  ' 
-		  ' Catch e As DatabaseException
-		  ' MessageBox("Error loading videos: " + e.Message)
-		  ' End Try
 		End Sub
 	#tag EndMethod
 

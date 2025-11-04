@@ -25,6 +25,7 @@ Begin WebDialog dlg_AddCase
    Width           =   454
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblTitle
       Bold            =   True

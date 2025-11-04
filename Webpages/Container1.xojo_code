@@ -24,6 +24,7 @@ Begin WebContainer Container1
    Width           =   250
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
 End
 #tag EndWebContainerControl

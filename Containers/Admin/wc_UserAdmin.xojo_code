@@ -24,6 +24,7 @@ Begin wc_base wc_UserAdmin
    Width           =   1044
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebListBox lstUsers
       AllowRowReordering=   False

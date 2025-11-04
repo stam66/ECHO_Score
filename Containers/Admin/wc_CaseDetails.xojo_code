@@ -24,6 +24,7 @@ Begin wc_base wc_CaseDetails
    Width           =   1084
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebListBox lstVideos
       AllowRowReordering=   False

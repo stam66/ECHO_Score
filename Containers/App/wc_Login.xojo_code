@@ -24,6 +24,7 @@ Begin wc_base wc_Login
    Width           =   446
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblTitle
       Bold            =   True
