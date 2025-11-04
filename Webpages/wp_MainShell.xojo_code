@@ -32,7 +32,6 @@ Begin WebPage wp_MainShell
    _ImplicitInstance=   False
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle Rectangle2
       BorderColor     =   &c000000FF
@@ -398,7 +397,7 @@ Begin WebPage wp_MainShell
       Scope           =   0
       TabIndex        =   12
       TabStop         =   True
-      Text            =   "Version 1.0 RC5        ©️Dr S. Kapetanakis, 2025"
+      Text            =   "Version 1.0 RC6        ©️Dr S. Kapetanakis, 2025"
       TextAlignment   =   3
       TextColor       =   &c000000FF
       Tooltip         =   ""
