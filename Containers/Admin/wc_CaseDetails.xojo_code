@@ -24,7 +24,6 @@ Begin wc_base wc_CaseDetails
    Width           =   1084
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebListBox lstVideos
       AllowRowReordering=   False
@@ -1486,8 +1485,10 @@ End
 		  html = html + "<style>"
 		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
 		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
-		  html = html + ".video-wrapper { display: flex; align-items: center; justify-content: flex-end; height: 100%; width: 100%; padding: 10px; background: transparent; }"
-		  html = html + ".video-container { position: relative; width: auto; max-width: 100%; height: 100%; max-height: 360px; aspect-ratio: 4 / 3; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  // fix for video resize
+		  html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		  html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  // end fix for video resize
 		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
 		  html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
 		  html = html + "</style></head><body>"
