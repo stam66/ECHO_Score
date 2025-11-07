@@ -81,7 +81,7 @@ CREATE TABLE `cases`(
 CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci
 ENGINE = InnoDB
-AUTO_INCREMENT = 14;
+AUTO_INCREMENT = 15;
 -- -------------------------------------------------------------
 
 
@@ -120,7 +120,7 @@ CREATE TABLE `password_reset_tokens`(
 CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
+AUTO_INCREMENT = 20;
 -- -------------------------------------------------------------
 
 
@@ -152,7 +152,7 @@ CREATE TABLE `user_responses`(
 CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci
 ENGINE = InnoDB
-AUTO_INCREMENT = 3;
+AUTO_INCREMENT = 8;
 -- -------------------------------------------------------------
 
 
@@ -174,7 +174,22 @@ CREATE TABLE `users`(
 CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci
 ENGINE = InnoDB
-AUTO_INCREMENT = 6;
+AUTO_INCREMENT = 7;
+-- -------------------------------------------------------------
+
+
+-- CREATE TABLE "access_requests" ------------------------------
+CREATE TABLE `access_requests`( 
+	`request_id` Int( 0 ) AUTO_INCREMENT NOT NULL,
+	`name` VarChar( 255 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`email` VarChar( 255 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`requested_at` Timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`request_status` TinyInt( 0 ) NULL DEFAULT NULL,
+	PRIMARY KEY ( `request_id` ) )
+CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
 -- -------------------------------------------------------------
 
 

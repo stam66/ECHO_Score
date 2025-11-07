@@ -19,8 +19,8 @@ Inherits webcontainer
 		    
 		  Case PositionEnum.Center
 		    ' Center the container within the target
-		    Var targetW As Integer = target.Width
-		    Var targetH As Integer = target.Height
+		    Var targetW As Integer = Self.Parent.Width //target.Width
+		    Var targetH As Integer = Self.Parent.Height // target.Height
 		    Self.Left = (targetW - Self.Width) / 2
 		    Self.Top = (targetH - Self.Height) / 2
 		  End Select

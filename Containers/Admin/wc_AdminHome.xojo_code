@@ -24,7 +24,6 @@ Begin wc_base wc_AdminHome
    Width           =   698
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblWelcome
       Bold            =   True
@@ -191,7 +190,7 @@ Begin wc_base wc_AdminHome
       Height          =   48
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   221
+      Left            =   423
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   True
@@ -205,7 +204,37 @@ Begin wc_base wc_AdminHome
       TabIndex        =   5
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   407
+      Top             =   371
+      Visible         =   True
+      Width           =   255
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnAccessRequests
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Access Requests"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   48
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   True
+      LockLeft        =   False
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   6
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   371
       Visible         =   True
       Width           =   255
       _mPanelIndex    =   -1
@@ -291,6 +320,27 @@ End
 		  emailConfig.ContainerID = "EmailConfig"
 		  emailConfig.Position = wc_Base.PositionEnum.Center
 		  Session.Navigation.NavigateTo(emailConfig)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnAccessRequests
+	#tag Event
+		Sub Pressed()
+		  ' *******************************************************************************
+		  ' btnProgressReview.Pressed Event
+		  ' *******************************************************************************
+		  Var requests As New wc_AccessRequests
+		  requests.ContainerID = "AccessRequests"
+		  requests.Position = wc_Base.PositionEnum.TopLeft
+		  Session.Navigation.NavigateTo(requests)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Shown()
+		  var sql as string = "SELECT COUNT(*) AS `Pending` FROM access_requests WHERE request_status IS NULL;"
+		  
+		  var rs as RowSet = session.db.SelectSQL(sql)
+		  btnAccessRequests.SetBadge(rs.Column("Pending").StringValue)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

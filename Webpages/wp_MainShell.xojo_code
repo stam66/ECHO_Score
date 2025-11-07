@@ -383,7 +383,7 @@ Begin WebPage wp_MainShell
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   True
-      Left            =   833
+      Left            =   761
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -399,12 +399,12 @@ Begin WebPage wp_MainShell
       TabStop         =   True
       Text            =   "Version 1.0 RC6        ©️Dr S. Kapetanakis, 2025"
       TextAlignment   =   3
-      TextColor       =   &c000000FF
+      TextColor       =   &cFFFFFF00
       Tooltip         =   ""
       Top             =   677
       Underline       =   False
       Visible         =   True
-      Width           =   285
+      Width           =   357
       _mPanelIndex    =   -1
    End
    Begin WebImageViewer imgAppIcon
@@ -449,6 +449,20 @@ End
 		  btnLogout.Enabled = False
 		  lblUserName.Text = "Not logged in"
 		  lblSectionTitle.Text = "Login page"
+		  lblVersionCopyright.Text = GetAppVersion(AppVersionType.Copyright)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown()
+		  ' Wait for page to be fully rendered before initial navigation
+		  If Self.ContentArea = Nil Then
+		    ' First time shown - navigate to login
+		    Var w As New wc_Login
+		    w.ContainerID = "Login"
+		    w.Position = wc_Base.PositionEnum.Center
+		    Session.Navigation.NavigateTo(w)
+		  End If
 		End Sub
 	#tag EndEvent
 

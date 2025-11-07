@@ -50,14 +50,21 @@ Inherits WebSession
 		  
 		  ' Initialize main shell and navigation
 		  MainShell = New wp_MainShell
-		  MainShell.Show
 		  Navigation = New WebNavigationManager(MainShell)
+		  MainShell.Show  ' Initial navigation will happen in MainShell.Shown event
 		  
-		  ' Navigate to login screen
-		  Var w As New wc_Login
-		  w.ContainerID = "Login"
-		  w.Position = wc_Base.PositionEnum.Center
-		  Navigation.NavigateTo(w)
+		  
+		  
+		  ' ' Initialize main shell and navigation
+		  ' MainShell = New wp_MainShell
+		  ' MainShell.Show
+		  ' Navigation = New WebNavigationManager(MainShell)
+		  ' 
+		  ' ' Navigate to login screen
+		  ' Var w As New wc_Login
+		  ' w.ContainerID = "Login"
+		  ' w.Position = wc_Base.PositionEnum.Center
+		  ' Navigation.NavigateTo(w)
 		End Sub
 	#tag EndEvent
 
@@ -76,6 +83,22 @@ Inherits WebSession
 		  Var label As WebLabel = WebLabel(value)
 		  label.Text = ""
 		  label.Visible = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Logout()
+		  ' Clear session
+		  Session.CurrentUserID = 0
+		  Session.CurrentUserName = ""
+		  Session.CurrentUserEmail = ""
+		  Session.IsAdmin = False
+		  
+		  ' Navigate to login
+		  Var login As New wc_Login
+		  login.ContainerID = "Login"
+		  login.Position = wc_Base.PositionEnum.Center
+		  Session.Navigation.NavigateTo(login)
 		End Sub
 	#tag EndMethod
 

@@ -82,7 +82,7 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   580
+      Left            =   562
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -115,7 +115,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   580
+      Left            =   562
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -150,7 +150,7 @@ Begin wc_base wc_CaseDetails
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   580
+      Left            =   562
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -334,7 +334,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   580
+      Left            =   562
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -351,7 +351,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   255
+      Top             =   191
       Underline       =   False
       Visible         =   True
       Width           =   122
@@ -520,7 +520,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   844
+      Left            =   826
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -563,7 +563,7 @@ Begin wc_base wc_CaseDetails
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
-      Left            =   844
+      Left            =   826
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -913,7 +913,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   580
+      Left            =   562
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -940,10 +940,10 @@ Begin wc_base wc_CaseDetails
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   386
+      Height          =   410
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   569
+      Left            =   557
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -956,10 +956,10 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   50
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   287
+      Top             =   220
       UseSandbox      =   False
       Visible         =   True
-      Width           =   515
+      Width           =   526
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblVideoPreview2
@@ -973,7 +973,7 @@ Begin wc_base wc_CaseDetails
       Index           =   -2147483648
       Indicator       =   0
       Italic          =   False
-      Left            =   710
+      Left            =   692
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -990,7 +990,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   255
+      Top             =   191
       Underline       =   True
       Visible         =   True
       Width           =   110
@@ -1041,7 +1041,7 @@ Begin wc_base wc_CaseDetails
       Height          =   32
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   844
+      Left            =   826
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
