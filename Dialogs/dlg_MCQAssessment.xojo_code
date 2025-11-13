@@ -94,14 +94,14 @@ Begin WebDialog dlg_MCQAssessment
       Width           =   300
       _mPanelIndex    =   -1
    End
-   Begin WebCheckbox chkOption
+   Begin WebCheckbox chkOptionA
       Caption         =   "Option A"
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       Height          =   34
       Indeterminate   =   False
-      Index           =   0
+      Index           =   -2147483648
       Indicator       =   ""
       Left            =   40
       LockBottom      =   False
@@ -122,14 +122,14 @@ Begin WebDialog dlg_MCQAssessment
       Width           =   720
       _mPanelIndex    =   -1
    End
-   Begin WebCheckbox chkOption
+   Begin WebCheckbox chkOptionB
       Caption         =   "Option B"
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       Height          =   34
       Indeterminate   =   False
-      Index           =   1
+      Index           =   -2147483648
       Indicator       =   ""
       Left            =   40
       LockBottom      =   False
@@ -150,14 +150,14 @@ Begin WebDialog dlg_MCQAssessment
       Width           =   720
       _mPanelIndex    =   -1
    End
-   Begin WebCheckbox chkOption
+   Begin WebCheckbox chkOptionC
       Caption         =   "Option C"
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       Height          =   34
       Indeterminate   =   False
-      Index           =   2
+      Index           =   -2147483648
       Indicator       =   ""
       Left            =   40
       LockBottom      =   False
@@ -178,14 +178,14 @@ Begin WebDialog dlg_MCQAssessment
       Width           =   720
       _mPanelIndex    =   -1
    End
-   Begin WebCheckbox chkOption
+   Begin WebCheckbox chkOptionD
       Caption         =   "Option D"
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       Height          =   34
       Indeterminate   =   False
-      Index           =   3
+      Index           =   -2147483648
       Indicator       =   ""
       Left            =   40
       LockBottom      =   False
@@ -206,14 +206,14 @@ Begin WebDialog dlg_MCQAssessment
       Width           =   720
       _mPanelIndex    =   -1
    End
-   Begin WebCheckbox chkOption
+   Begin WebCheckbox chkOptionE
       Caption         =   "Option E"
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
       Height          =   34
       Indeterminate   =   False
-      Index           =   4
+      Index           =   -2147483648
       Indicator       =   ""
       Left            =   40
       LockBottom      =   False
@@ -362,36 +362,6 @@ Begin WebDialog dlg_MCQAssessment
       Width           =   100
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnSubmit
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Submit"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   680
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   11
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   542
-      Visible         =   True
-      Width           =   100
-      _mPanelIndex    =   -1
-   End
    Begin WebLabel lblTitle
       Bold            =   True
       ControlID       =   ""
@@ -426,19 +396,63 @@ Begin WebDialog dlg_MCQAssessment
       Width           =   300
       _mPanelIndex    =   -1
    End
+   Begin WebImageViewer imgClose
+      ControlID       =   ""
+      CSSClasses      =   ""
+      DisplayMode     =   3
+      Enabled         =   True
+      Height          =   40
+      Image           =   0
+      Index           =   -2147483648
+      Indicator       =   ""
+      Left            =   753
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   2
+      SVGData         =   "<svg xmlns=""http://www.w3.org/2000/svg"" width=""16"" height=""16"" fill=""currentColor"" class=""bi bi-x-circle"" viewBox=""0 0 16 16"">\n  <path d=""M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16""/>\n  <path d=""M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708""/>\n</svg>"
+      TabIndex        =   13
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   2
+      URL             =   ""
+      Visible         =   True
+      Width           =   40
+      _mPanelIndex    =   -1
+      _ProtectImage   =   False
+   End
 End
 #tag EndWebPage
 
 #tag WindowCode
 	#tag Event
+		Sub Dismissed()
+		  SaveCurrentAnswer()
+		  
+		  ' Raise event to notify parent that answers have changed
+		  RaiseEvent AnswersChanged
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  ' Initialize dialog state
 		  CurrentQuestionIndex = 0
 		  
-		  ' Set up control array behavior
+		  ' Set up control behavior
 		  For i As Integer = 0 To 4
-		    chkOption(i).Visible = False
+		    chkOptionA.Visible = False
+		    chkOptionB.Visible = False
+		    chkOptionC.Visible = False
+		    chkOptionD.Visible = False
+		    chkOptionE.Visible = False
 		  Next
+		  
 		End Sub
 	#tag EndEvent
 
@@ -510,6 +524,43 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub CheckCheckboxesInBrowser()
+		  ' Check if checkboxes exist in the DOM
+		  Self.ExecuteJavaScript("console.log('Checking checkboxes in DOM'); " + _
+		  "for(let i = 0; i < 5; i++) { " + _
+		  "let cb = document.querySelector('[id*=""chkOption""][id*=""' + i + '""]'); " + _
+		  "console.log('Checkbox ' + i + ':', cb ? 'Found - Visible: ' + cb.style.display : 'Not found'); " + _
+		  "}")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckIfCompleted() As Boolean
+		  ' Check if user has already submitted this assessment
+		  Var sql As String = "SELECT is_completed FROM user_responses WHERE user_id = ? AND case_id = ?"
+		  
+		  Try
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(0, Session.CurrentUserID)
+		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(1, MCQCaseID)
+		    Var rs As RowSet = ps.SelectSQL
+		    
+		    If rs <> Nil And Not rs.AfterLastRow Then
+		      Return (rs.Column("is_completed").IntegerValue = 1)
+		    End If
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error checking completion: " + e.Message)
+		  End Try
+		  
+		  Return False
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub DisplayQuestion(index as integer)
 		  ' Display the question at the specified index
 		  If index < 0 Or index > Questions.LastIndex Then
@@ -530,18 +581,42 @@ End
 		  End If
 		  
 		  ' Clear all checkboxes first
-		  For i As Integer = 0 To 4
-		    chkOption(i).Value = False
-		    chkOption(i).Visible = False
-		  Next
+		  chkOptionA.Value = False
+		  chkOptionA.Visible = False
+		  chkOptionB.Value = False
+		  chkOptionB.Visible = False
+		  chkOptionC.Value = False
+		  chkOptionC.Visible = False
+		  chkOptionD.Value = False
+		  chkOptionD.Visible = False
+		  chkOptionE.Value = False
+		  chkOptionE.Visible = False
 		  
 		  ' Display options for this question
-		  For i As Integer = 0 To q.Options.LastIndex
-		    If i <= 4 Then ' We only have 5 checkboxes (0-4)
-		      chkOption(i).Caption = q.Options(i).Text
-		      chkOption(i).Visible = True
-		    End If
-		  Next
+		  If q.Options.Count > 0 Then
+		    chkOptionA.Caption = q.Options(0).Text
+		    chkOptionA.Visible = True
+		  End If
+		  
+		  If q.Options.Count > 1 Then
+		    chkOptionB.Caption = q.Options(1).Text
+		    chkOptionB.Visible = True
+		  End If
+		  
+		  If q.Options.Count > 2 Then
+		    chkOptionC.Caption = q.Options(2).Text
+		    chkOptionC.Visible = True
+		  End If
+		  
+		  If q.Options.Count > 3 Then
+		    chkOptionD.Caption = q.Options(3).Text
+		    chkOptionD.Visible = True
+		  End If
+		  
+		  If q.Options.Count > 4 Then
+		    chkOptionE.Caption = q.Options(4).Text
+		    chkOptionE.Visible = True
+		  End If
 		  
 		  ' Load previously saved answer if exists
 		  If UserAnswers(index) <> "" Then
@@ -549,12 +624,40 @@ End
 		    For Each selectedID As String In selectedIDs
 		      ' Find which option has this ID and check it
 		      For i As Integer = 0 To q.Options.LastIndex
-		        If i <= 4 And q.Options(i).ID.ToString = selectedID Then
-		          chkOption(i).Value = True
+		        If q.Options(i).ID.ToString = selectedID Then
+		          Select Case i
+		          Case 0
+		            chkOptionA.Value = True
+		          Case 1
+		            chkOptionB.Value = True
+		          Case 2
+		            chkOptionC.Value = True
+		          Case 3
+		            chkOptionD.Value = True
+		          Case 4
+		            chkOptionE.Value = True
+		          End Select
 		        End If
 		      Next
 		    Next
 		  End If
+		  
+		  ' Always enable checkboxes in draft mode
+		  Var defaultStyle As New WebStyle
+		  defaultStyle.ForegroundColor = If(Session.IsDarkMode, Color.White, Color.Black)
+		  
+		  chkOptionA.Enabled = True
+		  chkOptionB.Enabled = True
+		  chkOptionC.Enabled = True
+		  chkOptionD.Enabled = True
+		  chkOptionE.Enabled = True
+		  
+		  ' Reset to default style
+		  chkOptionA.Style = defaultStyle
+		  chkOptionB.Style = defaultStyle
+		  chkOptionC.Style = defaultStyle
+		  chkOptionD.Style = defaultStyle
+		  chkOptionE.Style = defaultStyle
 		  
 		  ' Update progress
 		  lblProgress.Text = "Question " + Str(index + 1) + " of " + Str(Questions.Count)
@@ -568,10 +671,23 @@ End
 		  Next
 		  lblAnswered.Text = "Answered: " + Str(answeredCount) + " of " + Str(Questions.Count)
 		  
-		  ' Update button states
-		  btnPrevious.Enabled = (index > 0)
-		  btnNext.Visible = (index < Questions.LastIndex)
-		  btnSubmit.Visible = (index = Questions.LastIndex)
+		  ' Update button states - always enabled for looping
+		  btnPrevious.Enabled = True
+		  btnNext.Enabled = True
+		  
+		  ' Update button captions for clarity
+		  If index = 0 Then
+		    btnPrevious.Caption = "← Last"
+		  Else
+		    btnPrevious.Caption = "← Previous"
+		  End If
+		  
+		  If index = Questions.LastIndex Then
+		    btnNext.Caption = "First →"
+		  Else
+		    btnNext.Caption = "Next →"
+		  End If
+		  
 		End Sub
 	#tag EndMethod
 
@@ -744,7 +860,10 @@ End
 	#tag Method, Flags = &h0
 		Sub Initialize(caseID as Integer)
 		  ' Initialize the dialog with questions for the specified case
-		  MCQCaseID = caseID
+		  Self.MCQCaseID = caseID
+		  
+		  ' Check if this assessment is already completed
+		  IsCompleted = CheckIfCompleted()
 		  
 		  ' Load questions and options from database
 		  LoadQuestions()
@@ -764,8 +883,39 @@ End
 		  Else
 		    lblQuestionText.Text = "No questions available for this case."
 		    btnNext.Enabled = False
-		    btnSubmit.Enabled = False
 		  End If
+		  
+		  ' Display first question (delayed to allow dialog to render)
+		  If Questions.Count > 0 Then
+		    WebTimer.CallLater(100, AddressOf ShowFirstQuestion)
+		  Else
+		    lblQuestionText.Text = "No questions available for this case."
+		    btnNext.Enabled = False
+		  End If
+		  
+		  ' ' Initialize the dialog with questions for the specified case
+		  ' MCQCaseID = caseID
+		  ' 
+		  ' ' Load questions and options from database
+		  ' LoadQuestions()
+		  ' 
+		  ' ' Initialize user answers array
+		  ' UserAnswers.ResizeTo(Questions.LastIndex)
+		  ' For i As Integer = 0 To UserAnswers.LastIndex
+		  ' UserAnswers(i) = ""
+		  ' Next
+		  ' 
+		  ' ' Load any existing draft answers
+		  ' LoadExistingAnswers()
+		  ' 
+		  ' ' Display first question
+		  ' If Questions.Count > 0 Then
+		  ' DisplayQuestion(0)
+		  ' Else
+		  ' lblQuestionText.Text = "No questions available for this case."
+		  ' btnNext.Enabled = False
+		  ' btnSubmit.Enabled = False
+		  ' End If
 		End Sub
 	#tag EndMethod
 
@@ -867,8 +1017,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SaveAllDraftsToDB()
+		  ' Save all current answers as drafts
+		  For i As Integer = 0 To Questions.LastIndex
+		    If UserAnswers(i) <> "" Then
+		      SaveDraftToDB(Questions(i).ID, UserAnswers(i))
+		    End If
+		  Next
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SaveCurrentAnswer()
-		  ' Save the current question's answer to memory
+		  ' Save the current question's answer to memory and database
 		  If CurrentQuestionIndex < 0 Or CurrentQuestionIndex > Questions.LastIndex Then
 		    Return
 		  End If
@@ -878,14 +1040,25 @@ End
 		  ' Collect selected option IDs
 		  Var selectedIDs() As String
 		  
-		  For i As Integer = 0 To 4
-		    If chkOption(i).Visible And chkOption(i).Value Then
-		      ' Find the option ID for this checkbox
-		      If i <= q.Options.LastIndex Then
-		        selectedIDs.Add(Str(q.Options(i).ID))
-		      End If
-		    End If
-		  Next
+		  If chkOptionA.Visible And chkOptionA.Value And q.Options.Count > 0 Then
+		    selectedIDs.Add(Str(q.Options(0).ID))
+		  End If
+		  
+		  If chkOptionB.Visible And chkOptionB.Value And q.Options.Count > 1 Then
+		    selectedIDs.Add(Str(q.Options(1).ID))
+		  End If
+		  
+		  If chkOptionC.Visible And chkOptionC.Value And q.Options.Count > 2 Then
+		    selectedIDs.Add(Str(q.Options(2).ID))
+		  End If
+		  
+		  If chkOptionD.Visible And chkOptionD.Value And q.Options.Count > 3 Then
+		    selectedIDs.Add(Str(q.Options(3).ID))
+		  End If
+		  
+		  If chkOptionE.Visible And chkOptionE.Value And q.Options.Count > 4 Then
+		    selectedIDs.Add(Str(q.Options(4).ID))
+		  End If
 		  
 		  ' Save as comma-separated string
 		  If selectedIDs.Count > 0 Then
@@ -893,12 +1066,79 @@ End
 		  Else
 		    UserAnswers(CurrentQuestionIndex) = ""
 		  End If
+		  
+		  ' Auto-save draft to database
+		  SaveDraftToDB(q.ID, UserAnswers(CurrentQuestionIndex))
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveDraftToDB(questionID As Integer, selectedOptionIDs As String)
+		  ' Save a single question's draft answer to database
+		  Var userResponseID As Integer = GetUserResponseID()
+		  If userResponseID = 0 Then Return
+		  
+		  Try
+		    ' Check if response already exists
+		    Var checkSQL As String = "SELECT response_id FROM user_mcq_responses WHERE user_response_id = ? AND question_id = ?"
+		    Var checkPS As MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
+		    checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    checkPS.Bind(0, userResponseID)
+		    checkPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    checkPS.Bind(1, questionID)
+		    Var checkRS As RowSet = checkPS.SelectSQL
+		    
+		    If checkRS.AfterLastRow Then
+		      ' Insert new draft
+		      Var insertSQL As String = "INSERT INTO user_mcq_responses (user_response_id, question_id, selected_option_ids) VALUES (?, ?, ?)"
+		      Var insertPS As MySQLPreparedStatement = Session.DB.Prepare(insertSQL)
+		      insertPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      insertPS.Bind(0, userResponseID)
+		      insertPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      insertPS.Bind(1, questionID)
+		      insertPS.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      insertPS.Bind(2, selectedOptionIDs)
+		      insertPS.ExecuteSQL
+		    Else
+		      ' Update existing draft
+		      Var updateSQL As String = "UPDATE user_mcq_responses SET selected_option_ids = ? WHERE user_response_id = ? AND question_id = ?"
+		      Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
+		      updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		      updatePS.Bind(0, selectedOptionIDs)
+		      updatePS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      updatePS.Bind(1, userResponseID)
+		      updatePS.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      updatePS.Bind(2, questionID)
+		      updatePS.ExecuteSQL
+		    End If
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error saving draft: " + e.Message)
+		  End Try
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowFirstQuestion()
+		  ' Display the first question after dialog has rendered
+		  DisplayQuestion(0)
 		End Sub
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event AnswersChanged()
+	#tag EndHook
+
+
 	#tag Property, Flags = &h21
 		Private CurrentQuestionIndex As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private IsCompleted As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -916,18 +1156,86 @@ End
 
 #tag EndWindowCode
 
-#tag Events chkOption
+#tag Events chkOptionA
 	#tag Event
-		Sub ValueChanged(index as Integer)
+		Sub ValueChanged()
 		  ' Auto-deselect other options for single-choice questions
 		  If CurrentQuestionIndex >= 0 And CurrentQuestionIndex <= Questions.LastIndex Then
 		    Var q As MCQQuestion = Questions(CurrentQuestionIndex)
-		    If q.QuestionType = "single" And chkOption(Index).Value Then
-		      For i As Integer = 0 To 4
-		        If i <> Index And chkOption(i).Visible Then
-		          chkOption(i).Value = False
-		        End If
-		      Next
+		    If q.QuestionType = "single" And chkOptionA.Value Then
+		      ' Deselect all other checkboxes
+		      chkOptionB.Value = False
+		      chkOptionC.Value = False
+		      chkOptionD.Value = False
+		      chkOptionE.Value = False
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkOptionB
+	#tag Event
+		Sub ValueChanged()
+		  ' Auto-deselect other options for single-choice questions
+		  If CurrentQuestionIndex >= 0 And CurrentQuestionIndex <= Questions.LastIndex Then
+		    Var q As MCQQuestion = Questions(CurrentQuestionIndex)
+		    If q.QuestionType = "single" And chkOptionB.Value Then
+		      ' Deselect all other checkboxes
+		      chkOptionA.Value = False
+		      chkOptionC.Value = False
+		      chkOptionD.Value = False
+		      chkOptionE.Value = False
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkOptionC
+	#tag Event
+		Sub ValueChanged()
+		  ' Auto-deselect other options for single-choice questions
+		  If CurrentQuestionIndex >= 0 And CurrentQuestionIndex <= Questions.LastIndex Then
+		    Var q As MCQQuestion = Questions(CurrentQuestionIndex)
+		    If q.QuestionType = "single" And chkOptionC.Value Then
+		      ' Deselect all other checkboxes
+		      chkOptionA.Value = False
+		      chkOptionB.Value = False
+		      chkOptionD.Value = False
+		      chkOptionE.Value = False
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkOptionD
+	#tag Event
+		Sub ValueChanged()
+		  ' Auto-deselect other options for single-choice questions
+		  If CurrentQuestionIndex >= 0 And CurrentQuestionIndex <= Questions.LastIndex Then
+		    Var q As MCQQuestion = Questions(CurrentQuestionIndex)
+		    If q.QuestionType = "single" And chkOptionD.Value Then
+		      ' Deselect all other checkboxes
+		      chkOptionA.Value = False
+		      chkOptionB.Value = False
+		      chkOptionC.Value = False
+		      chkOptionE.Value = False
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkOptionE
+	#tag Event
+		Sub ValueChanged()
+		  ' Auto-deselect other options for single-choice questions
+		  If CurrentQuestionIndex >= 0 And CurrentQuestionIndex <= Questions.LastIndex Then
+		    Var q As MCQQuestion = Questions(CurrentQuestionIndex)
+		    If q.QuestionType = "single" And chkOptionE.Value Then
+		      ' Deselect all other checkboxes
+		      chkOptionB.Value = False
+		      chkOptionC.Value = False
+		      chkOptionD.Value = False
+		      chkOptionA.Value = False
 		    End If
 		  End If
 		End Sub
@@ -936,40 +1244,45 @@ End
 #tag Events btnPrevious
 	#tag Event
 		Sub Pressed()
-		  ' Save current answer and go to previous question
+		  ' Save current answer and go to previous question (with looping)
 		  SaveCurrentAnswer()
 		  
 		  If CurrentQuestionIndex > 0 Then
 		    DisplayQuestion(CurrentQuestionIndex - 1)
+		  Else
+		    ' Loop to last question
+		    DisplayQuestion(Questions.LastIndex)
 		  End If
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events btnNext
 	#tag Event
 		Sub Pressed()
-		  ' Save current answer and go to next question
+		  ' Save current answer and go to next question (with looping)
 		  SaveCurrentAnswer()
 		  
 		  If CurrentQuestionIndex < Questions.LastIndex Then
 		    DisplayQuestion(CurrentQuestionIndex + 1)
+		  Else
+		    ' Loop to first question
+		    DisplayQuestion(0)
 		  End If
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnSubmit
+#tag Events imgClose
 	#tag Event
-		Sub Pressed()
-		  ' Show confirmation before submitting
-		  Var d As New WebMessageDialog
-		  d.Title = "Confirm Submission"
-		  d.Message = "Are you sure you want to submit your answers? You cannot change them after submission."
-		  d.ActionButton.Caption = "Submit"
-		  d.CancelButton.Caption = "Cancel"
-		  d.CancelButton.Visible = True
+		Sub Pressed(x As Integer, y As Integer)
+		  ' Save current answer before closing
+		  #Pragma Unused x
+		  #Pragma Unused y
 		  
-		  AddHandler d.ButtonPressed, AddressOf HandleSubmitConfirm
-		  d.Show
+		  SaveCurrentAnswer()
+		  Self.Close
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents

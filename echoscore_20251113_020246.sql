@@ -42,6 +42,8 @@ CREATE TABLE `case_videos`(
 	`video_id` Int( 0 ) AUTO_INCREMENT NOT NULL,
 	`case_id` Int( 0 ) NOT NULL,
 	`video_filename` VarChar( 255 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`stored_filename` VarChar( 255 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+	`file_type` VarChar( 20 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
 	`view_description` VarChar( 100 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
 	`video_purpose` Text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
 	`video_order` Int( 0 ) NULL DEFAULT 0,
@@ -147,6 +149,9 @@ CREATE TABLE `user_responses`(
 	`is_completed` TinyInt( 1 ) NULL DEFAULT 0,
 	`started_at` Timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 	`completed_at` Timestamp NULL DEFAULT NULL,
+	`mcq_score` Int( 0 ) NULL DEFAULT NULL COMMENT 'Score from MCQ questions only',
+	`checkbox_score` Int( 0 ) NULL DEFAULT NULL COMMENT 'Score from checkbox questions only (existing score column will be total)',
+	`has_mcq_questions` TinyInt( 1 ) NULL DEFAULT 0 COMMENT 'Whether this case includes MCQs',
 	PRIMARY KEY ( `response_id` ),
 	CONSTRAINT `unique_user_case` UNIQUE( `user_id`, `case_id` ) )
 CHARACTER SET = utf8mb4
@@ -174,7 +179,7 @@ CREATE TABLE `users`(
 CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci
 ENGINE = InnoDB
-AUTO_INCREMENT = 7;
+AUTO_INCREMENT = 8;
 -- -------------------------------------------------------------
 
 
@@ -189,7 +194,59 @@ CREATE TABLE `access_requests`(
 CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
+AUTO_INCREMENT = 50;
+-- -------------------------------------------------------------
+
+
+-- CREATE TABLE "mcq_options" ----------------------------------
+CREATE TABLE `mcq_options`( 
+	`option_id` Int( 0 ) AUTO_INCREMENT NOT NULL,
+	`question_id` Int( 0 ) NOT NULL,
+	`option_text` Text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`option_order` Int( 0 ) NULL DEFAULT 0 COMMENT 'Display order (A=0, B=1, C=2, etc)',
+	`is_correct` TinyInt( 1 ) NULL DEFAULT 0 COMMENT 'Whether this is a correct answer',
+	`created_at` Timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` Timestamp NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY ( `option_id` ) )
+CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci
+ENGINE = InnoDB;
+-- -------------------------------------------------------------
+
+
+-- CREATE TABLE "mcq_questions" --------------------------------
+CREATE TABLE `mcq_questions`( 
+	`question_id` Int( 0 ) AUTO_INCREMENT NOT NULL,
+	`case_id` Int( 0 ) NOT NULL,
+	`question_text` Text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`question_order` Int( 0 ) NULL DEFAULT 0 COMMENT 'Display order within case (0-based)',
+	`question_type` VarChar( 20 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'single' COMMENT 'single, multiple, numeric',
+	`points` Int( 0 ) NULL DEFAULT 1 COMMENT 'Points awarded for correct answer',
+	`explanation` Text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'Explanation shown after submission',
+	`is_active` TinyInt( 1 ) NULL DEFAULT 1,
+	`created_at` Timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` Timestamp NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY ( `question_id` ) )
+CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci
+ENGINE = InnoDB;
+-- -------------------------------------------------------------
+
+
+-- CREATE TABLE "user_mcq_responses" ---------------------------
+CREATE TABLE `user_mcq_responses`( 
+	`response_id` Int( 0 ) AUTO_INCREMENT NOT NULL,
+	`user_response_id` Int( 0 ) NOT NULL COMMENT 'Links to user_responses.response_id',
+	`question_id` Int( 0 ) NOT NULL,
+	`selected_option_ids` Text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'Comma-separated option_ids for selected answers',
+	`is_correct` TinyInt( 1 ) NULL DEFAULT NULL COMMENT 'Whether the response is correct',
+	`points_earned` Int( 0 ) NULL DEFAULT 0 COMMENT 'Points earned for this question',
+	`answered_at` Timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY ( `response_id` ),
+	CONSTRAINT `unique_user_question` UNIQUE( `user_response_id`, `question_id` ) )
+CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci
+ENGINE = InnoDB;
 -- -------------------------------------------------------------
 
 
@@ -253,6 +310,11 @@ CREATE INDEX `idx_user` USING BTREE ON `user_responses`( `user_id` );
 -- -------------------------------------------------------------
 
 
+-- CREATE INDEX "idx_has_mcq" ----------------------------------
+CREATE INDEX `idx_has_mcq` USING BTREE ON `user_responses`( `has_mcq_questions` );
+-- -------------------------------------------------------------
+
+
 -- CREATE INDEX "idx_email" ------------------------------------
 CREATE INDEX `idx_email` USING BTREE ON `users`( `email` );
 -- -------------------------------------------------------------
@@ -270,6 +332,36 @@ CREATE INDEX `idx_user_group` USING BTREE ON `users`( `user_group` );
 
 -- CREATE INDEX "idx_username" ---------------------------------
 CREATE INDEX `idx_username` USING BTREE ON `users`( `username` );
+-- -------------------------------------------------------------
+
+
+-- CREATE INDEX "idx_correct" ----------------------------------
+CREATE INDEX `idx_correct` USING BTREE ON `mcq_options`( `is_correct` );
+-- -------------------------------------------------------------
+
+
+-- CREATE INDEX "idx_question_options" -------------------------
+CREATE INDEX `idx_question_options` USING BTREE ON `mcq_options`( `question_id`, `option_order` );
+-- -------------------------------------------------------------
+
+
+-- CREATE INDEX "idx_active" -----------------------------------
+CREATE INDEX `idx_active` USING BTREE ON `mcq_questions`( `is_active` );
+-- -------------------------------------------------------------
+
+
+-- CREATE INDEX "idx_case_questions" ---------------------------
+CREATE INDEX `idx_case_questions` USING BTREE ON `mcq_questions`( `case_id`, `question_order` );
+-- -------------------------------------------------------------
+
+
+-- CREATE INDEX "idx_question" ---------------------------------
+CREATE INDEX `idx_question` USING BTREE ON `user_mcq_responses`( `question_id` );
+-- -------------------------------------------------------------
+
+
+-- CREATE INDEX "idx_user_response" ----------------------------
+CREATE INDEX `idx_user_response` USING BTREE ON `user_mcq_responses`( `user_response_id` );
 -- -------------------------------------------------------------
 
 
@@ -304,6 +396,42 @@ ALTER TABLE `user_responses`
 ALTER TABLE `user_responses`
 	ADD CONSTRAINT `user_responses_ibfk_2` FOREIGN KEY ( `case_id` )
 	REFERENCES `cases`( `case_id` )
+	ON DELETE Cascade
+	ON UPDATE No Action;
+-- -------------------------------------------------------------
+
+
+-- CREATE LINK "fk_mcq_case" -----------------------------------
+ALTER TABLE `mcq_questions`
+	ADD CONSTRAINT `fk_mcq_case` FOREIGN KEY ( `case_id` )
+	REFERENCES `cases`( `case_id` )
+	ON DELETE Cascade
+	ON UPDATE No Action;
+-- -------------------------------------------------------------
+
+
+-- CREATE LINK "fk_mcq_question" -------------------------------
+ALTER TABLE `user_mcq_responses`
+	ADD CONSTRAINT `fk_mcq_question` FOREIGN KEY ( `question_id` )
+	REFERENCES `mcq_questions`( `question_id` )
+	ON DELETE Cascade
+	ON UPDATE No Action;
+-- -------------------------------------------------------------
+
+
+-- CREATE LINK "fk_mcq_user_response" --------------------------
+ALTER TABLE `user_mcq_responses`
+	ADD CONSTRAINT `fk_mcq_user_response` FOREIGN KEY ( `user_response_id` )
+	REFERENCES `user_responses`( `response_id` )
+	ON DELETE Cascade
+	ON UPDATE No Action;
+-- -------------------------------------------------------------
+
+
+-- CREATE LINK "fk_option_question" ----------------------------
+ALTER TABLE `mcq_options`
+	ADD CONSTRAINT `fk_option_question` FOREIGN KEY ( `question_id` )
+	REFERENCES `mcq_questions`( `question_id` )
 	ON DELETE Cascade
 	ON UPDATE No Action;
 -- -------------------------------------------------------------

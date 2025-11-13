@@ -466,9 +466,19 @@ End
 	#tag Method, Flags = &h0
 		Sub Initialize(questionID As Integer)
 		  ' Initialize the dialog for a specific question
-		  QuestionID = questionID
+		  System.DebugLog("dlg_ManageMCQOptions.Initialize called with questionID: " + Str(questionID))
+		  Self.QuestionID = questionID
+		  System.DebugLog("QuestionID property set to: " + Str(Self.QuestionID))
 		  LoadOptions()
 		  ClearEditor()
+		  
+		  
+		  ' ' Initialize the dialog for a specific question
+		  ' System.DebugLog("dlg_ManageMCQOptions.Initialize called with questionID: " + Str(questionID))
+		  ' 
+		  ' QuestionID = questionID
+		  ' LoadOptions()
+		  ' ClearEditor()
 		End Sub
 	#tag EndMethod
 
@@ -590,6 +600,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SaveOption()
 		  ' Save the current option
+		  System.DebugLog("SaveOption called - QuestionID: " + Str(QuestionID))
+		  System.DebugLog("SaveOption - IsEditMode: " + Str(IsEditMode))
+		  
 		  Var optionText As String = txtOptionText.Text.Trim
 		  If optionText = "" Then
 		    Var d As New WebMessageDialog
@@ -600,6 +613,28 @@ End
 		    d.Show
 		    Return
 		  End If
+		  
+		  ' Verify question exists
+		  Try
+		    Var checkSQL As String = "SELECT question_id FROM mcq_questions WHERE question_id = ?"
+		    Var checkPS As MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
+		    checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    checkPS.Bind(0, QuestionID)
+		    Var checkRS As RowSet = checkPS.SelectSQL
+		    
+		    If checkRS.AfterLastRow Then
+		      Var d As New WebMessageDialog
+		      d.Title = "Error"
+		      d.Message = "Question ID " + Str(QuestionID) + " does not exist in the database."
+		      d.ActionButton.Caption = "OK"
+		      d.CancelButton.Visible = False
+		      d.Show
+		      System.DebugLog("Question ID " + Str(QuestionID) + " not found in database")
+		      Return
+		    End If
+		  Catch e As DatabaseException
+		    System.DebugLog("Error checking question existence: " + e.Message)
+		  End Try
 		  
 		  Try
 		    If IsEditMode Then

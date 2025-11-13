@@ -947,9 +947,32 @@ End
 		  LoadVideos
 		  UpdateVideoNavigation
 		  UpdateCaseNavigation
+		  CheckMCQAvailability  ' Check if MCQs exist for this case
 		  
 		  System.DebugLog("wc_CaseReview.Opening complete - TotalVideos: " + Str(TotalVideos))
 		  
+		  
+		  ' ' *******************************************************************************
+		  ' ' wc_CaseReview.Opening Event
+		  ' ' *******************************************************************************
+		  ' Self.EnableBackButton = True
+		  ' Self.EnableLogoutButton = True
+		  ' Self.SectionTitle = "Assessment Section"
+		  ' 
+		  ' UpdateNavigation // update shell page data
+		  ' 
+		  ' LoadAvailableCases
+		  ' LoadCase
+		  ' LoadExistingResponse
+		  ' LoadVideos
+		  ' UpdateVideoNavigation
+		  ' UpdateCaseNavigation
+		  ' 
+		  ' System.DebugLog("wc_CaseReview.Opening complete - TotalVideos: " + Str(TotalVideos))
+		  ' 
+		  ' 
+		  ' CheckMCQAvailability()
+		  ' UpdateSubmitButtons()
 		  
 		End Sub
 	#tag EndEvent
@@ -958,9 +981,118 @@ End
 		Sub Shown()
 		  ' At the end of your existing Opening/Shown code, add:
 		  RefreshMCQStatus
+		  
+		  CheckMCQAvailability()
+		  UpdateSubmitButtons()
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function CheckMCQAnswerCorrectness(questionID As Integer, userAnswer As String) As Boolean
+		  ' Check if user's answer matches correct answers
+		  ' userAnswer is comma-separated option IDs
+		  
+		  Try
+		    ' Get all correct option IDs for this question
+		    Var sql As String = "SELECT option_id FROM mcq_options WHERE question_id = ? AND is_correct = 1"
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(0, questionID)
+		    Var rs As RowSet = ps.SelectSQL
+		    
+		    Var correctIDs() As String
+		    While Not rs.AfterLastRow
+		      correctIDs.Add(Str(rs.Column("option_id").IntegerValue))
+		      rs.MoveToNextRow
+		    Wend
+		    
+		    ' Compare user answer with correct answers
+		    Var userIDs() As String = userAnswer.Split(",")
+		    
+		    ' Must have same number of selections
+		    If userIDs.Count <> correctIDs.Count Then
+		      Return False
+		    End If
+		    
+		    ' All user selections must be correct
+		    For Each userID As String In userIDs
+		      Var found As Boolean = False
+		      For Each correctID As String In correctIDs
+		        If userID.Trim = correctID.Trim Then
+		          found = True
+		          Exit For
+		        End If
+		      Next
+		      If Not found Then
+		        Return False
+		      End If
+		    Next
+		    
+		    Return True
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error checking MCQ correctness: " + e.Message)
+		    Return False
+		  End Try
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckMCQAnswered() As Boolean
+		  ' Check if user has answered any MCQ questions
+		  Var sql As String = "SELECT COUNT(*) as answer_count FROM user_mcq_responses umr " + _
+		  "INNER JOIN user_responses ur ON umr.user_response_id = ur.response_id " + _
+		  "WHERE ur.user_id = ? AND ur.case_id = ? AND ur.is_completed = 0"
+		  
+		  Try
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(0, Session.CurrentUserID)
+		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(1, CaseID)
+		    Var rs As RowSet = ps.SelectSQL
+		    
+		    If rs <> Nil And Not rs.AfterLastRow Then
+		      Return (rs.Column("answer_count").IntegerValue > 0)
+		    End If
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error checking MCQ answers: " + e.Message)
+		  End Try
+		  
+		  Return False
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckMCQAvailability()
+		  ' Check if MCQs exist for this case and show/hide button accordingly
+		  Var sql As String = "SELECT COUNT(*) as mcq_count FROM mcq_questions WHERE case_id = ?"
+		  
+		  Try
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(0, CaseID)
+		    Var rs As RowSet = ps.SelectSQL
+		    
+		    If rs <> Nil And Not rs.AfterLastRow Then
+		      Var count As Integer = rs.Column("mcq_count").IntegerValue
+		      btnMCQAssessment.Visible = (count > 0)
+		      System.DebugLog("MCQ questions for case " + Str(CaseID) + ": " + Str(count))
+		    Else
+		      btnMCQAssessment.Visible = False
+		    End If
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error checking MCQ availability: " + e.Message)
+		    btnMCQAssessment.Visible = False
+		  End Try
+		  
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub DisplayCurrentVideo()
@@ -1054,6 +1186,31 @@ End
 		  UpdateCaseNavigation()
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub HandleMCQAnswersChanged(dialog As dlg_MCQAssessment)
+		  ' Called when MCQ dialog is dismissed and answers may have changed
+		  #Pragma Unused dialog
+		  
+		  UpdateSubmitButtons()
+		  RefreshMCQStatus()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function HasAnsweredCheckboxes() As Boolean
+		  ' Check if any checkboxes have been changed from their default state
+		  Return chkLVSizeDilated.Value Or chkLVFunctionImpaired.Value Or _
+		  chkRVSizeDilated.Value Or chkRVFunctionImpaired.Value Or _
+		  chkAorticStenosis.Value Or chkAorticRegurgitation.Value Or _
+		  chkMitralStenosis.Value Or chkMitralRegurgitation.Value Or _
+		  chkTricuspidStenosis.Value Or chkTricuspidRegurgitation.Value Or _
+		  chkPericardialEffusion.Value Or chkIVCHighPressure.Value Or _
+		  chkRequiresFullEcho.Value Or txtConclusions.Text.Trim <> ""
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1410,6 +1567,8 @@ End
 		  LoadVideos
 		  UpdateVideoNavigation
 		  UpdateCaseNavigation
+		  CheckMCQAvailability  ' Check if MCQs exist for this case
+		  
 		End Sub
 	#tag EndMethod
 
@@ -1430,16 +1589,22 @@ End
 		    
 		    If rs <> Nil And Not rs.AfterLastRow Then
 		      If rs.Column("has_mcq_questions").IntegerValue = 1 Then
-		        ' MCQ has been completed - you might want to update UI here
-		        ' For example, change button text or show score
+		        ' MCQ has been completed - show score in button
 		        btnMCQAssessment.Caption = "Review Questions (Score: " + _
 		        Str(rs.Column("mcq_score").IntegerValue) + ")"
+		      Else
+		        ' Reset button caption if not completed
+		        btnMCQAssessment.Caption = "MCQ Assessment"
 		      End If
 		    End If
+		    
+		    ' Update submit button states
+		    UpdateSubmitButtons()
 		    
 		  Catch e As DatabaseException
 		    System.DebugLog("Error refreshing MCQ status: " + e.Message)
 		  End Try
+		  
 		End Sub
 	#tag EndMethod
 
@@ -1735,6 +1900,9 @@ End
 		    ps.ExecuteSQL
 		    
 		    If isCompleted Then
+		      ' Submit MCQ responses if they exist
+		      SubmitMCQResponses()
+		      
 		      MessageBox("Test submitted successfully!")
 		      ShowCorrectAnswers
 		      btnSave.Visible = False
@@ -1879,6 +2047,130 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SubmitMCQResponses()
+		  
+		  ' Submit MCQ responses and calculate score
+		  
+		  ' First check if MCQs exist for this case
+		  Var checkSQL As String = "SELECT COUNT(*) as mcq_count FROM mcq_questions WHERE case_id = ?"
+		  Try
+		    Var checkPS As MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
+		    checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    checkPS.Bind(0, CaseID)
+		    Var checkRS As RowSet = checkPS.SelectSQL
+		    
+		    If checkRS.AfterLastRow Or checkRS.Column("mcq_count").IntegerValue = 0 Then
+		      Return ' No MCQs for this case
+		    End If
+		  Catch e As DatabaseException
+		    System.DebugLog("Error checking MCQs: " + e.Message)
+		    Return
+		  End Try
+		  
+		  ' Get user response ID
+		  Var responseSQL As String = "SELECT response_id FROM user_responses WHERE user_id = ? AND case_id = ?"
+		  Var userResponseID As Integer = 0
+		  
+		  Try
+		    Var ps1 As MySQLPreparedStatement = Session.DB.Prepare(responseSQL)
+		    ps1.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps1.Bind(0, Session.CurrentUserID)
+		    ps1.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps1.Bind(1, CaseID)
+		    Var rs1 As RowSet = ps1.SelectSQL
+		    
+		    If rs1 <> Nil And Not rs1.AfterLastRow Then
+		      userResponseID = rs1.Column("response_id").IntegerValue
+		    Else
+		      Return ' No response record
+		    End If
+		  Catch e As DatabaseException
+		    System.DebugLog("Error getting response ID: " + e.Message)
+		    Return
+		  End Try
+		  
+		  ' Calculate MCQ score from saved draft answers
+		  Var totalPoints As Integer = 0
+		  Var earnedPoints As Integer = 0
+		  
+		  Try
+		    ' Get all questions for this case
+		    Var qSQL As String = "SELECT question_id, points FROM mcq_questions WHERE case_id = ?"
+		    Var qPS As MySQLPreparedStatement = Session.DB.Prepare(qSQL)
+		    qPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    qPS.Bind(0, CaseID)
+		    Var qRS As RowSet = qPS.SelectSQL
+		    
+		    While Not qRS.AfterLastRow
+		      Var questionID As Integer = qRS.Column("question_id").IntegerValue
+		      Var points As Integer = qRS.Column("points").IntegerValue
+		      totalPoints = totalPoints + points
+		      
+		      ' Get user's answer from drafts
+		      Var aSQL As String = "SELECT selected_option_ids FROM user_mcq_responses " + _
+		      "WHERE user_response_id = ? AND question_id = ?"
+		      Var aPS As MySQLPreparedStatement = Session.DB.Prepare(aSQL)
+		      aPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      aPS.Bind(0, userResponseID)
+		      aPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      aPS.Bind(1, questionID)
+		      Var aRS As RowSet = aPS.SelectSQL
+		      
+		      If aRS <> Nil And Not aRS.AfterLastRow Then
+		        Var userAnswer As String = aRS.Column("selected_option_ids").StringValue
+		        
+		        If userAnswer <> "" Then
+		          ' Check correctness
+		          If CheckMCQAnswerCorrectness(questionID, userAnswer) Then
+		            earnedPoints = earnedPoints + points
+		            
+		            ' Update is_correct and points_earned
+		            Var updateSQL As String = "UPDATE user_mcq_responses SET is_correct = 1, points_earned = ? " + _
+		            "WHERE user_response_id = ? AND question_id = ?"
+		            Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
+		            updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(0, points)
+		            updatePS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(1, userResponseID)
+		            updatePS.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(2, questionID)
+		            updatePS.ExecuteSQL
+		          Else
+		            ' Mark as incorrect
+		            Var updateSQL As String = "UPDATE user_mcq_responses SET is_correct = 0, points_earned = 0 " + _
+		            "WHERE user_response_id = ? AND question_id = ?"
+		            Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
+		            updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(0, userResponseID)
+		            updatePS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(1, questionID)
+		            updatePS.ExecuteSQL
+		          End If
+		        End If
+		      End If
+		      
+		      qRS.MoveToNextRow
+		    Wend
+		    
+		    ' Update user_responses with MCQ score and mark as completed
+		    Var finalSQL As String = "UPDATE user_responses SET mcq_score = ?, has_mcq_questions = 1, is_completed = 1 WHERE response_id = ?"
+		    Var finalPS As MySQLPreparedStatement = Session.DB.Prepare(finalSQL)
+		    finalPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    finalPS.Bind(0, earnedPoints)
+		    finalPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    finalPS.Bind(1, userResponseID)
+		    finalPS.ExecuteSQL
+		    
+		    System.DebugLog("MCQ submission complete - Score: " + Str(earnedPoints) + "/" + Str(totalPoints))
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error submitting MCQ responses: " + e.Message)
+		  End Try
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateCaseNavigation()
 		  ' *******************************************************************************
 		  ' UpdateCaseNavigation Method
@@ -1893,6 +2185,20 @@ End
 		    btnPreviousCase.Enabled = True
 		    btnNextCase.Enabled = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateSubmitButtons()
+		  ' Enable submit if user has answered checkbox questions OR MCQ questions
+		  Var hasCheckboxAnswers As Boolean = HasAnsweredCheckboxes()
+		  Var hasMCQAnswers As Boolean = CheckMCQAnswered()
+		  
+		  Var enableSubmit As Boolean = hasCheckboxAnswers Or hasMCQAnswers
+		  
+		  btnSave.Enabled = enableSubmit
+		  btnSubmit.Enabled = enableSubmit
+		  
 		End Sub
 	#tag EndMethod
 
@@ -2060,11 +2366,21 @@ End
 		Sub Pressed()
 		  ' Open MCQ dialog
 		  Var mcqDialog As New dlg_MCQAssessment
+		  
+		  ' Add handler for when answers change
+		  AddHandler mcqDialog.AnswersChanged, AddressOf HandleMCQAnswersChanged
+		  
 		  mcqDialog.Initialize(CaseID)
 		  mcqDialog.Show
 		  
-		  ' Refresh MCQ status after dialog closes
-		  WebTimer.CallLater(500, AddressOf RefreshMCQStatus)
+		  
+		  ' ' Open MCQ dialog
+		  ' Var mcqDialog As New dlg_MCQAssessment
+		  ' mcqDialog.Initialize(CaseID)
+		  ' mcqDialog.Show
+		  ' 
+		  ' ' Refresh MCQ status after dialog closes
+		  ' WebTimer.CallLater(500, AddressOf RefreshMCQStatus)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

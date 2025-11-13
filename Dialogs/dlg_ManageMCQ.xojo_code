@@ -584,7 +584,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Initialize(caseID As Integer)
 		  ' Initialize the dialog for a specific case
-		  MCQCaseID = caseID
+		  Self.MCQCaseID = caseID
 		  LoadQuestions()
 		  ClearEditor()
 		End Sub
@@ -623,6 +623,7 @@ End
 		Private Sub LoadQuestions()
 		  ' Load questions from database into list
 		  lstQuestions.RemoveAllRows
+		  System.DebugLog("LoadQuestions called - MCQCaseID: " + Str(Self.MCQCaseID))
 		  
 		  Var sql As String = "SELECT q.question_id, q.question_text, q.question_type, q.points, " + _
 		  "COUNT(o.option_id) as option_count " + _
@@ -637,6 +638,8 @@ End
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    ps.Bind(0, MCQCaseID)
 		    Var rs As RowSet = ps.SelectSQL
+		    System.DebugLog("Query executed. Checking results...")
+		    System.DebugLog("Query executed, AfterLastRow: " + Str(rs.AfterLastRow))
 		    
 		    Var rowNum As Integer = 1
 		    While Not rs.AfterLastRow
@@ -728,8 +731,10 @@ End
 		    Return
 		  End If
 		  
+		  System.DebugLog("OpenOptionsManager - SelectedQuestionID: " + Str(SelectedQuestionID))
 		  Var optionsDialog As New dlg_ManageMCQOptions
 		  optionsDialog.Initialize(SelectedQuestionID)
+		  System.DebugLog("After Initialize, checking dialog's QuestionID...")
 		  optionsDialog.Show
 		  
 		  ' Refresh list after dialog closes
@@ -1159,5 +1164,13 @@ End
 			"2 - TopToBottom"
 			"3 - BottomToTop"
 		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MCQCaseID"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior
