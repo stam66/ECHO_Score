@@ -70,7 +70,7 @@ Protected Module EmailHelper
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SendAccessRequestNotification(toEmail as String, toName as String, applicantName as String, applicantEmail as String) As Boolean
+		Function SendAccessRequestNotification(toEmail as String, toName as String, applicantName as String, applicantEmail as String, db as MySQLCommunityServer) As Boolean
 		  ' *******************************************************************************
 		  ' Add Method: SendAccessRequestNotification
 		  '   Parameters: toEmail (admin), toName (admin), applicantName, applicantEmail
@@ -82,7 +82,7 @@ Protected Module EmailHelper
 		  Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
 		  
 		  Try
-		    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
+		    Var rs As RowSet = db.SelectSQL(configSQL)
 		    
 		    If rs = Nil Or rs.AfterLastRow Then
 		      System.DebugLog("Email configuration not found")

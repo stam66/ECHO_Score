@@ -25,7 +25,6 @@ Begin WebDialog dlg_ManageAvailableGroups
    Width           =   820
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblInstruction
       Bold            =   False
@@ -554,6 +553,9 @@ End
 		      LoadAvailableGroupsList
 		      ClearForm
 		      
+		      ' Notify parent that groups changed
+		      RaiseEvent GroupsChanged
+		      
 		    Catch e As DatabaseException
 		      MessageBox("Error deactivating group: " + e.Message)
 		    End Try
@@ -561,9 +563,40 @@ End
 		  ElseIf button.Caption = "Force Delete" Then
 		    ' Hard delete even though in use
 		    PerformDelete
+		    ' Note: PerformDelete now raises the event, so no need here
 		    
-		    ' Else Cancel - do nothing
 		  End If
+		  
+		  
+		  ' #Pragma Unused dialog
+		  ' 
+		  ' ' Handle choice when group is in use
+		  ' Var groupName As String = txtGroupName.Text.Trim
+		  ' 
+		  ' If button.Caption = "Deactivate" Then
+		  ' ' Soft delete - just deactivate
+		  ' Var updateSQL As String = "UPDATE available_groups SET is_active = FALSE WHERE group_id = ?"
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, SelectedGroupID)
+		  ' ps.ExecuteSQL
+		  ' 
+		  ' GroupsModified = True
+		  ' lblStatus.Text = "Group deactivated: " + groupName
+		  ' LoadAvailableGroupsList
+		  ' ClearForm
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error deactivating group: " + e.Message)
+		  ' End Try
+		  ' 
+		  ' ElseIf button.Caption = "Force Delete" Then
+		  ' ' Hard delete even though in use
+		  ' PerformDelete
+		  ' 
+		  ' ' Else Cancel - do nothing
+		  ' End If
 		  
 		End Sub
 	#tag EndMethod
@@ -607,6 +640,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub PerformDelete()
+		  
 		  ' Actually delete the group from database
 		  Var groupName As String = txtGroupName.Text.Trim
 		  Var sql As String = "DELETE FROM available_groups WHERE group_id = ?"
@@ -622,11 +656,39 @@ End
 		    LoadAvailableGroupsList
 		    ClearForm
 		    
+		    ' Notify parent that groups changed
+		    RaiseEvent GroupsChanged
+		    
 		  Catch e As DatabaseException
 		    MessageBox("Error deleting group: " + e.Message)
 		  End Try
+		  
+		  
+		  ' ' Actually delete the group from database
+		  ' Var groupName As String = txtGroupName.Text.Trim
+		  ' Var sql As String = "DELETE FROM available_groups WHERE group_id = ?"
+		  ' 
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, SelectedGroupID)
+		  ' ps.ExecuteSQL
+		  ' 
+		  ' GroupsModified = True
+		  ' lblStatus.Text = "Group deleted: " + groupName
+		  ' LoadAvailableGroupsList
+		  ' ClearForm
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error deleting group: " + e.Message)
+		  ' End Try
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event GroupsChanged()
+	#tag EndHook
 
 
 	#tag Property, Flags = &h0
@@ -835,6 +897,8 @@ End
 		    LoadAvailableGroupsList
 		    ClearForm
 		    
+		    RaiseEvent GroupsChanged
+		    
 		  Catch e As DatabaseException
 		    MessageBox("Error adding group: " + e.Message)
 		  End Try
@@ -888,6 +952,8 @@ End
 		    lblStatus.Text = "Group updated: " + groupName
 		    LoadAvailableGroupsList
 		    
+		    RaiseEvent GroupsChanged
+		    
 		  Catch e As DatabaseException
 		    MessageBox("Error updating group: " + e.Message)
 		  End Try
@@ -928,6 +994,8 @@ End
 		      
 		      AddHandler d.ButtonPressed, AddressOf HandleDeleteInUseChoice
 		      d.Show
+		      RaiseEvent GroupsChanged // raise event to update groups in calling page
+		      
 		      
 		    Else
 		      ' Group not in use - simple confirmation
@@ -940,7 +1008,10 @@ End
 		      
 		      AddHandler d.ButtonPressed, AddressOf HandleDeleteConfirm
 		      d.Show
+		      RaiseEvent GroupsChanged // raise event to update groups in calling page
+		      
 		    End If
+		    
 		    
 		  Catch e As DatabaseException
 		    MessageBox("Error checking group usage: " + e.Message)

@@ -9,6 +9,8 @@ Inherits webcontainer
 		  '     Return Type: (none)
 		  '   Purpose: Positions the container within the target based on Position property
 		  ' *******************************************************************************
+		  #Pragma Unused target
+		  
 		  Select Case Position
 		  Case PositionEnum.TopLeft
 		    ' Lock all sides for full-screen containers

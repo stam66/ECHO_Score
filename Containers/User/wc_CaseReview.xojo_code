@@ -896,6 +896,36 @@ Begin wc_base wc_CaseReview
       Width           =   129
       _mPanelIndex    =   -1
    End
+   Begin WebButton btnMCQAssessment
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "MCQs"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   628
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   31
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   11
+      Visible         =   True
+      Width           =   100
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebContainerControl
 
@@ -924,57 +954,156 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown()
+		  ' At the end of your existing Opening/Shown code, add:
+		  RefreshMCQStatus
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub DisplayCurrentVideo()
+		  
 		  ' *******************************************************************************
 		  ' DisplayCurrentVideo Method
+		  ' Displays the current video or image with appropriate HTML
 		  ' *******************************************************************************
-		  If CurrentVideoIndex < 0 Or CurrentVideoIndex >= TotalVideos Then Return
 		  
-		  ' Ensure the video player is visible
-		  htmlVideoPlayer.Visible = True
+		  If CurrentVideoIndex < 0 Or CurrentVideoIndex > VideoFilenames.LastIndex Then
+		    htmlVideoPlayer.LoadHTML("")
+		    Return
+		  End If
 		  
 		  Var videoFilename As String = VideoFilenames(CurrentVideoIndex)
+		  System.DebugLog("Attempting to display: " + videoFilename)
 		  
-		  ' Get WebFile URL for the video
 		  Var wf As WebFile = Session.ServeVideo(videoFilename)
 		  
 		  If wf = Nil Then
 		    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
-		    errorHTML = errorHTML + "* { margin: 0; padding: 0; box-sizing: border-box; } html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; } body{display:flex;align-items:center;justify-content:center;padding:20px;}"
-		    errorHTML = errorHTML + ".error{background:#fff;padding:30px;border-radius:8px;border-left:4px solid #e74c3c;max-width:600px;box-shadow:0 2px 10px rgba(0,0,0,0.1);} h3{color:#e74c3c;margin-bottom:10px;font-family:Arial,sans-serif;} p{color:#666;font-family:Arial,sans-serif;line-height:1.5;} strong{color:#333;}"
+		    errorHTML = errorHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#e74c3c;font-family:Arial,sans-serif;}"
+		    errorHTML = errorHTML + ".error{background:#fff;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
 		    errorHTML = errorHTML + "</style></head><body><div class='error'>"
-		    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
-		    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+		    errorHTML = errorHTML + "<h3>⚠️ File Not Found</h3>"
+		    errorHTML = errorHTML + "<p>The file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
 		    errorHTML = errorHTML + "</div></body></html>"
 		    
 		    htmlVideoPlayer.LoadHTML(errorHTML)
+		    System.DebugLog("Failed to load: " + videoFilename)
 		    Return
 		  End If
 		  
 		  Var videoURL As String = wf.URL
-		  System.DebugLog("Playing video: " + videoFilename + " at URL: " + videoURL)
+		  System.DebugLog("File loaded successfully: " + videoURL + " (MIME: " + wf.MIMEType + ")")
 		  
-		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
-		  html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-		  html = html + "<style>"
-		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
-		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
-		  html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
-		  html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
-		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
-		  html = html + "</style></head><body>"
-		  html = html + "<div class='video-wrapper'>"
-		  html = html + "<div class='video-container' id='videoContainer'>"
-		  html = html + "<video id='mainVideo' autoplay muted loop playsinline>"
-		  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
-		  html = html + "</video>"
-		  html = html + "</div></div>"
-		  html = html + "</body></html>"
+		  ' Determine if it's an image or video based on MIME type
+		  Var isImage As Boolean = wf.MIMEType.BeginsWith("image/")
 		  
-		  htmlVideoPlayer.LoadHTML(html)
-		  UpdateVideoNavigation
+		  If isImage Then
+		    ' Image HTML
+		    Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		    html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		    html = html + "<style>"
+		    html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		    html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		    html = html + ".image-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		    html = html + ".image-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; position: relative; }"
+		    html = html + "img { max-width: 100%; max-height: 100%; object-fit: contain; }"
+		    html = html + ".nav-info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
+		    html = html + "</style></head><body>"
+		    html = html + "<div class='image-wrapper'>"
+		    html = html + "<div class='image-container'>"
+		    html = html + "<img src='" + videoURL + "' alt='Case Image'>"
+		    html = html + "<div class='nav-info'>Image " + Str(CurrentVideoIndex + 1) + " of " + Str(TotalVideos) + "</div>"
+		    html = html + "</div></div>"
+		    html = html + "</body></html>"
+		    
+		    htmlVideoPlayer.LoadHTML(html)
+		    
+		  Else
+		    ' Video HTML - the working version
+		    Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		    html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		    html = html + "<style>"
+		    html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		    html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		    html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		    html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); position: relative; }"
+		    html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
+		    html = html + ".nav-info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
+		    html = html + "</style></head><body>"
+		    html = html + "<div class='video-wrapper'>"
+		    html = html + "<div class='video-container' id='videoContainer'>"
+		    html = html + "<video id='mainVideo' loop autoplay playsinline muted>"
+		    html = html + "<source src='" + videoURL + "' type='" + wf.MIMEType + "'>"
+		    html = html + "Your browser does not support video.</video>"
+		    html = html + "<div class='nav-info'>Video " + Str(CurrentVideoIndex + 1) + " of " + Str(TotalVideos) + "</div>"
+		    html = html + "</div></div>"
+		    html = html + "<script>"
+		    html = html + "document.getElementById('mainVideo').addEventListener('click', function() {"
+		    html = html + "  if (this.paused) { this.play(); } else { this.pause(); }"
+		    html = html + "});"
+		    html = html + "</script>"
+		    html = html + "</body></html>"
+		    
+		    htmlVideoPlayer.LoadHTML(html)
+		  End If
+		  
+		  ' Update navigation button states
+		  UpdateCaseNavigation()
+		  
+		  
+		  
+		  
+		  ' ' *******************************************************************************
+		  ' ' DisplayCurrentVideo Method
+		  ' ' *******************************************************************************
+		  ' If CurrentVideoIndex < 0 Or CurrentVideoIndex >= TotalVideos Then Return
+		  ' 
+		  ' ' Ensure the video player is visible
+		  ' htmlVideoPlayer.Visible = True
+		  ' 
+		  ' Var videoFilename As String = VideoFilenames(CurrentVideoIndex)
+		  ' 
+		  ' ' Get WebFile URL for the video
+		  ' Var wf As WebFile = Session.ServeVideo(videoFilename)
+		  ' 
+		  ' If wf = Nil Then
+		  ' Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		  ' errorHTML = errorHTML + "* { margin: 0; padding: 0; box-sizing: border-box; } html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; } body{display:flex;align-items:center;justify-content:center;padding:20px;}"
+		  ' errorHTML = errorHTML + ".error{background:#fff;padding:30px;border-radius:8px;border-left:4px solid #e74c3c;max-width:600px;box-shadow:0 2px 10px rgba(0,0,0,0.1);} h3{color:#e74c3c;margin-bottom:10px;font-family:Arial,sans-serif;} p{color:#666;font-family:Arial,sans-serif;line-height:1.5;} strong{color:#333;}"
+		  ' errorHTML = errorHTML + "</style></head><body><div class='error'>"
+		  ' errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+		  ' errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+		  ' errorHTML = errorHTML + "</div></body></html>"
+		  ' 
+		  ' htmlVideoPlayer.LoadHTML(errorHTML)
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var videoURL As String = wf.URL
+		  ' System.DebugLog("Playing video: " + videoFilename + " at URL: " + videoURL)
+		  ' 
+		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		  ' html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		  ' html = html + "<style>"
+		  ' html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		  ' html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		  ' html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		  ' html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  ' html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }"
+		  ' html = html + "</style></head><body>"
+		  ' html = html + "<div class='video-wrapper'>"
+		  ' html = html + "<div class='video-container' id='videoContainer'>"
+		  ' html = html + "<video id='mainVideo' autoplay muted loop playsinline>"
+		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+		  ' html = html + "</video>"
+		  ' html = html + "</div></div>"
+		  ' html = html + "</body></html>"
+		  ' 
+		  ' htmlVideoPlayer.LoadHTML(html)
+		  ' UpdateVideoNavigation
 		End Sub
 	#tag EndMethod
 
@@ -1231,6 +1360,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LoadVideos()
+		  
 		  ' *******************************************************************************
 		  ' LoadVideos Method
 		  ' Loads videos filtered by user's group membership
@@ -1256,7 +1386,8 @@ End
 		  End Try
 		  
 		  ' Build SQL with multi-group filtering
-		  Var sql As String = "SELECT video_filename FROM case_videos WHERE case_id = ? "
+		  ' COALESCE handles both old videos (video_filename) and new videos (stored_filename)
+		  Var sql As String = "SELECT COALESCE(stored_filename, video_filename) as filename FROM case_videos WHERE case_id = ? "
 		  
 		  If userGroup <> "" Then
 		    ' User has a group - filter accordingly
@@ -1289,7 +1420,7 @@ End
 		    ' Collect filenames
 		    Redim VideoFilenames(-1)
 		    While rs <> Nil And Not rs.AfterLastRow
-		      VideoFilenames.Add(rs.Column("video_filename").StringValue)
+		      VideoFilenames.Add(rs.Column("filename").StringValue)
 		      rs.MoveToNextRow
 		    Wend
 		    
@@ -1308,6 +1439,84 @@ End
 		  Catch e As DatabaseException
 		    MessageBox("Error loading videos: " + e.Message)
 		  End Try
+		  
+		  ' ' *******************************************************************************
+		  ' ' LoadVideos Method
+		  ' ' Loads videos filtered by user's group membership
+		  ' ' *******************************************************************************
+		  ' 
+		  ' ' CRITICAL: Clear the HTMLViewer first to prevent white overlay when no videos
+		  ' htmlVideoPlayer.LoadHTML("")
+		  ' 
+		  ' ' Get user's group for filtering
+		  ' Var userGroup As String = ""
+		  ' Try
+		  ' Var userSQL As String = "SELECT user_group FROM users WHERE user_id = ?"
+		  ' Var userPS As MySQLPreparedStatement = Session.DB.Prepare(userSQL)
+		  ' userPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' userPS.Bind(0, Session.CurrentUserID)
+		  ' Var userRS As RowSet = userPS.SelectSQL
+		  ' 
+		  ' If userRS <> Nil And Not userRS.AfterLastRow Then
+		  ' userGroup = If(userRS.Column("user_group").Value = Nil, "", userRS.Column("user_group").StringValue.Trim)
+		  ' End If
+		  ' Catch e As DatabaseException
+		  ' System.DebugLog("Error getting user group: " + e.Message)
+		  ' End Try
+		  ' 
+		  ' ' Build SQL with multi-group filtering
+		  ' Var sql As String = "SELECT video_filename FROM case_videos WHERE case_id = ? "
+		  ' 
+		  ' If userGroup <> "" Then
+		  ' ' User has a group - filter accordingly
+		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
+		  ' sql = sql + "AND (video_purpose IS NULL OR video_purpose = '' "
+		  ' sql = sql + "OR FIND_IN_SET(?, REPLACE(video_purpose, ' ', '')) > 0 "
+		  ' sql = sql + "OR video_purpose LIKE ?) "
+		  ' Else
+		  ' ' No group - only show videos with no purpose set
+		  ' sql = sql + "AND (video_purpose IS NULL OR video_purpose = '') "
+		  ' End If
+		  ' 
+		  ' sql = sql + "ORDER BY video_order"
+		  ' 
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, CaseID)
+		  ' 
+		  ' If userGroup <> "" Then
+		  ' Var trimmedGroup As String = userGroup.ReplaceAll(" ", "")
+		  ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.Bind(1, trimmedGroup)
+		  ' ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.Bind(2, "%" + userGroup + "%")
+		  ' End If
+		  ' 
+		  ' Var rs As RowSet = ps.SelectSQL
+		  ' 
+		  ' ' Collect filenames
+		  ' Redim VideoFilenames(-1)
+		  ' While rs <> Nil And Not rs.AfterLastRow
+		  ' VideoFilenames.Add(rs.Column("video_filename").StringValue)
+		  ' rs.MoveToNextRow
+		  ' Wend
+		  ' 
+		  ' TotalVideos = VideoFilenames.Count
+		  ' CurrentVideoIndex = 0
+		  ' 
+		  ' If TotalVideos > 0 Then
+		  ' htmlVideoPlayer.Visible = True
+		  ' DisplayCurrentVideo
+		  ' Else
+		  ' ' Hide the video player when there are no videos
+		  ' htmlVideoPlayer.Visible = False
+		  ' System.DebugLog("No videos available for case " + Str(CaseID))
+		  ' End If
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error loading videos: " + e.Message)
+		  ' End Try
 		End Sub
 	#tag EndMethod
 
@@ -1329,6 +1538,36 @@ End
 		  LoadVideos
 		  UpdateVideoNavigation
 		  UpdateCaseNavigation
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RefreshMCQStatus()
+		  ' Refresh the MCQ completion status after dialog closes
+		  ' Check if user has completed MCQ assessment
+		  Var sql As String = "SELECT mcq_score, has_mcq_questions FROM user_responses " + _
+		  "WHERE user_id = ? AND case_id = ?"
+		  
+		  Try
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(0, Session.CurrentUserID)
+		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(1, CaseID)
+		    Var rs As RowSet = ps.SelectSQL
+		    
+		    If rs <> Nil And Not rs.AfterLastRow Then
+		      If rs.Column("has_mcq_questions").IntegerValue = 1 Then
+		        ' MCQ has been completed - you might want to update UI here
+		        ' For example, change button text or show score
+		        btnMCQAssessment.Caption = "Review Questions (Score: " + _
+		        Str(rs.Column("mcq_score").IntegerValue) + ")"
+		      End If
+		    End If
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error refreshing MCQ status: " + e.Message)
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -1941,6 +2180,19 @@ End
 		Sub Pressed()
 		  ' Request fullscreen
 		  htmlVideoPlayer.ExecuteJavaScript("(function() { var v = document.getElementById('mainVideo'); if (v) { if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } else { if (v.requestFullscreen) { v.requestFullscreen(); } else if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); } else if (v.mozRequestFullScreen) { v.mozRequestFullScreen(); } else if (v.msRequestFullscreen) { v.msRequestFullscreen(); } } } })();")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnMCQAssessment
+	#tag Event
+		Sub Pressed()
+		  ' Open MCQ dialog
+		  Var mcqDialog As New dlg_MCQAssessment
+		  mcqDialog.Initialize(CaseID)
+		  mcqDialog.Show
+		  
+		  ' Refresh MCQ status after dialog closes
+		  WebTimer.CallLater(500, AddressOf RefreshMCQStatus)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

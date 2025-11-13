@@ -24,7 +24,6 @@ Begin wc_base wc_UserAdmin
    Width           =   1044
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebListBox lstUsers
       AllowRowReordering=   False
@@ -526,7 +525,7 @@ Begin wc_base wc_UserAdmin
       Tooltip         =   ""
       Top             =   515
       Visible         =   True
-      Width           =   249
+      Width           =   202
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblDisplayedMessage
@@ -652,6 +651,36 @@ Begin wc_base wc_UserAdmin
       Width           =   125
       _mPanelIndex    =   -1
    End
+   Begin WebButton btnManageGroups
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "+"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   40
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   984
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   True
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   23
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   515
+      Visible         =   True
+      Width           =   40
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebContainerControl
 
@@ -663,6 +692,8 @@ End
 		  ' *******************************************************************************
 		  LoadUsers("")
 		  LoadUserGroups
+		  popGroupFilter.SelectedRowIndex = 0
+		  LoadUsers(popGroupFilter.RowTextAt(0))
 		  ClearFields
 		  
 		  Self.EnableBackButton = True
@@ -670,6 +701,43 @@ End
 		  Self.SectionTitle = "Manage Users"
 		  
 		  UpdateNavigation // update shell page data
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown()
+		  ' Save the currently selected group NAME (not index)
+		  Var selectedGroupName As String = ""
+		  
+		  If popGroupFilter.SelectedRowIndex >= 0 Then
+		    selectedGroupName = popGroupFilter.RowTextAt(popGroupFilter.SelectedRowIndex)
+		  End If
+		  
+		  ' Refresh the groups list
+		  LoadUserGroups()
+		  
+		  ' Restore the selection by finding the group name
+		  If selectedGroupName <> "" Then
+		    For i As Integer = 0 To popGroupFilter.RowCount - 1
+		      If popGroupFilter.RowTextAt(i) = selectedGroupName Then
+		        popGroupFilter.SelectedRowIndex = i
+		        
+		        ' Manually reload users for this group
+		        If selectedGroupName = "All Groups" Then
+		          LoadUsers("")
+		        Else
+		          LoadUsers(selectedGroupName)
+		        End If
+		        
+		        Exit For i
+		      End If
+		    Next
+		  Else
+		    ' No selection - default to "All Groups"
+		    popGroupFilter.SelectedRowIndex = 0
+		    LoadUsers("")
+		  End If
+		  
 		End Sub
 	#tag EndEvent
 
@@ -757,10 +825,53 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub HandleGroupsChanged(sender As dlg_ManageAvailableGroups)
+		  ' Save current selection
+		  Var selectedGroupName As String = ""
+		  
+		  If popGroupFilter.SelectedRowIndex >= 0 Then
+		    selectedGroupName = popGroupFilter.RowTextAt(popGroupFilter.SelectedRowIndex)
+		  End If
+		  
+		  ' Refresh groups
+		  LoadUserGroups()
+		  
+		  ' Restore selection
+		  If selectedGroupName <> "" Then
+		    For i As Integer = 0 To popGroupFilter.RowCount - 1
+		      If popGroupFilter.RowTextAt(i) = selectedGroupName Then
+		        popGroupFilter.SelectedRowIndex = i
+		        
+		        If selectedGroupName = "All Groups" Then
+		          LoadUsers("")
+		        Else
+		          LoadUsers(selectedGroupName)
+		        End If
+		        
+		        Exit For i
+		      End If
+		    Next
+		  Else
+		    ' Default to "All Groups"
+		    popGroupFilter.SelectedRowIndex = 0
+		    LoadUsers("")
+		  End If
+		  
+		  System.DebugLog("Groups refreshed after change")
+		  
+		  ' You can use 'sender' if you need to access the dialog that raised the event
+		  ' But in this case we don't need it
+		  #Pragma Unused sender
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub LoadUserGroups()
 		  ' *******************************************************************************
 		  ' LoadUserGroups Method
+		  ' Load groups from available_groups table, not just from assigned users
 		  ' *******************************************************************************
 		  cmbUserGroup.RemoveAllRows
 		  popGroupFilter.RemoveAllRows
@@ -768,58 +879,31 @@ End
 		  ' Add "All" as first option in filter
 		  popGroupFilter.AddRow("All Groups")
 		  
-		  ' Add common groups
-		  Var currentYear As Integer = DateTime.Now.Year
-		  Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
-		  Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+		  ' Load groups from available_groups table
+		  ' Var sql As String = "SELECT group_name FROM available_groups ORDER BY group_name"
+		  Var sql As String = "SELECT group_name FROM available_groups ORDER BY created_date DESC"
 		  
-		  For Each specialty As String In specialties
-		    For Each quarter As String In quarters
-		      cmbUserGroup.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
-		    Next
-		  Next
-		  
-		  ' Also load existing groups from database
-		  Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL ORDER BY user_group DESC"
 		  Try
 		    Var rs As RowSet = Session.DB.SelectSQL(sql)
+		    
 		    While Not rs.AfterLastRow
-		      Var existingGroup As String = rs.Column("user_group").StringValue
-		      If existingGroup.Trim <> "" Then
-		        ' Add to cmbUserGroup if not already in list
-		        Var found As Boolean = False
-		        For i As Integer = 0 To cmbUserGroup.RowCount - 1
-		          If cmbUserGroup.RowTextAt(i) = existingGroup Then
-		            found = True
-		            Exit For i
-		          End If
-		        Next
-		        If Not found Then
-		          cmbUserGroup.AddRow(existingGroup)
-		        End If
+		      Var groupName As String = rs.Column("group_name").StringValue
+		      If groupName.Trim <> "" Then
+		        ' Add to cmbUserGroup
+		        cmbUserGroup.AddRow(groupName)
 		        
-		        ' Add to popGroupFilter if not already in list
-		        found = False
-		        For i As Integer = 0 To popGroupFilter.RowCount - 1
-		          If popGroupFilter.RowTextAt(i) = existingGroup Then
-		            found = True
-		            Exit For i
-		          End If
-		        Next
-		        If Not found Then
-		          popGroupFilter.AddRow(existingGroup)
-		        End If
+		        ' Add to popGroupFilter
+		        popGroupFilter.AddRow(groupName)
 		      End If
+		      
 		      rs.MoveToNextRow
 		    Wend
+		    
+		    System.DebugLog("Loaded " + Str(cmbUserGroup.RowCount) + " groups from available_groups table")
+		    
 		  Catch e As DatabaseException
-		    ' Ignore error
+		    System.DebugLog("Error loading groups: " + e.Message)
 		  End Try
-		  
-		  ' Set filter to "All" by default
-		  popGroupFilter.SelectedRowIndex = 0
-		  
-		  
 		  
 		  
 		  
@@ -827,6 +911,10 @@ End
 		  ' ' LoadUserGroups Method
 		  ' ' *******************************************************************************
 		  ' cmbUserGroup.RemoveAllRows
+		  ' popGroupFilter.RemoveAllRows
+		  ' 
+		  ' ' Add "All" as first option in filter
+		  ' popGroupFilter.AddRow("All Groups")
 		  ' 
 		  ' ' Add common groups
 		  ' Var currentYear As Integer = DateTime.Now.Year
@@ -846,7 +934,7 @@ End
 		  ' While Not rs.AfterLastRow
 		  ' Var existingGroup As String = rs.Column("user_group").StringValue
 		  ' If existingGroup.Trim <> "" Then
-		  ' ' Add if not already in list
+		  ' ' Add to cmbUserGroup if not already in list
 		  ' Var found As Boolean = False
 		  ' For i As Integer = 0 To cmbUserGroup.RowCount - 1
 		  ' If cmbUserGroup.RowTextAt(i) = existingGroup Then
@@ -857,12 +945,72 @@ End
 		  ' If Not found Then
 		  ' cmbUserGroup.AddRow(existingGroup)
 		  ' End If
+		  ' 
+		  ' ' Add to popGroupFilter if not already in list
+		  ' found = False
+		  ' For i As Integer = 0 To popGroupFilter.RowCount - 1
+		  ' If popGroupFilter.RowTextAt(i) = existingGroup Then
+		  ' found = True
+		  ' Exit For i
+		  ' End If
+		  ' Next
+		  ' If Not found Then
+		  ' popGroupFilter.AddRow(existingGroup)
+		  ' End If
 		  ' End If
 		  ' rs.MoveToNextRow
 		  ' Wend
 		  ' Catch e As DatabaseException
 		  ' ' Ignore error
 		  ' End Try
+		  ' 
+		  ' ' Set filter to "All" by default
+		  ' popGroupFilter.SelectedRowIndex = 0
+		  ' 
+		  ' 
+		  ' 
+		  ' 
+		  ' 
+		  ' ' ' *******************************************************************************
+		  ' ' ' LoadUserGroups Method
+		  ' ' ' *******************************************************************************
+		  ' ' cmbUserGroup.RemoveAllRows
+		  ' ' 
+		  ' ' ' Add common groups
+		  ' ' Var currentYear As Integer = DateTime.Now.Year
+		  ' ' Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
+		  ' ' Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
+		  ' ' 
+		  ' ' For Each specialty As String In specialties
+		  ' ' For Each quarter As String In quarters
+		  ' ' cmbUserGroup.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
+		  ' ' Next
+		  ' ' Next
+		  ' ' 
+		  ' ' ' Also load existing groups from database
+		  ' ' Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL ORDER BY user_group DESC"
+		  ' ' Try
+		  ' ' Var rs As RowSet = Session.DB.SelectSQL(sql)
+		  ' ' While Not rs.AfterLastRow
+		  ' ' Var existingGroup As String = rs.Column("user_group").StringValue
+		  ' ' If existingGroup.Trim <> "" Then
+		  ' ' ' Add if not already in list
+		  ' ' Var found As Boolean = False
+		  ' ' For i As Integer = 0 To cmbUserGroup.RowCount - 1
+		  ' ' If cmbUserGroup.RowTextAt(i) = existingGroup Then
+		  ' ' found = True
+		  ' ' Exit For i
+		  ' ' End If
+		  ' ' Next
+		  ' ' If Not found Then
+		  ' ' cmbUserGroup.AddRow(existingGroup)
+		  ' ' End If
+		  ' ' End If
+		  ' ' rs.MoveToNextRow
+		  ' ' Wend
+		  ' ' Catch e As DatabaseException
+		  ' ' ' Ignore error
+		  ' ' End Try
 		End Sub
 	#tag EndMethod
 
@@ -1306,6 +1454,19 @@ End
 		    ' Specific group selected
 		    LoadUsers(Me.RowTextAt(Me.SelectedRowIndex))
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnManageGroups
+	#tag Event
+		Sub Pressed()
+		  Var groupDlg As New dlg_ManageAvailableGroups
+		  
+		  'Add handler to refresh when groups change
+		  AddHandler groupDlg.GroupsChanged, AddressOf HandleGroupsChanged
+		  
+		  groupDlg.Show
+		  WebTimer.CallLater(4000, AddressOf LoadUserGroups)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class App
 Inherits WebApplication
-	#tag Constant, Name = kVersion, Type = String, Dynamic = False, Default = \"1.0.1", Scope = Public
+	#tag Constant, Name = kVersion, Type = String, Dynamic = False, Default = \"1.0.2", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = MyGrey, Type = Color, Dynamic = False, Default = \"&c808080", Scope = Public

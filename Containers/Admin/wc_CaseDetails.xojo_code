@@ -423,7 +423,7 @@ Begin wc_base wc_CaseDetails
       Caption         =   "Save"
       ControlID       =   ""
       CSSClasses      =   ""
-      Default         =   False
+      Default         =   True
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -449,7 +449,7 @@ Begin wc_base wc_CaseDetails
    End
    Begin WebButton btnCancelChanges
       AllowAutoDisable=   False
-      Cancel          =   False
+      Cancel          =   True
       Caption         =   "Cancel"
       ControlID       =   ""
       CSSClasses      =   ""
@@ -482,10 +482,10 @@ Begin wc_base wc_CaseDetails
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Filter          =   "video/mp4,video/*"
+      Filter          =   "video/mp4,video/quicktime,video/x-msvideo,video/webm,image/png,image/jpeg,image/gif"
       HasFileNameField=   True
       Height          =   41
-      Hint            =   "Click to select video to upload"
+      Hint            =   "Select video or image to upload"
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   0
@@ -1060,6 +1060,36 @@ Begin wc_base wc_CaseDetails
       Width           =   101
       _mPanelIndex    =   -1
    End
+   Begin WebButton btnManageMCQ
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Manage MCQs"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   708
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   54
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   724
+      Visible         =   True
+      Width           =   142
+      _mPanelIndex    =   -1
+   End
 End
 #tag EndWebContainerControl
 
@@ -1093,6 +1123,13 @@ End
 		  
 		  btnSaveAll.Enabled = False
 		  btnCancelChanges.Enabled = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown()
+		  lstVideos.SelectedRowIndex = 0
+		  LoadVideoPreview(0)
 		End Sub
 	#tag EndEvent
 
@@ -1144,64 +1181,130 @@ End
 		Private Sub HandleDeleteVideoConfirm(dialog As WebMessageDialog, button As WebMessageDialogButton)
 		  
 		  ' ******************************************************************
-		  ' HandleDeleteVideoConfirm Method - FIXED to delete physical file
+		  ' HandleDeleteVideoConfirm Method - Callback for delete video confirmation
 		  ' ******************************************************************
-		  Select Case button
-		  Case dialog.ActionButton
-		    Var videoID As Integer = lstVideos.RowTagAt(lstVideos.SelectedRowIndex)
+		  If button <> dialog.ActionButton Then
+		    ' User cancelled
+		    Return
+		  End If
+		  
+		  Try
+		    ' FIRST: Get the stored filename from database
+		    Var getFilenameSQL As String = "SELECT COALESCE(stored_filename, video_filename) as stored_filename FROM case_videos WHERE video_id = ?"
+		    Var psFile As MySQLPreparedStatement = Session.DB.Prepare(getFilenameSQL)
+		    psFile.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    psFile.Bind(0, LastSelectedVideoID)
+		    Var rsFile As RowSet = psFile.SelectSQL
 		    
-		    Try
-		      ' FIRST: Get the filename from database before deleting the record
-		      Var getFilenameSQL As String = "SELECT video_filename FROM case_videos WHERE video_id = ?"
-		      Var psGetFile As MySQLPreparedStatement = Session.DB.Prepare(getFilenameSQL)
-		      psGetFile.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		      psGetFile.Bind(0, videoID)
-		      Var rsFile As RowSet = psGetFile.SelectSQL
-		      
-		      If rsFile = Nil Or rsFile.AfterLastRow Then
-		        MessageBox("Error: Video not found in database")
-		        Return
-		      End If
-		      
-		      Var videoFilename As String = rsFile.Column("video_filename").StringValue
-		      System.DebugLog("Deleting video: " + videoFilename)
-		      
-		      ' SECOND: Delete the physical file from CaseVideos folder
+		    Var storedFilename As String = ""
+		    If rsFile <> Nil And Not rsFile.AfterLastRow Then
+		      storedFilename = rsFile.Column("stored_filename").StringValue
+		    End If
+		    
+		    ' SECOND: Delete from database
+		    Var deleteSQL As String = "DELETE FROM case_videos WHERE video_id = ?"
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(deleteSQL)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(0, LastSelectedVideoID)
+		    ps.ExecuteSQL
+		    
+		    ' THIRD: Delete the physical file from CaseVideos folder
+		    If storedFilename <> "" Then
 		      Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
 		      If videoFolder.Exists Then
-		        Var videoFile As FolderItem = videoFolder.Child(videoFilename)
-		        
-		        If videoFile.Exists Then
+		        Var mediaFile As FolderItem = videoFolder.Child(storedFilename)
+		        If mediaFile.Exists Then
 		          Try
-		            videoFile.Remove
-		            System.DebugLog("Physical file deleted: " + videoFile.NativePath)
-		          Catch fileError As IOException
-		            System.DebugLog("Warning: Could not delete physical file: " + fileError.Message)
-		            ' Continue with database deletion even if file deletion fails
+		            mediaFile.Remove
+		            System.DebugLog("Deleted physical file: " + storedFilename)
+		          Catch removeError As IOException
+		            System.DebugLog("Warning: Could not delete physical file: " + removeError.Message)
+		            ' Continue anyway - database record is already deleted
 		          End Try
 		        Else
-		          System.DebugLog("Warning: Physical file not found: " + videoFilename)
-		          ' Continue with database deletion even if file doesn't exist
+		          System.DebugLog("Warning: Physical file not found: " + storedFilename)
 		        End If
 		      End If
-		      
-		      ' THIRD: Delete the database record
-		      Var sql As String = "DELETE FROM case_videos WHERE video_id = ?"
-		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		      ps.Bind(0, videoID)
-		      ps.ExecuteSQL
-		      
-		      MessageBox("Video deleted successfully!")
-		      LoadCaseVideos
-		      htmlVideoPreview.LoadHTML("")  // Clear the video preview
-		      
-		    Catch e As DatabaseException
-		      MessageBox("Error deleting video: " + e.Message)
-		    Catch e As RuntimeException
-		      MessageBox("Error deleting video: " + e.Message)
-		    End Try
-		  End Select
+		    End If
+		    
+		    ' Reload the list
+		    LoadCaseVideos()
+		    
+		    ' Show success message
+		    Var successMsg As New WebMessageDialog
+		    successMsg.Title = "Success"
+		    successMsg.Message = "File deleted successfully."
+		    successMsg.ActionButton.Caption = "OK"
+		    successMsg.CancelButton.Visible = False
+		    successMsg.Show
+		    
+		  Catch e As DatabaseException
+		    Var errMsg As New WebMessageDialog
+		    errMsg.Title = "Error"
+		    errMsg.Message = "Error deleting file: " + e.Message
+		    errMsg.ActionButton.Caption = "OK"
+		    errMsg.CancelButton.Visible = False
+		    errMsg.Show
+		    
+		    System.DebugLog("Error deleting video: " + e.Message)
+		  End Try
+		  
+		  ' Select Case button
+		  ' Case dialog.ActionButton
+		  ' Var videoID As Integer = lstVideos.RowTagAt(lstVideos.SelectedRowIndex)
+		  ' 
+		  ' Try
+		  ' ' FIRST: Get the filename from database before deleting the record
+		  ' Var getFilenameSQL As String = "SELECT video_filename FROM case_videos WHERE video_id = ?"
+		  ' Var psGetFile As MySQLPreparedStatement = Session.DB.Prepare(getFilenameSQL)
+		  ' psGetFile.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' psGetFile.Bind(0, videoID)
+		  ' Var rsFile As RowSet = psGetFile.SelectSQL
+		  ' 
+		  ' If rsFile = Nil Or rsFile.AfterLastRow Then
+		  ' MessageBox("Error: Video not found in database")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var videoFilename As String = rsFile.Column("video_filename").StringValue
+		  ' System.DebugLog("Deleting video: " + videoFilename)
+		  ' 
+		  ' ' SECOND: Delete the physical file from CaseVideos folder
+		  ' Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		  ' If videoFolder.Exists Then
+		  ' Var videoFile As FolderItem = videoFolder.Child(videoFilename)
+		  ' 
+		  ' If videoFile.Exists Then
+		  ' Try
+		  ' videoFile.Remove
+		  ' System.DebugLog("Physical file deleted: " + videoFile.NativePath)
+		  ' Catch fileError As IOException
+		  ' System.DebugLog("Warning: Could not delete physical file: " + fileError.Message)
+		  ' ' Continue with database deletion even if file deletion fails
+		  ' End Try
+		  ' Else
+		  ' System.DebugLog("Warning: Physical file not found: " + videoFilename)
+		  ' ' Continue with database deletion even if file doesn't exist
+		  ' End If
+		  ' End If
+		  ' 
+		  ' ' THIRD: Delete the database record
+		  ' Var sql As String = "DELETE FROM case_videos WHERE video_id = ?"
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, videoID)
+		  ' ps.ExecuteSQL
+		  ' 
+		  ' MessageBox("Video deleted successfully!")
+		  ' LoadCaseVideos
+		  ' htmlVideoPreview.LoadHTML("")  // Clear the video preview
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error deleting video: " + e.Message)
+		  ' Catch e As RuntimeException
+		  ' MessageBox("Error deleting video: " + e.Message)
+		  ' End Try
+		  ' End Select
 		  
 		  
 		  ' ' ******************************************************************
@@ -1412,99 +1515,320 @@ End
 		  ' ******************************************************************
 		  lstVideos.RemoveAllRows
 		  
-		  Var sql As String = "SELECT video_id, video_filename, view_description, video_order FROM case_videos WHERE case_id = ? ORDER BY video_order"
+		  Var sql As String = "SELECT video_id, video_filename, COALESCE(stored_filename, video_filename) as stored_filename, view_description, video_order, COALESCE(file_type, 'video') as file_type FROM case_videos WHERE case_id = ? ORDER BY video_order"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    ps.Bind(0, CaseID)
-		    
 		    Var rs As RowSet = ps.SelectSQL
 		    
-		    ' Create centered style once (reuse for all rows)
-		    Var centeredStyle As New WebStyle
-		    centeredStyle.Value("text-align") = "center"
-		    
 		    While Not rs.AfterLastRow
+		      ' Display the original filename (user-friendly name)
 		      lstVideos.AddRow(rs.Column("video_filename").StringValue)
-		      lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 1) = rs.Column("view_description").StringValue
 		      
-		      ' Center the order column - use CellValueAt with WebListBoxStyleRenderer
-		      Var row As Integer = lstVideos.LastAddedRowIndex
-		      Var orderValue As String = Str(rs.Column("video_order").IntegerValue)
-		      lstVideos.CellValueAt(row, 2) = New WebListBoxStyleRenderer(centeredStyle, orderValue)
-		      
-		      ' Store video_id in rowtag
+		      ' Store the video_id in RowTag for later reference
 		      lstVideos.RowTagAt(lstVideos.LastAddedRowIndex) = rs.Column("video_id").IntegerValue
+		      
+		      ' Optionally show file type indicator
+		      Var fileType As String = rs.Column("file_type").StringValue
+		      If fileType = "image" Then
+		        ' You could add a visual indicator that it's an image
+		        ' For example: lstVideos.CellValueAt(lstVideos.LastAddedRowIndex, 1) = "📷"
+		      End If
 		      
 		      rs.MoveToNextRow
 		    Wend
 		    
-		    ' Select first row and manually load video
-		    If lstVideos.RowCount > 0 Then
-		      lstVideos.SelectedRowIndex = 0
-		      ' Manually trigger video load since SelectionChanged doesn't fire programmatically
-		      LoadVideoPreview(0)
-		    End If
-		    
 		  Catch e As DatabaseException
-		    MessageBox("Error loading videos: " + e.Message)
+		    System.DebugLog("Error loading videos: " + e.Message)
 		  End Try
+		  
+		  ' lstVideos.RemoveAllRows
+		  ' 
+		  ' Var sql As String = "SELECT video_id, video_filename, view_description, video_order FROM case_videos WHERE case_id = ? ORDER BY video_order"
+		  ' 
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, CaseID)
+		  ' 
+		  ' Var rs As RowSet = ps.SelectSQL
+		  ' 
+		  ' ' Create centered style once (reuse for all rows)
+		  ' Var centeredStyle As New WebStyle
+		  ' centeredStyle.Value("text-align") = "center"
+		  ' 
+		  ' While Not rs.AfterLastRow
+		  ' lstVideos.AddRow(rs.Column("video_filename").StringValue)
+		  ' lstVideos.CellTextAt(lstVideos.LastAddedRowIndex, 1) = rs.Column("view_description").StringValue
+		  ' 
+		  ' ' Center the order column - use CellValueAt with WebListBoxStyleRenderer
+		  ' Var row As Integer = lstVideos.LastAddedRowIndex
+		  ' Var orderValue As String = Str(rs.Column("video_order").IntegerValue)
+		  ' lstVideos.CellValueAt(row, 2) = New WebListBoxStyleRenderer(centeredStyle, orderValue)
+		  ' 
+		  ' ' Store video_id in rowtag
+		  ' lstVideos.RowTagAt(lstVideos.LastAddedRowIndex) = rs.Column("video_id").IntegerValue
+		  ' 
+		  ' rs.MoveToNextRow
+		  ' Wend
+		  ' 
+		  ' ' Select first row and manually load video
+		  ' If lstVideos.RowCount > 0 Then
+		  ' lstVideos.SelectedRowIndex = 0
+		  ' ' Manually trigger video load since SelectionChanged doesn't fire programmatically
+		  ' LoadVideoPreview(0)
+		  ' End If
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error loading videos: " + e.Message)
+		  ' End Try
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub LoadVideoPreview(rowIndex As Integer)
+		  ' ******************************************************************************************
+		  ' LoadVideoPreview method
+		  '    Params: rowIndex as integer
+		  '    Returns nothing
+		  ' ******************************************************************************************
 		  If rowIndex < 0 Then
 		    htmlVideoPreview.LoadHTML("")
 		    Return
 		  End If
 		  
-		  Var videoFilename As String = lstVideos.CellTextAt(rowIndex, 0)
-		  Var wf As WebFile = Session.ServeVideo(videoFilename)
+		  ' Get video_id from RowTag
+		  Var videoID As Integer = lstVideos.RowTagAt(rowIndex)
+		  
+		  ' Get the STORED filename (UUID) from database, not the displayed name
+		  Var sql As String = "SELECT COALESCE(stored_filename, video_filename) as stored_filename, video_filename FROM case_videos WHERE video_id = ?"
+		  
+		  Var storedFilename As String = ""
+		  Var displayedFilename As String = ""
+		  
+		  Try
+		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.Bind(0, videoID)
+		    Var rs As RowSet = ps.SelectSQL
+		    
+		    If rs <> Nil And Not rs.AfterLastRow Then
+		      storedFilename = rs.Column("stored_filename").StringValue
+		      displayedFilename = rs.Column("video_filename").StringValue
+		    Else
+		      ' Video ID not found
+		      htmlVideoPreview.LoadHTML("<html><body>Error: Video not found in database</body></html>")
+		      Return
+		    End If
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error getting stored filename: " + e.Message)
+		    htmlVideoPreview.LoadHTML("<html><body>Error loading file: " + e.Message + "</body></html>")
+		    Return
+		  End Try
+		  
+		  System.DebugLog("Loading preview - Display name: " + displayedFilename + ", Stored name: " + storedFilename)
+		  
+		  ' Serve the file using the STORED filename (UUID)
+		  Var wf As WebFile = Session.ServeVideo(storedFilename)
 		  
 		  If wf = Nil Then
 		    Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
 		    errorHTML = errorHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#e74c3c;font-family:Arial,sans-serif;}"
 		    errorHTML = errorHTML + ".error{background:#fff;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
 		    errorHTML = errorHTML + "</style></head><body><div class='error'>"
-		    errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
-		    errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+		    errorHTML = errorHTML + "<h3>⚠️ File Not Found</h3>"
+		    errorHTML = errorHTML + "<p>The file <strong>" + displayedFilename + "</strong> could not be loaded.</p>"
+		    errorHTML = errorHTML + "<p>Stored as: <code>" + storedFilename + "</code></p>"
 		    errorHTML = errorHTML + "</div></body></html>"
 		    
 		    htmlVideoPreview.LoadHTML(errorHTML)
+		    System.DebugLog("Failed to load stored file: " + storedFilename)
 		    Return
 		  End If
 		  
 		  Var videoURL As String = wf.URL
-		  System.DebugLog("Loading video in preview: " + videoURL)
+		  System.DebugLog("Loading file in preview: " + videoURL + " (MIME: " + wf.MIMEType + ")")
 		  
-		  ' HTML without native controls (to avoid grey overlay)
-		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
-		  html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-		  html = html + "<style>"
-		  html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
-		  html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
-		  // fix for video resize
-		  html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
-		  html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
-		  // end fix for video resize
-		  html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
-		  html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
-		  html = html + "</style></head><body>"
-		  html = html + "<div class='video-wrapper'>"
-		  html = html + "<div class='video-container' id='videoContainer'>"
-		  html = html + "<video id='mainVideo' loop autoplay playsinline muted>"
-		  html = html + "<source src='" + videoURL + "' type='video/mp4'>"
-		  html = html + "Your browser does not support video.</video>"
-		  html = html + "<div class='info'>" + videoFilename + "</div>"
-		  html = html + "</div></div>"
-		  html = html + "<script>"
-		  html = html + "document.getElementById('mainVideo').addEventListener('click', function() {"
-		  html = html + "  if (this.paused) { this.play(); } else { this.pause(); }"
-		  html = html + "});"
-		  html = html + "</script>"
-		  html = html + "</body></html>"
+		  ' Determine if it's an image or video based on MIME type
+		  Var isImage As Boolean = wf.MIMEType.BeginsWith("image/")
+		  
+		  If isImage Then
+		    ' Image HTML with similar styling to video
+		    Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		    html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		    html = html + "<style>"
+		    html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		    html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		    html = html + ".image-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		    html = html + ".image-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; }"
+		    html = html + "img { max-width: 100%; max-height: 100%; object-fit: contain; }"
+		    html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
+		    html = html + "</style></head><body>"
+		    html = html + "<div class='image-wrapper'>"
+		    html = html + "<div class='image-container'>"
+		    html = html + "<img src='" + videoURL + "' alt='Preview'>"
+		    html = html + "<div class='info'>" + displayedFilename + "</div>"
+		    html = html + "</div></div>"
+		    html = html + "</body></html>"
+		    
+		    htmlVideoPreview.LoadHTML(html)
+		    
+		  Else
+		    ' Video HTML - your working version
+		    Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		    html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		    html = html + "<style>"
+		    html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		    html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		    html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		    html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		    html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
+		    html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
+		    html = html + "</style></head><body>"
+		    html = html + "<div class='video-wrapper'>"
+		    html = html + "<div class='video-container' id='videoContainer'>"
+		    html = html + "<video id='mainVideo' loop autoplay playsinline muted>"
+		    html = html + "<source src='" + videoURL + "' type='" + wf.MIMEType + "'>"
+		    html = html + "Your browser does not support video.</video>"
+		    html = html + "<div class='info'>" + displayedFilename + "</div>"
+		    html = html + "</div></div>"
+		    html = html + "<script>"
+		    html = html + "document.getElementById('mainVideo').addEventListener('click', function() {"
+		    html = html + "  if (this.paused) { this.play(); } else { this.pause(); }"
+		    html = html + "});"
+		    html = html + "</script>"
+		    html = html + "</body></html>"
+		    
+		    htmlVideoPreview.LoadHTML(html)
+		  End If
+		  
+		  
+		  
+		  
+		  
+		  ' =============================================================================
+		  ' If rowIndex < 0 Then
+		  ' htmlVideoPreview.LoadHTML("")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' ' Get video_id from RowTag (set by LoadCaseVideos)
+		  ' Var videoID As Integer = lstVideos.RowTagAt(rowIndex)
+		  ' 
+		  ' ' Look up the actual stored filename from database
+		  ' Var sql As String = "SELECT COALESCE(stored_filename, video_filename) as actual_filename FROM case_videos WHERE video_id = ?"
+		  ' Var actualFilename As String = ""
+		  ' 
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ps.Bind(0, videoID)
+		  ' Var rs As RowSet = ps.SelectSQL
+		  ' 
+		  ' If rs <> Nil And Not rs.AfterLastRow Then
+		  ' actualFilename = rs.Column("actual_filename").StringValue
+		  ' End If
+		  ' Catch e As DatabaseException
+		  ' System.DebugLog("Error looking up stored filename: " + e.Message)
+		  ' End Try
+		  ' 
+		  ' If actualFilename = "" Then
+		  ' htmlVideoPreview.LoadHTML("<html><body>Error: Could not find file</body></html>")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' System.DebugLog("Loading video: " + actualFilename)
+		  ' 
+		  ' ' Now serve using the actual stored filename
+		  ' Var wf As WebFile = Session.ServeVideo(actualFilename)
+		  ' 
+		  ' If wf = Nil Then
+		  ' Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		  ' errorHTML = errorHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#e74c3c;font-family:Arial,sans-serif;}"
+		  ' errorHTML = errorHTML + ".error{background:#fff;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
+		  ' errorHTML = errorHTML + "</style></head><body><div class='error'>"
+		  ' errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+		  ' errorHTML = errorHTML + "<p>The video file <strong>" + actualFilename + "</strong> could not be loaded.</p>"
+		  ' errorHTML = errorHTML + "</div></body></html>"
+		  ' 
+		  ' htmlVideoPreview.LoadHTML(errorHTML)
+		  ' System.DebugLog("Failed to serve: " + actualFilename)
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var videoURL As String = wf.URL
+		  ' System.DebugLog("Video URL: " + videoURL)
+		  ' 
+		  ' ' Use your original working HTML structure
+		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		  ' html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		  ' html = html + "<style>"
+		  ' html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		  ' html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: #000; }"
+		  ' html = html + "video { width: 100%; height: 100%; object-fit: contain; background: #000; }"
+		  ' html = html + "</style></head><body>"
+		  ' html = html + "<video controls autoplay muted loop>"
+		  ' html = html + "<source src='" + videoURL + "' type='" + wf.MIMEType + "'>"
+		  ' html = html + "Your browser does not support the video tag."
+		  ' html = html + "</video>"
+		  ' html = html + "</body></html>"
+		  ' 
+		  ' htmlVideoPreview.LoadHTML(html)
+		  
+		  ' ===================================================================================
+		  ' If rowIndex < 0 Then
+		  ' htmlVideoPreview.LoadHTML("")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var videoFilename As String = lstVideos.CellTextAt(rowIndex, 0)
+		  ' Var wf As WebFile = Session.ServeVideo(videoFilename)
+		  ' 
+		  ' If wf = Nil Then
+		  ' Var errorHTML As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
+		  ' errorHTML = errorHTML + "body{margin:0;padding:20px;background:#f5f5f5;color:#e74c3c;font-family:Arial,sans-serif;}"
+		  ' errorHTML = errorHTML + ".error{background:#fff;padding:20px;border-radius:8px;border-left:4px solid #e74c3c;}"
+		  ' errorHTML = errorHTML + "</style></head><body><div class='error'>"
+		  ' errorHTML = errorHTML + "<h3>⚠️ Video Not Found</h3>"
+		  ' errorHTML = errorHTML + "<p>The video file <strong>" + videoFilename + "</strong> could not be loaded.</p>"
+		  ' errorHTML = errorHTML + "</div></body></html>"
+		  ' 
+		  ' htmlVideoPreview.LoadHTML(errorHTML)
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var videoURL As String = wf.URL
+		  ' System.DebugLog("Loading video in preview: " + videoURL)
+		  ' 
+		  ' ' HTML without native controls (to avoid grey overlay)
+		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
+		  ' html = html + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+		  ' html = html + "<style>"
+		  ' html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
+		  ' html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
+		  ' // fix for video resize
+		  ' html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		  ' html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }"
+		  ' // end fix for video resize
+		  ' html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
+		  ' html = html + ".info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
+		  ' html = html + "</style></head><body>"
+		  ' html = html + "<div class='video-wrapper'>"
+		  ' html = html + "<div class='video-container' id='videoContainer'>"
+		  ' html = html + "<video id='mainVideo' loop autoplay playsinline muted>"
+		  ' html = html + "<source src='" + videoURL + "' type='video/mp4'>"
+		  ' html = html + "Your browser does not support video.</video>"
+		  ' html = html + "<div class='info'>" + videoFilename + "</div>"
+		  ' html = html + "</div></div>"
+		  ' html = html + "<script>"
+		  ' html = html + "document.getElementById('mainVideo').addEventListener('click', function() {"
+		  ' html = html + "  if (this.paused) { this.play(); } else { this.pause(); }"
+		  ' html = html + "});"
+		  ' html = html + "</script>"
+		  ' html = html + "</body></html>"
 		  
 		  ' ' HTML with max-width and max-height constraints
 		  ' Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'>"
@@ -1534,7 +1858,7 @@ End
 		  ' html = html + "</div></div>"
 		  ' html = html + "</body></html>"
 		  
-		  htmlVideoPreview.LoadHTML(html)
+		  ' htmlVideoPreview.LoadHTML(html)
 		End Sub
 	#tag EndMethod
 
@@ -1571,6 +1895,10 @@ End
 
 	#tag Property, Flags = &h0
 		CaseID As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LastSelectedVideoID As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1765,23 +2093,53 @@ End
 #tag Events btnDeleteVideo
 	#tag Event
 		Sub Pressed()
-		  ' ******************************************************************
-		  ' btnDeleteVideo.Pressed Event
-		  ' ******************************************************************
-		  If lstVideos.SelectedRowIndex < 0 Then
-		    MessageBox("Please select a video to delete")
+		  ' Delete selected video/image
+		  Var selectedRow As Integer = lstVideos.SelectedRowIndex
+		  If selectedRow < 0 Then
+		    Var d As New WebMessageDialog
+		    d.Title = "No Selection"
+		    d.Message = "Please select a video or image to delete."
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
 		    Return
 		  End If
 		  
+		  ' Get the video_id from RowTag
+		  Var selectedVideoID As Integer = lstVideos.RowTagAt(selectedRow)
+		  
+		  ' Confirm deletion
 		  Var d As New WebMessageDialog
 		  d.Title = "Confirm Delete"
-		  d.Message = "Are you sure you want to delete this video? This action cannot be undone."
+		  d.Message = "Are you sure you want to delete this file? This cannot be undone."
 		  d.ActionButton.Caption = "Delete"
 		  d.CancelButton.Caption = "Cancel"
 		  d.CancelButton.Visible = True
 		  
 		  AddHandler d.ButtonPressed, AddressOf HandleDeleteVideoConfirm
 		  d.Show
+		  
+		  ' Store the video_id for the callback
+		  LastSelectedVideoID = selectedVideoID
+		  
+		  
+		  ' ' ******************************************************************
+		  ' ' btnDeleteVideo.Pressed Event
+		  ' ' ******************************************************************
+		  ' If lstVideos.SelectedRowIndex < 0 Then
+		  ' MessageBox("Please select a video to delete")
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Var d As New WebMessageDialog
+		  ' d.Title = "Confirm Delete"
+		  ' d.Message = "Are you sure you want to delete this video? This action cannot be undone."
+		  ' d.ActionButton.Caption = "Delete"
+		  ' d.CancelButton.Caption = "Cancel"
+		  ' d.CancelButton.Visible = True
+		  ' 
+		  ' AddHandler d.ButtonPressed, AddressOf HandleDeleteVideoConfirm
+		  ' d.Show
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2046,27 +2404,75 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub UploadFinished(files() As WebUploadedFile)
-		  session.DisplayMessage("UPLOAD FINISHED EVENT CALLED - Processing " + Str(files.Count) + " files", self.DisplayedMessage)
-		  
 		  Try
 		    If files.Count = 0 Then
-		      MessageBox("ERROR: No files received")
+		      Var d As New WebMessageDialog
+		      d.Title = "Error"
+		      d.Message = "No files received"
+		      d.ActionButton.Caption = "OK"
+		      d.CancelButton.Visible = False
+		      d.Show
 		      Return
 		    End If
 		    
 		    Var uploadedFile As WebUploadedFile = files(0)
 		    
-		    If uploadedFile = Nil Then
-		      MessageBox("ERROR: uploadedFile is Nil")
+		    If uploadedFile = Nil Or uploadedFile.Data = Nil Then
+		      Var d As New WebMessageDialog
+		      d.Title = "Error"
+		      d.Message = "Invalid file"
+		      d.ActionButton.Caption = "OK"
+		      d.CancelButton.Visible = False
+		      d.Show
 		      Return
 		    End If
 		    
-		    If uploadedFile.Data = Nil Then
-		      MessageBox("ERROR: uploadedFile.Data is Nil")
+		    ' Determine file type from extension
+		    Var originalName As String = uploadedFile.Name.Lowercase
+		    Var fileType As String = "video" ' Default
+		    Var isImage As Boolean = False
+		    
+		    If originalName.EndsWith(".png") Or originalName.EndsWith(".jpg") Or originalName.EndsWith(".jpeg") Then
+		      fileType = "image"
+		      isImage = True
+		    ElseIf Not (originalName.EndsWith(".mp4") Or originalName.EndsWith(".mov") Or originalName.EndsWith(".avi")) Then
+		      Var d As New WebMessageDialog
+		      d.Title = "Invalid File Type"
+		      d.Message = "Please upload a video file (.mp4, .mov, .avi) or image file (.png, .jpg, .jpeg)"
+		      d.ActionButton.Caption = "OK"
+		      d.CancelButton.Visible = False
+		      d.Show
 		      Return
 		    End If
 		    
-		    session.DisplayMessage("Processing file: " + uploadedFile.Name + ", " + "Size: " + Str(uploadedFile.Data.Size) + " bytes", self.DisplayedMessage)
+		    session.DisplayMessage("Processing file: " + uploadedFile.Name + ", Size: " + Str(uploadedFile.Data.Size) + " bytes", self.DisplayedMessage)
+		    
+		    ' Get UUID from MySQL
+		    Var uuidSQL As String = "SELECT UUID() as uuid"
+		    Var uuidRS As RowSet = Session.DB.SelectSQL(uuidSQL)
+		    Var uuid As String = ""
+		    If uuidRS <> Nil And Not uuidRS.AfterLastRow Then
+		      uuid = uuidRS.Column("uuid").StringValue
+		    Else
+		      Var d As New WebMessageDialog
+		      d.Title = "Error"
+		      d.Message = "Could not generate unique identifier"
+		      d.ActionButton.Caption = "OK"
+		      d.CancelButton.Visible = False
+		      d.Show
+		      Return
+		    End If
+		    
+		    ' Extract original extension
+		    ' Extract original extension
+		    Var extension As String = ""
+		    Var fieldCount As Integer = CountFields(uploadedFile.Name, ".")
+		    If fieldCount > 1 Then
+		      extension = "." + NthField(uploadedFile.Name, ".", fieldCount)
+		    End If
+		    
+		    ' Create unique stored filename: UUID + extension
+		    Var storedFilename As String = uuid + extension
 		    
 		    ' Get or create the CaseVideos folder
 		    Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
@@ -2074,23 +2480,18 @@ End
 		      targetFolder.CreateFolder
 		    End If
 		    
-		    ' Create the target file
-		    Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+		    ' Create the target file with unique name
+		    Var targetFile As FolderItem = targetFolder.Child(storedFilename)
 		    
-		    ' If file already exists, delete it first
-		    If targetFile.Exists Then
-		      Try
-		        targetFile.Remove
-		      Catch deleteError As IOException
-		        MessageBox("ERROR: Cannot overwrite existing file. " + deleteError.Message)
-		        Return
-		      End Try
-		    End If
-		    
-		    ' Create and write to the file
+		    ' Write file
 		    Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
 		    If outputStream = Nil Then
-		      MessageBox("ERROR: Could not create output stream for " + uploadedFile.Name)
+		      Var d As New WebMessageDialog
+		      d.Title = "Error"
+		      d.Message = "Could not create output stream"
+		      d.ActionButton.Caption = "OK"
+		      d.CancelButton.Visible = False
+		      d.Show
 		      Return
 		    End If
 		    
@@ -2108,101 +2509,115 @@ End
 		      videoOrder = orderRS.Column("next_order").IntegerValue
 		    End If
 		    
-		    ' Insert into database
-		    Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
+		    ' Insert into database with BOTH original and stored filenames
+		    Var sql As String = "INSERT INTO case_videos (case_id, video_filename, stored_filename, file_type, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?, ?, ?)"
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    
 		    ps.Bind(0, CaseID)
-		    ps.Bind(1, uploadedFile.Name)
-		    ps.Bind(2, "")
-		    ps.Bind(3, "")
-		    ps.Bind(4, videoOrder)
+		    ps.Bind(1, uploadedFile.Name) ' Original name for display
+		    ps.Bind(2, storedFilename)     ' UUID name for storage
+		    ps.Bind(3, fileType)           ' "video" or "image"
+		    ps.Bind(4, "")
+		    ps.Bind(5, "")
+		    ps.Bind(6, videoOrder)
 		    
 		    ps.ExecuteSQL
 		    
-		    session.DisplayMessage("Video uploaded successfully!", self.DisplayedMessage)
+		    session.DisplayMessage(If(isImage, "Image", "Video") + " uploaded successfully!", self.DisplayedMessage)
 		    LoadCaseVideos
 		    
 		    uplVideo.RemoveAllFiles
 		    btnStartUpload.Enabled = False
 		    
 		  Catch e As IOException
-		    MessageBox("IOException: " + e.Message)
+		    Var d As New WebMessageDialog
+		    d.Title = "Error"
+		    d.Message = "IOException: " + e.Message
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
 		  Catch e As DatabaseException
-		    MessageBox("DatabaseException: " + e.Message)
-		  Catch e As RuntimeException
-		    MessageBox("RuntimeException: " + e.Message + " (Code: " + Str(e.ErrorNumber) + ")")
+		    Var d As New WebMessageDialog
+		    d.Title = "Error"
+		    d.Message = "DatabaseException: " + e.Message
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
 		  End Try
 		  
-		  me.Hint = "Click to select video to upload"
+		  me.Hint = "Select video or image to upload"
 		  
-		  ' 
-		  ' ' ******************************************************************
-		  ' ' uplVideo.UploadFinished Event
-		  ' '    Get the first (and only, since AllowMultipleFiles = False) file
-		  ' ' ******************************************************************
+		  // set listbox to last added row and load record
+		  var row as integer = lstVideos.LastAddedRowIndex
+		  lstVideos.SelectedRowIndex = row
+		  LoadVideoPreview(row)
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  ' session.DisplayMessage("UPLOAD FINISHED EVENT CALLED - Processing " + Str(files.Count) + " files", self.DisplayedMessage)
 		  ' 
 		  ' Try
-		  ' ' Step 1: Validate array
 		  ' If files.Count = 0 Then
-		  ' MessageBox("STEP 1 FAILED: No files in array")
+		  ' MessageBox("ERROR: No files received")
 		  ' Return
 		  ' End If
 		  ' 
-		  ' ' Step 2: Get file
 		  ' Var uploadedFile As WebUploadedFile = files(0)
+		  ' 
 		  ' If uploadedFile = Nil Then
-		  ' MessageBox("STEP 2 FAILED: uploadedFile is Nil")
+		  ' MessageBox("ERROR: uploadedFile is Nil")
 		  ' Return
 		  ' End If
 		  ' 
-		  ' ' Step 3: Check data
 		  ' If uploadedFile.Data = Nil Then
-		  ' MessageBox("STEP 3 FAILED: Data is Nil")
+		  ' MessageBox("ERROR: uploadedFile.Data is Nil")
 		  ' Return
 		  ' End If
 		  ' 
-		  ' Var fileSize As Integer = uploadedFile.Data.Size
-		  ' MessageBox("STEP 3 OK: File received" + EndOfLine + _
-		  ' "Name: " + uploadedFile.Name + EndOfLine + _
-		  ' "Size: " + Str(fileSize) + " bytes")
+		  ' session.DisplayMessage("Processing file: " + uploadedFile.Name + ", " + "Size: " + Str(uploadedFile.Data.Size) + " bytes", self.DisplayedMessage)
 		  ' 
-		  ' ' Step 4: Get folder
+		  ' ' Get or create the CaseVideos folder
 		  ' Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
 		  ' If Not targetFolder.Exists Then
 		  ' targetFolder.CreateFolder
 		  ' End If
 		  ' 
-		  ' If Not targetFolder.Exists Then
-		  ' MessageBox("STEP 4 FAILED: Cannot access CaseVideos folder")
-		  ' Return
-		  ' End If
-		  ' 
-		  ' ' Step 5: Create file
+		  ' ' Create the target file
 		  ' Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+		  ' 
+		  ' ' If file already exists, delete it first
 		  ' If targetFile.Exists Then
+		  ' Try
 		  ' targetFile.Remove
+		  ' Catch deleteError As IOException
+		  ' MessageBox("ERROR: Cannot overwrite existing file. " + deleteError.Message)
+		  ' Return
+		  ' End Try
 		  ' End If
 		  ' 
-		  ' ' Step 6: Write file
+		  ' ' Create and write to the file
 		  ' Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
 		  ' If outputStream = Nil Then
-		  ' MessageBox("STEP 6 FAILED: Cannot create output stream")
+		  ' MessageBox("ERROR: Could not create output stream for " + uploadedFile.Name)
 		  ' Return
 		  ' End If
 		  ' 
 		  ' outputStream.Write(uploadedFile.Data)
 		  ' outputStream.Close
-		  ' outputStream = Nil  ' Explicit cleanup
 		  ' 
-		  ' MessageBox("STEP 6 OK: File written to disk")
-		  ' 
-		  ' ' Step 7: Database insert
+		  ' ' Get next order number
 		  ' Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
 		  ' Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
 		  ' orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -2213,6 +2628,7 @@ End
 		  ' videoOrder = orderRS.Column("next_order").IntegerValue
 		  ' End If
 		  ' 
+		  ' ' Insert into database
 		  ' Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
 		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -2229,69 +2645,84 @@ End
 		  ' 
 		  ' ps.ExecuteSQL
 		  ' 
-		  ' MessageBox("SUCCESS: Video uploaded!" + EndOfLine + _
-		  ' "Order: " + Str(videoOrder))
-		  ' 
+		  ' session.DisplayMessage("Video uploaded successfully!", self.DisplayedMessage)
 		  ' LoadCaseVideos
+		  ' 
 		  ' uplVideo.RemoveAllFiles
 		  ' btnStartUpload.Enabled = False
 		  ' 
 		  ' Catch e As IOException
-		  ' MessageBox("IOException:" + EndOfLine + e.Message)
+		  ' MessageBox("IOException: " + e.Message)
 		  ' Catch e As DatabaseException
-		  ' MessageBox("DatabaseException:" + EndOfLine + e.Message)
+		  ' MessageBox("DatabaseException: " + e.Message)
 		  ' Catch e As RuntimeException
-		  ' MessageBox("RuntimeException:" + EndOfLine + _
-		  ' e.Message + EndOfLine + _
-		  ' "Code: " + Str(e.ErrorNumber))
+		  ' MessageBox("RuntimeException: " + e.Message + " (Code: " + Str(e.ErrorNumber) + ")")
 		  ' End Try
 		  ' 
+		  ' me.Hint = "Click to select video to upload"
 		  ' 
+		  ' ' 
 		  ' ' ' ******************************************************************
 		  ' ' ' uplVideo.UploadFinished Event
 		  ' ' '    Get the first (and only, since AllowMultipleFiles = False) file
 		  ' ' ' ******************************************************************
-		  ' ' Var uploadedFile As WebUploadedFile = files(0)
 		  ' ' 
 		  ' ' Try
-		  ' ' ' Get or create the CaseVideos folder
+		  ' ' ' Step 1: Validate array
+		  ' ' If files.Count = 0 Then
+		  ' ' MessageBox("STEP 1 FAILED: No files in array")
+		  ' ' Return
+		  ' ' End If
+		  ' ' 
+		  ' ' ' Step 2: Get file
+		  ' ' Var uploadedFile As WebUploadedFile = files(0)
+		  ' ' If uploadedFile = Nil Then
+		  ' ' MessageBox("STEP 2 FAILED: uploadedFile is Nil")
+		  ' ' Return
+		  ' ' End If
+		  ' ' 
+		  ' ' ' Step 3: Check data
+		  ' ' If uploadedFile.Data = Nil Then
+		  ' ' MessageBox("STEP 3 FAILED: Data is Nil")
+		  ' ' Return
+		  ' ' End If
+		  ' ' 
+		  ' ' Var fileSize As Integer = uploadedFile.Data.Size
+		  ' ' MessageBox("STEP 3 OK: File received" + EndOfLine + _
+		  ' ' "Name: " + uploadedFile.Name + EndOfLine + _
+		  ' ' "Size: " + Str(fileSize) + " bytes")
+		  ' ' 
+		  ' ' ' Step 4: Get folder
 		  ' ' Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
 		  ' ' If Not targetFolder.Exists Then
 		  ' ' targetFolder.CreateFolder
-		  ' ' System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
 		  ' ' End If
 		  ' ' 
-		  ' ' System.DebugLog("Target folder: " + targetFolder.NativePath)
-		  ' ' 
-		  ' ' ' Create the target file
-		  ' ' Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
-		  ' ' 
-		  ' ' ' If file already exists, delete it first
-		  ' ' If targetFile.Exists Then
-		  ' ' System.DebugLog("File already exists, deleting: " + targetFile.NativePath)
-		  ' ' Try
-		  ' ' targetFile.Remove
-		  ' ' Catch deleteError As IOException
-		  ' ' MessageBox("Error: Cannot overwrite existing file. " + deleteError.Message)
+		  ' ' If Not targetFolder.Exists Then
+		  ' ' MessageBox("STEP 4 FAILED: Cannot access CaseVideos folder")
 		  ' ' Return
-		  ' ' End Try
 		  ' ' End If
 		  ' ' 
-		  ' ' System.DebugLog("Writing file: " + targetFile.NativePath)
+		  ' ' ' Step 5: Create file
+		  ' ' Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+		  ' ' If targetFile.Exists Then
+		  ' ' targetFile.Remove
+		  ' ' End If
 		  ' ' 
-		  ' ' ' Create and write to the file
+		  ' ' ' Step 6: Write file
 		  ' ' Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
 		  ' ' If outputStream = Nil Then
-		  ' ' MessageBox("Error: Could not create output stream for " + uploadedFile.Name)
+		  ' ' MessageBox("STEP 6 FAILED: Cannot create output stream")
 		  ' ' Return
 		  ' ' End If
 		  ' ' 
 		  ' ' outputStream.Write(uploadedFile.Data)
 		  ' ' outputStream.Close
+		  ' ' outputStream = Nil  ' Explicit cleanup
 		  ' ' 
-		  ' ' System.DebugLog("Video saved successfully: " + targetFile.NativePath)
+		  ' ' MessageBox("STEP 6 OK: File written to disk")
 		  ' ' 
-		  ' ' ' Get next order number
+		  ' ' ' Step 7: Database insert
 		  ' ' Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
 		  ' ' Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
 		  ' ' orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -2302,7 +2733,6 @@ End
 		  ' ' videoOrder = orderRS.Column("next_order").IntegerValue
 		  ' ' End If
 		  ' ' 
-		  ' ' ' Insert into database (video_purpose can be empty or used for other purposes)
 		  ' ' Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
 		  ' ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		  ' ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -2314,24 +2744,114 @@ End
 		  ' ' ps.Bind(0, CaseID)
 		  ' ' ps.Bind(1, uploadedFile.Name)
 		  ' ' ps.Bind(2, "")
-		  ' ' ps.Bind(3, "")  ' video_purpose left empty (reserved for future use)
+		  ' ' ps.Bind(3, "")
 		  ' ' ps.Bind(4, videoOrder)
 		  ' ' 
 		  ' ' ps.ExecuteSQL
 		  ' ' 
-		  ' ' MessageBox("Video uploaded successfully!")
-		  ' ' LoadCaseVideos
+		  ' ' MessageBox("SUCCESS: Video uploaded!" + EndOfLine + _
+		  ' ' "Order: " + Str(videoOrder))
 		  ' ' 
+		  ' ' LoadCaseVideos
 		  ' ' uplVideo.RemoveAllFiles
 		  ' ' btnStartUpload.Enabled = False
 		  ' ' 
 		  ' ' Catch e As IOException
-		  ' ' System.DebugLog("IOException: " + e.Message)
-		  ' ' MessageBox("Error saving video file: " + e.Message + EndOfLine + EndOfLine + _
-		  ' ' "This may be a permissions issue. Check the console for details.")
+		  ' ' MessageBox("IOException:" + EndOfLine + e.Message)
 		  ' ' Catch e As DatabaseException
-		  ' ' MessageBox("Error saving video to database: " + e.Message)
+		  ' ' MessageBox("DatabaseException:" + EndOfLine + e.Message)
+		  ' ' Catch e As RuntimeException
+		  ' ' MessageBox("RuntimeException:" + EndOfLine + _
+		  ' ' e.Message + EndOfLine + _
+		  ' ' "Code: " + Str(e.ErrorNumber))
 		  ' ' End Try
+		  ' ' 
+		  ' ' 
+		  ' ' ' ' ******************************************************************
+		  ' ' ' ' uplVideo.UploadFinished Event
+		  ' ' ' '    Get the first (and only, since AllowMultipleFiles = False) file
+		  ' ' ' ' ******************************************************************
+		  ' ' ' Var uploadedFile As WebUploadedFile = files(0)
+		  ' ' ' 
+		  ' ' ' Try
+		  ' ' ' ' Get or create the CaseVideos folder
+		  ' ' ' Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		  ' ' ' If Not targetFolder.Exists Then
+		  ' ' ' targetFolder.CreateFolder
+		  ' ' ' System.DebugLog("Created CaseVideos folder: " + targetFolder.NativePath)
+		  ' ' ' End If
+		  ' ' ' 
+		  ' ' ' System.DebugLog("Target folder: " + targetFolder.NativePath)
+		  ' ' ' 
+		  ' ' ' ' Create the target file
+		  ' ' ' Var targetFile As FolderItem = targetFolder.Child(uploadedFile.Name)
+		  ' ' ' 
+		  ' ' ' ' If file already exists, delete it first
+		  ' ' ' If targetFile.Exists Then
+		  ' ' ' System.DebugLog("File already exists, deleting: " + targetFile.NativePath)
+		  ' ' ' Try
+		  ' ' ' targetFile.Remove
+		  ' ' ' Catch deleteError As IOException
+		  ' ' ' MessageBox("Error: Cannot overwrite existing file. " + deleteError.Message)
+		  ' ' ' Return
+		  ' ' ' End Try
+		  ' ' ' End If
+		  ' ' ' 
+		  ' ' ' System.DebugLog("Writing file: " + targetFile.NativePath)
+		  ' ' ' 
+		  ' ' ' ' Create and write to the file
+		  ' ' ' Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
+		  ' ' ' If outputStream = Nil Then
+		  ' ' ' MessageBox("Error: Could not create output stream for " + uploadedFile.Name)
+		  ' ' ' Return
+		  ' ' ' End If
+		  ' ' ' 
+		  ' ' ' outputStream.Write(uploadedFile.Data)
+		  ' ' ' outputStream.Close
+		  ' ' ' 
+		  ' ' ' System.DebugLog("Video saved successfully: " + targetFile.NativePath)
+		  ' ' ' 
+		  ' ' ' ' Get next order number
+		  ' ' ' Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
+		  ' ' ' Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
+		  ' ' ' orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ' ' orderPS.Bind(0, CaseID)
+		  ' ' ' Var orderRS As RowSet = orderPS.SelectSQL
+		  ' ' ' Var videoOrder As Integer = 0
+		  ' ' ' If orderRS <> Nil And Not orderRS.AfterLastRow Then
+		  ' ' ' videoOrder = orderRS.Column("next_order").IntegerValue
+		  ' ' ' End If
+		  ' ' ' 
+		  ' ' ' ' Insert into database (video_purpose can be empty or used for other purposes)
+		  ' ' ' Var sql As String = "INSERT INTO case_videos (case_id, video_filename, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?)"
+		  ' ' ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ' ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ' ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ' ' ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ' ' ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ' ' ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		  ' ' ' 
+		  ' ' ' ps.Bind(0, CaseID)
+		  ' ' ' ps.Bind(1, uploadedFile.Name)
+		  ' ' ' ps.Bind(2, "")
+		  ' ' ' ps.Bind(3, "")  ' video_purpose left empty (reserved for future use)
+		  ' ' ' ps.Bind(4, videoOrder)
+		  ' ' ' 
+		  ' ' ' ps.ExecuteSQL
+		  ' ' ' 
+		  ' ' ' MessageBox("Video uploaded successfully!")
+		  ' ' ' LoadCaseVideos
+		  ' ' ' 
+		  ' ' ' uplVideo.RemoveAllFiles
+		  ' ' ' btnStartUpload.Enabled = False
+		  ' ' ' 
+		  ' ' ' Catch e As IOException
+		  ' ' ' System.DebugLog("IOException: " + e.Message)
+		  ' ' ' MessageBox("Error saving video file: " + e.Message + EndOfLine + EndOfLine + _
+		  ' ' ' "This may be a permissions issue. Check the console for details.")
+		  ' ' ' Catch e As DatabaseException
+		  ' ' ' MessageBox("Error saving video to database: " + e.Message)
+		  ' ' ' End Try
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2577,6 +3097,16 @@ End
 		  ' System.DebugLog("Groups updated via dialog")
 		  ' End If
 		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnManageMCQ
+	#tag Event
+		Sub Pressed()
+		  ' Open MCQ management dialog
+		  Var mcqDialog As New dlg_ManageMCQ
+		  mcqDialog.Initialize(CaseID)
+		  mcqDialog.Show
 		End Sub
 	#tag EndEvent
 #tag EndEvents

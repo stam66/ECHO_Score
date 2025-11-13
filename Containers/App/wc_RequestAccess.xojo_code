@@ -24,6 +24,7 @@ Begin wc_base wc_RequestAccess
    Width           =   780
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle RectWhite
       BorderColor     =   &c42424200
@@ -514,13 +515,171 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub PerformSubmission(params As Variant)
+		  ' Unwrap parameters from dictionary
+		  Var paramDict As Dictionary = params
+		  Var applicantName As String = paramDict.Value("name")
+		  Var applicantEmail As String = paramDict.Value("email")
+		  Var db As MySQLCommunityServer = paramDict.Value("db")
+		  
+		  Try
+		    System.DebugLog("PerformSubmission: Starting submission")
+		    
+		    ' Verify we have a valid database connection
+		    If db = Nil Or Not db.IsConnected Then
+		      System.DebugLog("ERROR: Database not available")
+		      MessageBox("Database connection error. Please try again.")
+		      ResetSubmitButton()
+		      Return
+		    End If
+		    
+		    ' Insert the access request into the database
+		    Var sql As String = "INSERT INTO access_requests (name, email) VALUES (?, ?)"
+		    
+		    Var ps As MySQLPreparedStatement = db.Prepare(sql)
+		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		    
+		    ps.Bind(0, applicantName)
+		    ps.Bind(1, applicantEmail)
+		    
+		    ps.ExecuteSQL
+		    
+		    System.DebugLog("PerformSubmission: Database insert successful")
+		    
+		    ' Send admin notifications
+		    SendAdminNotifications(params)
+		    
+		    ' Show success and navigate (PASS params)
+		    ShowSuccessAndNavigate(params)
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("DATABASE ERROR in PerformSubmission: " + e.Message)
+		    MessageBox("Error submitting request: " + e.Message)
+		    ResetSubmitButton()
+		    
+		  Catch e As RuntimeException
+		    System.DebugLog("RUNTIME ERROR in PerformSubmission: " + e.Message)
+		    MessageBox("An unexpected error occurred. Please try again.")
+		    ResetSubmitButton()
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ResetSubmitButton()
+		  ' Re-enable the button if something went wrong
+		  btnSubmitRequest.Enabled = True
+		  btnSubmitRequest.Caption = "Submit request"
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub ResetUI()
 		  txtFullName.Text = ""
 		  txtEmail.Text = ""
 		  btnSubmitRequest.Enabled = false
+		  btnSubmitRequest.Caption = "Submit request"
+		  btnSubmitRequest.Indicator = WebButton.Indicators.Primary
 		  
 		  txtFullName.SetFocus
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SendAdminNotifications(params As Variant)
+		  ' Unwrap parameters from dictionary
+		  Var paramDict As Dictionary = params
+		  Var applicantName As String = paramDict.Value("name")
+		  Var applicantEmail As String = paramDict.Value("email")
+		  Var db As MySQLCommunityServer = paramDict.Value("db")
+		  
+		  Try
+		    System.DebugLog("SendAdminNotifications: Starting")
+		    
+		    If db = Nil Or Not db.IsConnected Then
+		      System.DebugLog("ERROR: Database not available for notifications")
+		      Return
+		    End If
+		    
+		    ' Get all active admins
+		    Var adminSQL As String = "SELECT email, full_name FROM users WHERE is_admin = 1 AND is_active = 1"
+		    Var adminRS As RowSet = db.SelectSQL(adminSQL)
+		    
+		    If adminRS = Nil Then
+		      System.DebugLog("ERROR: Failed to get admin list")
+		      Return
+		    End If
+		    
+		    Var adminCount As Integer = 0
+		    Var successCount As Integer = 0
+		    
+		    While Not adminRS.AfterLastRow
+		      Var adminEmail As String = adminRS.Column("email").StringValue
+		      Var adminName As String = adminRS.Column("full_name").StringValue
+		      
+		      ' Send notification
+		      If EmailHelper.SendAccessRequestNotification(adminEmail, adminName, applicantName, applicantEmail, db) Then
+		        successCount = successCount + 1
+		      End If
+		      
+		      adminCount = adminCount + 1
+		      adminRS.MoveToNextRow
+		    Wend
+		    
+		    System.DebugLog("SendAdminNotifications: Sent " + Str(successCount) + " of " + Str(adminCount) + " notification(s)")
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("DATABASE ERROR in SendAdminNotifications: " + e.Message)
+		    
+		  Catch e As RuntimeException
+		    System.DebugLog("RUNTIME ERROR in SendAdminNotifications: " + e.Message)
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowSuccessAndNavigate(params as Variant)
+		  System.DebugLog("ShowSuccessAndNavigate: Starting")
+		  
+		  Try
+		    ' Unwrap navigation from dictionary
+		    Var paramDict As Dictionary = params
+		    Var navigation As WebNavigationManager = paramDict.Value("navigation")
+		    
+		    If navigation = Nil Then
+		      System.DebugLog("ERROR: Navigation is Nil in ShowSuccessAndNavigate")
+		      
+		      ' Fallback: reset button so user can try again
+		      btnSubmitRequest.Caption = "Submit request"
+		      btnSubmitRequest.Enabled = True
+		      Return
+		    End If
+		    
+		    ' Clear the form
+		    txtFullName.Text = ""
+		    txtEmail.Text = ""
+		    
+		    ' Show brief success message on button
+		    btnSubmitRequest.Caption = "Submitted!"
+		    btnSubmitRequest.Indicator = WebButton.Indicators.Success
+		    
+		    ' Navigate back to login after 2 seconds
+		    System.DebugLog("ShowSuccessAndNavigate: Waiting before navigation")
+		    var currentSession as session = paramDict.Value("currentSession")
+		    currentSession.Logout(currentSession)
+		    
+		    
+		    System.DebugLog("ShowSuccessAndNavigate: Navigation complete")
+		    
+		  Catch e As RuntimeException
+		    System.DebugLog("ERROR in ShowSuccessAndNavigate: " + e.Message)
+		    
+		    ' Reset button on error
+		    btnSubmitRequest.Caption = "Submit request"
+		    btnSubmitRequest.Enabled = True
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -533,60 +692,93 @@ End
 		  ' *******************************************************************************
 		  ' btnSubmitRequest.Pressed Event:
 		  ' *******************************************************************************
-		  '  Validate form fields
+		  ' Validate form fields
 		  If txtFullName.Text.Trim = "" Or txtEmail.Text.Trim = "" Then
 		    MessageBox("Please fill in all required fields")
 		    Return
 		  End If
+		  
 		  if not isValidEmail(txtEmail.Text.Trim) then
 		    MessageBox("Invalid email format - please try again.")
 		    return
 		  end if
 		  
-		  ' Insert the access request into the database
-		  Var sql As String = "INSERT INTO access_requests (name, email) VALUES (?, ?)"
+		  ' Disable button and show feedback
+		  btnSubmitRequest.Enabled = False
+		  btnSubmitRequest.Caption = "Submitting..."
 		  
-		  Try
-		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    
-		    ps.Bind(0, txtFullName.Text.Trim)
-		    ps.Bind(1, txtEmail.Text.Trim)
-		    
-		    ps.ExecuteSQL
-		    
-		    ' *** NEW CODE: Notify all admins of the new request ***
-		    ' This will send an email to every admin user in the system
-		    Var applicantName As String = txtFullName.Text.Trim
-		    Var applicantEmail As String = txtEmail.Text.Trim
-		    
-		    ' Get all admin emails and send notifications
-		    Var adminSQL As String = "SELECT email, full_name FROM users WHERE is_admin = 1 AND is_active = 1"
-		    Var adminRS As RowSet = Session.DB.SelectSQL(adminSQL)
-		    
-		    While Not adminRS.AfterLastRow
-		      Var adminEmail As String = adminRS.Column("email").StringValue
-		      Var adminName As String = adminRS.Column("full_name").StringValue
-		      
-		      ' Send notification (fires asynchronously, won't block the UI)
-		      ' Using Call to explicitly ignore the return value
-		      Call EmailHelper.SendAccessRequestNotification(adminEmail, adminName, applicantName, applicantEmail)
-		      
-		      adminRS.MoveToNextRow
-		    Wend
-		    ' *** END NEW CODE ***
-		    
-		    ' Show success message
-		    MessageBox("Your access request has been submitted successfully! You will receive an email once it's been reviewed.")
-		    
-		    ' Clear the form or navigate away
-		    txtFullName.Text = ""
-		    txtEmail.Text = ""
-		    
-		  Catch e As DatabaseException
-		    MessageBox("Error submitting request: " + e.Message)
-		  End Try
+		  ' Create dictionary with all needed parameters INCLUDING Navigation
+		  Var params As New Dictionary
+		  params.Value("name") = txtFullName.Text.Trim
+		  params.Value("email") = txtEmail.Text.Trim
+		  params.Value("db") = Session.DB
+		  params.Value("navigation") = Session.Navigation  // ADD THIS
+		  params.Value("currentSession") = session
+		  
+		  ' Use CallLater to allow UI to update
+		  WebTimer.CallLater(100, AddressOf PerformSubmission, params)
+		  
+		  
+		  
+		  
+		  
+		  ' ' *******************************************************************************
+		  ' ' btnSubmitRequest.Pressed Event:
+		  ' ' *******************************************************************************
+		  ' '  Validate form fields
+		  ' If txtFullName.Text.Trim = "" Or txtEmail.Text.Trim = "" Then
+		  ' MessageBox("Please fill in all required fields")
+		  ' Return
+		  ' End If
+		  ' if not isValidEmail(txtEmail.Text.Trim) then
+		  ' MessageBox("Invalid email format - please try again.")
+		  ' return
+		  ' end if
+		  ' 
+		  ' ' Insert the access request into the database
+		  ' Var sql As String = "INSERT INTO access_requests (name, email) VALUES (?, ?)"
+		  ' 
+		  ' Try
+		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
+		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+		  ' 
+		  ' ps.Bind(0, txtFullName.Text.Trim)
+		  ' ps.Bind(1, txtEmail.Text.Trim)
+		  ' 
+		  ' ps.ExecuteSQL
+		  ' 
+		  ' ' *** NEW CODE: Notify all admins of the new request ***
+		  ' ' This will send an email to every admin user in the system
+		  ' Var applicantName As String = txtFullName.Text.Trim
+		  ' Var applicantEmail As String = txtEmail.Text.Trim
+		  ' 
+		  ' ' Get all admin emails and send notifications
+		  ' Var adminSQL As String = "SELECT email, full_name FROM users WHERE is_admin = 1 AND is_active = 1"
+		  ' Var adminRS As RowSet = Session.DB.SelectSQL(adminSQL)
+		  ' 
+		  ' While Not adminRS.AfterLastRow
+		  ' Var adminEmail As String = adminRS.Column("email").StringValue
+		  ' Var adminName As String = adminRS.Column("full_name").StringValue
+		  ' 
+		  ' ' Send notification (fires asynchronously, won't block the UI)
+		  ' ' Using Call to explicitly ignore the return value
+		  ' Call EmailHelper.SendAccessRequestNotification(adminEmail, adminName, applicantName, applicantEmail)
+		  ' 
+		  ' adminRS.MoveToNextRow
+		  ' Wend
+		  ' ' *** END NEW CODE ***
+		  ' 
+		  ' ' Show success message
+		  ' MessageBox("Your access request has been submitted successfully! You will receive an email once it's been reviewed.")
+		  ' 
+		  ' ' Clear the form or navigate away
+		  ' txtFullName.Text = ""
+		  ' txtEmail.Text = ""
+		  ' 
+		  ' Catch e As DatabaseException
+		  ' MessageBox("Error submitting request: " + e.Message)
+		  ' End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents

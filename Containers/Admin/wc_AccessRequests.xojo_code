@@ -53,7 +53,7 @@ Begin wc_base wc_AccessRequests
       LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
-      NoRowsMessage   =   ""
+      NoRowsMessage   =   "No access requests for selected category."
       PanelIndex      =   0
       ProcessingMessage=   ""
       RowCount        =   0
@@ -76,7 +76,7 @@ Begin wc_base wc_AccessRequests
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
+      Indicator       =   1
       LastSegmentIndex=   0
       Left            =   160
       LockBottom      =   False
@@ -86,7 +86,7 @@ Begin wc_base wc_AccessRequests
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   2
       SegmentCount    =   0
@@ -231,12 +231,20 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  Self.EnableBackButton = True
+		  Self.EnableLogoutButton = True
+		  Self.SectionTitle = "Access Requests"
+		  
+		  UpdateNavigation // update shell page data
+		  
 		  var v as variant = nil
 		  PopulateAccessRequests(v)
 		  
 		  btnAccept.Enabled = lstAccessReqeusts.SelectedRowIndex > -1
 		  btnReject.Enabled = lstAccessReqeusts.SelectedRowIndex > -1
 		  btnPend.Enabled = lstAccessReqeusts.SelectedRowIndex > -1
+		  
+		  
 		End Sub
 	#tag EndEvent
 
@@ -437,32 +445,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub NotifyAdminsOfNewRequest(applicantName as String, applicantEmail as String)
-		  // Send email notification to all admins when a new access request is submitted
-		  // This should be called from the wc_RequestAccess screen after submitting the request
-		  
-		  var sql as String = "SELECT email, full_name FROM users WHERE is_admin = 1 AND is_active = 1"
-		  
-		  Try
-		    var rs as RowSet = Session.DB.SelectSQL(sql)
-		    
-		    while not rs.AfterLastRow
-		      var adminEmail as String = rs.Column("email").StringValue
-		      var adminName as String = rs.Column("full_name").StringValue
-		      
-		      ' Use Call to explicitly ignore the return value
-		      Call EmailHelper.SendAccessRequestNotification(adminEmail, adminName, applicantName, applicantEmail)
-		      
-		      rs.MoveToNextRow
-		    wend
-		    
-		  Catch e as DatabaseException
-		    System.DebugLog("Error notifying admins: " + e.Message)
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub PopulateAccessRequests(statusFilter as variant)
 		  lstAccessReqeusts.RemoveAllRows
 		  
@@ -492,10 +474,6 @@ End
 		    elseif rs.Column("request_status").IntegerValue = 0 then
 		      lstAccessReqeusts.CellTextAt(row, 2) = "Rejected"
 		    end if
-		    
-		    ' lstAccessReqeusts.CellCheckBoxValueAt(row, 2) = rs.Column("request_status").Value = nil
-		    ' lstAccessReqeusts.CellCheckBoxValueAt(row, 3) = rs.Column("request_status").IntegerValue = 1
-		    ' lstAccessReqeusts.CellCheckBoxValueAt(row, 4) = rs.Column("request_status").IntegerValue = 0
 		    
 		    lstAccessReqeusts.CellTextAt(row, 3) = rs.Column("requested_at").StringValue
 		    lstAccessReqeusts.RowTagAt(row) = rs.Column("request_id").IntegerValue

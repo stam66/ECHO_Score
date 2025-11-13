@@ -89,16 +89,37 @@ Inherits WebSession
 	#tag Method, Flags = &h0
 		Sub Logout()
 		  ' Clear session
-		  Session.CurrentUserID = 0
-		  Session.CurrentUserName = ""
-		  Session.CurrentUserEmail = ""
-		  Session.IsAdmin = False
+		  CurrentUserID = 0
+		  CurrentUserName = ""
+		  CurrentUserEmail = ""
+		  IsAdmin = False
 		  
 		  ' Navigate to login
 		  Var login As New wc_Login
 		  login.ContainerID = "Login"
 		  login.Position = wc_Base.PositionEnum.Center
-		  Session.Navigation.NavigateTo(login)
+		  Navigation.NavigateTo(login)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Logout(currentSession as session)
+		  var context as new WebSessionContext(currentSession)
+		  
+		  ' Clear session
+		  currentSession.CurrentUserID = 0
+		  currentSession.CurrentUserName = ""
+		  currentSession.CurrentUserEmail = ""
+		  currentSession.IsAdmin = False
+		  
+		  ' Navigate to login
+		  Var login As New wc_Login
+		  login.ContainerID = "Login"
+		  login.Position = wc_Base.PositionEnum.Center
+		  currentSession.Navigation.NavigateTo(login)
+		  
+		  // currently this overloaded method is only called form access request submission - unless that changes it's a good place to post a confirmation
+		  MessageBox("Request successfully submitted. You will receive an email with confirmation and OTP as soon as the admin team have approved the request.")
 		End Sub
 	#tag EndMethod
 
@@ -108,39 +129,63 @@ Inherits WebSession
 		  ' Method: ServeVideo
 		  '   Parameters: filename As String
 		  '   Return Type: WebFile
+		  '   Updated to support images and multiple video formats
 		  ' *******************************************************************************
+		  
 		  Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
-		  System.DebugLog("Video folder path: " + videoFolder.NativePath)
+		  System.DebugLog("Media folder path: " + videoFolder.NativePath)
 		  
 		  If Not videoFolder.Exists Then
-		    System.DebugLog("Video folder does not exist")
+		    System.DebugLog("Media folder does not exist")
 		    Return Nil
 		  End If
 		  
-		  System.DebugLog("Video folder exists: YES")
+		  System.DebugLog("Media folder exists: YES")
 		  
-		  Var videoFile As FolderItem = videoFolder.Child(filename)
-		  System.DebugLog("Looking for video: " + videoFile.NativePath)
+		  Var mediaFile As FolderItem = videoFolder.Child(filename)
+		  System.DebugLog("Looking for file: " + mediaFile.NativePath)
 		  
-		  If Not videoFile.Exists Then
-		    System.DebugLog("Video file does not exist")
+		  If Not mediaFile.Exists Then
+		    System.DebugLog("File does not exist")
 		    Return Nil
 		  End If
 		  
-		  System.DebugLog("Video file exists: YES")
-		  System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
+		  System.DebugLog("File exists: YES")
+		  System.DebugLog("File size: " + Str(mediaFile.Length) + " bytes")
+		  
+		  ' Determine MIME type from extension
+		  Var mimeType As String = "video/mp4" ' Default
+		  Var lowerName As String = filename.Lowercase
+		  
+		  If lowerName.EndsWith(".png") Then
+		    mimeType = "image/png"
+		  ElseIf lowerName.EndsWith(".jpg") Or lowerName.EndsWith(".jpeg") Then
+		    mimeType = "image/jpeg"
+		  ElseIf lowerName.EndsWith(".gif") Then
+		    mimeType = "image/gif"
+		  ElseIf lowerName.EndsWith(".mp4") Then
+		    mimeType = "video/mp4"
+		  ElseIf lowerName.EndsWith(".mov") Then
+		    mimeType = "video/quicktime"
+		  ElseIf lowerName.EndsWith(".avi") Then
+		    mimeType = "video/x-msvideo"
+		  ElseIf lowerName.EndsWith(".webm") Then
+		    mimeType = "video/webm"
+		  End If
+		  
+		  System.DebugLog("MIME type: " + mimeType)
 		  
 		  Try
-		    Var bs As BinaryStream = BinaryStream.Open(videoFile)
-		    Var fileSize As Int64 = videoFile.Length
-		    Var videoData As MemoryBlock = bs.Read(fileSize)
+		    Var bs As BinaryStream = BinaryStream.Open(mediaFile)
+		    Var fileSize As Int64 = mediaFile.Length
+		    Var fileData As MemoryBlock = bs.Read(fileSize)
 		    bs.Close
 		    
 		    ' Create WebFile and store it in Session to keep it alive
 		    CurrentVideoFile = New WebFile
-		    CurrentVideoFile.Data = videoData
+		    CurrentVideoFile.Data = fileData
 		    CurrentVideoFile.Filename = filename
-		    CurrentVideoFile.MIMEType = "video/mp4"
+		    CurrentVideoFile.MIMEType = mimeType  ' Now uses detected MIME type
 		    CurrentVideoFile.ForceDownload = False
 		    
 		    System.DebugLog("WebFile URL: " + CurrentVideoFile.URL)
@@ -149,9 +194,58 @@ Inherits WebSession
 		    Return CurrentVideoFile
 		    
 		  Catch e As IOException
-		    System.DebugLog("Error reading video file: " + e.Message)
+		    System.DebugLog("Error reading file: " + e.Message)
 		    Return Nil
 		  End Try
+		  
+		  ' ' *******************************************************************************
+		  ' ' Method: ServeVideo
+		  ' '   Parameters: filename As String
+		  ' '   Return Type: WebFile
+		  ' ' *******************************************************************************
+		  ' Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
+		  ' System.DebugLog("Video folder path: " + videoFolder.NativePath)
+		  ' 
+		  ' If Not videoFolder.Exists Then
+		  ' System.DebugLog("Video folder does not exist")
+		  ' Return Nil
+		  ' End If
+		  ' 
+		  ' System.DebugLog("Video folder exists: YES")
+		  ' 
+		  ' Var videoFile As FolderItem = videoFolder.Child(filename)
+		  ' System.DebugLog("Looking for video: " + videoFile.NativePath)
+		  ' 
+		  ' If Not videoFile.Exists Then
+		  ' System.DebugLog("Video file does not exist")
+		  ' Return Nil
+		  ' End If
+		  ' 
+		  ' System.DebugLog("Video file exists: YES")
+		  ' System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
+		  ' 
+		  ' Try
+		  ' Var bs As BinaryStream = BinaryStream.Open(videoFile)
+		  ' Var fileSize As Int64 = videoFile.Length
+		  ' Var videoData As MemoryBlock = bs.Read(fileSize)
+		  ' bs.Close
+		  ' 
+		  ' ' Create WebFile and store it in Session to keep it alive
+		  ' CurrentVideoFile = New WebFile
+		  ' CurrentVideoFile.Data = videoData
+		  ' CurrentVideoFile.Filename = filename
+		  ' CurrentVideoFile.MIMEType = "video/mp4"
+		  ' CurrentVideoFile.ForceDownload = False
+		  ' 
+		  ' System.DebugLog("WebFile URL: " + CurrentVideoFile.URL)
+		  ' System.DebugLog("WebFile data size: " + Str(CurrentVideoFile.Data.Size) + " bytes")
+		  ' 
+		  ' Return CurrentVideoFile
+		  ' 
+		  ' Catch e As IOException
+		  ' System.DebugLog("Error reading video file: " + e.Message)
+		  ' Return Nil
+		  ' End Try
 		  
 		End Function
 	#tag EndMethod
