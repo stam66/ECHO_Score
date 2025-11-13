@@ -232,7 +232,7 @@ Begin wc_base wc_RequestAccess
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Submit access request"
-         TextAlignment   =   1
+         TextAlignment   =   2
          TextColor       =   &c000000FF
          Tooltip         =   ""
          Top             =   20

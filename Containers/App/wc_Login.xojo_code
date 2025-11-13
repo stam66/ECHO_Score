@@ -24,7 +24,6 @@ Begin wc_base wc_Login
    Width           =   780
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle Rectangle2
       BorderColor     =   &c42424200
@@ -52,7 +51,7 @@ Begin wc_base wc_Login
       PanelIndex      =   0
       Parent          =   "nil"
       Scope           =   0
-      TabIndex        =   0
+      TabIndex        =   2
       TabStop         =   False
       Tooltip         =   ""
       Top             =   0
@@ -66,7 +65,7 @@ Begin wc_base wc_Login
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
-      Enabled         =   True
+      Enabled         =   False
       FontName        =   "arial"
       FontSize        =   24.0
       Height          =   38
@@ -84,10 +83,10 @@ Begin wc_base wc_Login
       Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   2
+      TabIndex        =   4
       TabStop         =   True
       Text            =   "Log into the application"
-      TextAlignment   =   1
+      TextAlignment   =   2
       TextColor       =   &c000000FF
       Tooltip         =   ""
       Top             =   20
@@ -100,7 +99,7 @@ Begin wc_base wc_Login
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
-      Enabled         =   True
+      Enabled         =   False
       FontName        =   "arial"
       FontSize        =   14.0
       Height          =   28
@@ -118,7 +117,7 @@ Begin wc_base wc_Login
       Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   3
+      TabIndex        =   5
       TabStop         =   True
       Text            =   "Username"
       TextAlignment   =   1
@@ -205,7 +204,7 @@ Begin wc_base wc_Login
       ControlID       =   ""
       CornerSize      =   0
       CSSClasses      =   ""
-      Enabled         =   True
+      Enabled         =   False
       FillColor       =   &c005EB800
       HasFillColor    =   True
       Height          =   506
@@ -223,7 +222,7 @@ Begin wc_base wc_Login
       LockVertical    =   False
       PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   3
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
@@ -269,7 +268,7 @@ Begin wc_base wc_Login
          Bold            =   True
          ControlID       =   ""
          CSSClasses      =   ""
-         Enabled         =   True
+         Enabled         =   False
          FontName        =   "arial"
          FontSize        =   24.0
          Height          =   38
@@ -339,7 +338,7 @@ Begin wc_base wc_Login
          Bold            =   False
          ControlID       =   ""
          CSSClasses      =   ""
-         Enabled         =   True
+         Enabled         =   False
          FontName        =   "arial"
          FontSize        =   15.0
          Height          =   38
@@ -377,7 +376,7 @@ Begin wc_base wc_Login
       Bold            =   True
       ControlID       =   ""
       CSSClasses      =   ""
-      Enabled         =   True
+      Enabled         =   False
       FontName        =   "arial"
       FontSize        =   14.0
       Height          =   28
@@ -396,7 +395,7 @@ Begin wc_base wc_Login
       PanelIndex      =   0
       Parent          =   "nil"
       Scope           =   0
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Password"
@@ -434,7 +433,7 @@ Begin wc_base wc_Login
       Parent          =   "nil"
       ReadOnly        =   False
       Scope           =   0
-      TabIndex        =   6
+      TabIndex        =   1
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
@@ -500,7 +499,7 @@ Begin wc_base wc_Login
       PanelIndex      =   0
       ReadOnly        =   False
       Scope           =   0
-      TabIndex        =   4
+      TabIndex        =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
