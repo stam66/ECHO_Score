@@ -130,6 +130,40 @@ Begin wc_base wc_Login
       Width           =   300
       _mPanelIndex    =   -1
    End
+   Begin WebTextField txtUsername
+      AllowAutoComplete=   True
+      AllowSpellChecking=   False
+      Caption         =   ""
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FieldType       =   0
+      Height          =   38
+      Hint            =   ""
+      Index           =   -2147483648
+      Indicator       =   0
+      Left            =   435
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   True
+      LockLeft        =   False
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   True
+      MaximumCharactersAllowed=   0
+      PanelIndex      =   0
+      ReadOnly        =   False
+      Scope           =   0
+      TabIndex        =   4
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      Tooltip         =   ""
+      Top             =   165
+      Visible         =   True
+      Width           =   300
+      _mPanelIndex    =   -1
+   End
    Begin WebLabel lblError
       Bold            =   False
       ControlID       =   ""
@@ -410,7 +444,7 @@ Begin wc_base wc_Login
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtPassword
-      AllowAutoComplete=   False
+      AllowAutoComplete=   True
       AllowSpellChecking=   False
       Caption         =   ""
       ControlID       =   ""
@@ -474,40 +508,6 @@ Begin wc_base wc_Login
       Top             =   448
       Visible         =   True
       Width           =   175
-      _mPanelIndex    =   -1
-   End
-   Begin WebTextField txtUsername
-      AllowAutoComplete=   False
-      AllowSpellChecking=   False
-      Caption         =   ""
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FieldType       =   0
-      Height          =   38
-      Hint            =   ""
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   435
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   True
-      LockLeft        =   False
-      LockRight       =   False
-      LockTop         =   False
-      LockVertical    =   True
-      MaximumCharactersAllowed=   0
-      PanelIndex      =   0
-      ReadOnly        =   False
-      Scope           =   0
-      TabIndex        =   4
-      TabStop         =   True
-      Text            =   ""
-      TextAlignment   =   0
-      Tooltip         =   ""
-      Top             =   165
-      Visible         =   True
-      Width           =   300
       _mPanelIndex    =   -1
    End
 End
