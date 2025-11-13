@@ -625,17 +625,6 @@ End
 		Sub Pressed()
 		  var v as variant = 1
 		  SetStatus(v)
-		  
-		  ' if lstAccessReqeusts.SelectedRowIndex = -1 then return
-		  ' 
-		  ' var row as integer = lstAccessReqeusts.SelectedRowIndex
-		  ' var requestID as integer = lstAccessReqeusts.RowTagAt(row)
-		  ' 
-		  ' var sql as string = "UPDATE access_requests SET request_status = 1 where request_id = " + Str(requestID)
-		  ' session.DB.ExecuteSQL(sql)
-		  ' 
-		  ' var seg as integer = segRequestFilter.SelectedSegmentIndex
-		  ' FilterBySegment(seg)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -653,17 +642,6 @@ End
 		  var v as variant = nil
 		  SetStatus(v)
 		  
-		  
-		  ' if lstAccessReqeusts.SelectedRowIndex = -1 then return
-		  ' 
-		  ' var row as integer = lstAccessReqeusts.SelectedRowIndex
-		  ' var requestID as integer = lstAccessReqeusts.RowTagAt(row)
-		  ' 
-		  ' var sql as string = "UPDATE access_requests SET request_status = 1 where request_id = " + Str(requestID)
-		  ' session.DB.ExecuteSQL(sql)
-		  ' 
-		  ' var seg as integer = segRequestFilter.SelectedSegmentIndex
-		  ' FilterBySegment(seg)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

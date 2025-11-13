@@ -906,111 +906,6 @@ End
 		  End Try
 		  
 		  
-		  
-		  ' ' *******************************************************************************
-		  ' ' LoadUserGroups Method
-		  ' ' *******************************************************************************
-		  ' cmbUserGroup.RemoveAllRows
-		  ' popGroupFilter.RemoveAllRows
-		  ' 
-		  ' ' Add "All" as first option in filter
-		  ' popGroupFilter.AddRow("All Groups")
-		  ' 
-		  ' ' Add common groups
-		  ' Var currentYear As Integer = DateTime.Now.Year
-		  ' Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
-		  ' Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
-		  ' 
-		  ' For Each specialty As String In specialties
-		  ' For Each quarter As String In quarters
-		  ' cmbUserGroup.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
-		  ' Next
-		  ' Next
-		  ' 
-		  ' ' Also load existing groups from database
-		  ' Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL ORDER BY user_group DESC"
-		  ' Try
-		  ' Var rs As RowSet = Session.DB.SelectSQL(sql)
-		  ' While Not rs.AfterLastRow
-		  ' Var existingGroup As String = rs.Column("user_group").StringValue
-		  ' If existingGroup.Trim <> "" Then
-		  ' ' Add to cmbUserGroup if not already in list
-		  ' Var found As Boolean = False
-		  ' For i As Integer = 0 To cmbUserGroup.RowCount - 1
-		  ' If cmbUserGroup.RowTextAt(i) = existingGroup Then
-		  ' found = True
-		  ' Exit For i
-		  ' End If
-		  ' Next
-		  ' If Not found Then
-		  ' cmbUserGroup.AddRow(existingGroup)
-		  ' End If
-		  ' 
-		  ' ' Add to popGroupFilter if not already in list
-		  ' found = False
-		  ' For i As Integer = 0 To popGroupFilter.RowCount - 1
-		  ' If popGroupFilter.RowTextAt(i) = existingGroup Then
-		  ' found = True
-		  ' Exit For i
-		  ' End If
-		  ' Next
-		  ' If Not found Then
-		  ' popGroupFilter.AddRow(existingGroup)
-		  ' End If
-		  ' End If
-		  ' rs.MoveToNextRow
-		  ' Wend
-		  ' Catch e As DatabaseException
-		  ' ' Ignore error
-		  ' End Try
-		  ' 
-		  ' ' Set filter to "All" by default
-		  ' popGroupFilter.SelectedRowIndex = 0
-		  ' 
-		  ' 
-		  ' 
-		  ' 
-		  ' 
-		  ' ' ' *******************************************************************************
-		  ' ' ' LoadUserGroups Method
-		  ' ' ' *******************************************************************************
-		  ' ' cmbUserGroup.RemoveAllRows
-		  ' ' 
-		  ' ' ' Add common groups
-		  ' ' Var currentYear As Integer = DateTime.Now.Year
-		  ' ' Var quarters() As String = Array("Q1", "Q2", "Q3", "Q4")
-		  ' ' Var specialties() As String = Array("Cardiology", "ICU", "ED", "Medicine", "Surgery")
-		  ' ' 
-		  ' ' For Each specialty As String In specialties
-		  ' ' For Each quarter As String In quarters
-		  ' ' cmbUserGroup.AddRow(specialty + " " + Str(currentYear) + " " + quarter)
-		  ' ' Next
-		  ' ' Next
-		  ' ' 
-		  ' ' ' Also load existing groups from database
-		  ' ' Var sql As String = "SELECT DISTINCT user_group FROM users WHERE user_group IS NOT NULL ORDER BY user_group DESC"
-		  ' ' Try
-		  ' ' Var rs As RowSet = Session.DB.SelectSQL(sql)
-		  ' ' While Not rs.AfterLastRow
-		  ' ' Var existingGroup As String = rs.Column("user_group").StringValue
-		  ' ' If existingGroup.Trim <> "" Then
-		  ' ' ' Add if not already in list
-		  ' ' Var found As Boolean = False
-		  ' ' For i As Integer = 0 To cmbUserGroup.RowCount - 1
-		  ' ' If cmbUserGroup.RowTextAt(i) = existingGroup Then
-		  ' ' found = True
-		  ' ' Exit For i
-		  ' ' End If
-		  ' ' Next
-		  ' ' If Not found Then
-		  ' ' cmbUserGroup.AddRow(existingGroup)
-		  ' ' End If
-		  ' ' End If
-		  ' ' rs.MoveToNextRow
-		  ' ' Wend
-		  ' ' Catch e As DatabaseException
-		  ' ' ' Ignore error
-		  ' ' End Try
 		End Sub
 	#tag EndMethod
 
@@ -1025,16 +920,6 @@ End
 		  Var darkMode As Boolean = session.IsDarkMode
 		  Var activeStyle   As New WebStyle
 		  Var inactiveStyle As New WebStyle
-		  
-		  ' If darkMode Then
-		  ' // Dark background → light text
-		  ' activeStyle.ForegroundColor   = Color.White
-		  ' inactiveStyle.ForegroundColor = Color.LightGray // &cAAAAAA   // light gray
-		  ' Else
-		  ' // Light background → dark text
-		  ' activeStyle.ForegroundColor   = Color.Black
-		  ' inactiveStyle.ForegroundColor = Color.LightGray // &c808080   // gray
-		  ' End If
 		  
 		  activeStyle.ForegroundColor = if(darkMode, color.White, color.Black)
 		  inactiveStyle.ForegroundColor = color.LightGray
@@ -1092,47 +977,6 @@ End
 		    MessageBox("Error loading users: " + e.Message)
 		  End Try
 		  
-		  
-		  ' ' *******************************************************************************
-		  ' ' LoadUsers Method
-		  ' ' *******************************************************************************
-		  ' lstUsers.RemoveAllRows
-		  ' 
-		  ' Var sql As String
-		  ' If filterGroup = "" Then
-		  ' sql = "SELECT user_id, full_name, email, username, is_admin, is_active, user_group FROM users ORDER BY full_name"
-		  ' Else
-		  ' sql = "SELECT user_id, full_name, email, username, is_admin, is_active, user_group FROM users WHERE user_group = ? ORDER BY full_name"
-		  ' End If
-		  ' 
-		  ' Try
-		  ' Var rs As RowSet
-		  ' If filterGroup = "" Then
-		  ' rs = Session.DB.SelectSQL(sql)
-		  ' Else
-		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		  ' ps.Bind(0, filterGroup)
-		  ' rs = ps.SelectSQL
-		  ' End If
-		  ' 
-		  ' While Not rs.AfterLastRow
-		  ' lstUsers.AddRow(rs.Column("full_name").StringValue)
-		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 1) = rs.Column("email").StringValue
-		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 2) = rs.Column("username").StringValue
-		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 3) = If(rs.Column("is_admin").BooleanValue, "Yes", "No")
-		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 4) = rs.Column("user_group").StringValue
-		  ' lstUsers.CellTextAt(lstUsers.LastAddedRowIndex, 5) = If(rs.Column("is_active").BooleanValue, "Active", "Inactive")
-		  ' lstUsers.RowTagAt(lstUsers.LastAddedRowIndex) = rs.Column("user_id").IntegerValue
-		  ' 
-		  ' rs.MoveToNextRow
-		  ' Wend
-		  ' Catch e As DatabaseException
-		  ' MessageBox("Error loading users: " + e.Message)
-		  ' End Try
-		  ' 
-		  ' 
-		  '  
 		End Sub
 	#tag EndMethod
 

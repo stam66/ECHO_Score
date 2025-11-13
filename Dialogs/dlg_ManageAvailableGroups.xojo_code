@@ -566,38 +566,6 @@ End
 		    ' Note: PerformDelete now raises the event, so no need here
 		    
 		  End If
-		  
-		  
-		  ' #Pragma Unused dialog
-		  ' 
-		  ' ' Handle choice when group is in use
-		  ' Var groupName As String = txtGroupName.Text.Trim
-		  ' 
-		  ' If button.Caption = "Deactivate" Then
-		  ' ' Soft delete - just deactivate
-		  ' Var updateSQL As String = "UPDATE available_groups SET is_active = FALSE WHERE group_id = ?"
-		  ' Try
-		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
-		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		  ' ps.Bind(0, SelectedGroupID)
-		  ' ps.ExecuteSQL
-		  ' 
-		  ' GroupsModified = True
-		  ' lblStatus.Text = "Group deactivated: " + groupName
-		  ' LoadAvailableGroupsList
-		  ' ClearForm
-		  ' 
-		  ' Catch e As DatabaseException
-		  ' MessageBox("Error deactivating group: " + e.Message)
-		  ' End Try
-		  ' 
-		  ' ElseIf button.Caption = "Force Delete" Then
-		  ' ' Hard delete even though in use
-		  ' PerformDelete
-		  ' 
-		  ' ' Else Cancel - do nothing
-		  ' End If
-		  
 		End Sub
 	#tag EndMethod
 
@@ -663,25 +631,6 @@ End
 		    MessageBox("Error deleting group: " + e.Message)
 		  End Try
 		  
-		  
-		  ' ' Actually delete the group from database
-		  ' Var groupName As String = txtGroupName.Text.Trim
-		  ' Var sql As String = "DELETE FROM available_groups WHERE group_id = ?"
-		  ' 
-		  ' Try
-		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		  ' ps.Bind(0, SelectedGroupID)
-		  ' ps.ExecuteSQL
-		  ' 
-		  ' GroupsModified = True
-		  ' lblStatus.Text = "Group deleted: " + groupName
-		  ' LoadAvailableGroupsList
-		  ' ClearForm
-		  ' 
-		  ' Catch e As DatabaseException
-		  ' MessageBox("Error deleting group: " + e.Message)
-		  ' End Try
 		End Sub
 	#tag EndMethod
 

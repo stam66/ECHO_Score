@@ -24,7 +24,6 @@ Begin wc_base wc_RequestAccess
    Width           =   780
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle RectWhite
       BorderColor     =   &c42424200
@@ -719,66 +718,6 @@ End
 		  WebTimer.CallLater(100, AddressOf PerformSubmission, params)
 		  
 		  
-		  
-		  
-		  
-		  ' ' *******************************************************************************
-		  ' ' btnSubmitRequest.Pressed Event:
-		  ' ' *******************************************************************************
-		  ' '  Validate form fields
-		  ' If txtFullName.Text.Trim = "" Or txtEmail.Text.Trim = "" Then
-		  ' MessageBox("Please fill in all required fields")
-		  ' Return
-		  ' End If
-		  ' if not isValidEmail(txtEmail.Text.Trim) then
-		  ' MessageBox("Invalid email format - please try again.")
-		  ' return
-		  ' end if
-		  ' 
-		  ' ' Insert the access request into the database
-		  ' Var sql As String = "INSERT INTO access_requests (name, email) VALUES (?, ?)"
-		  ' 
-		  ' Try
-		  ' Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		  ' ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		  ' ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		  ' 
-		  ' ps.Bind(0, txtFullName.Text.Trim)
-		  ' ps.Bind(1, txtEmail.Text.Trim)
-		  ' 
-		  ' ps.ExecuteSQL
-		  ' 
-		  ' ' *** NEW CODE: Notify all admins of the new request ***
-		  ' ' This will send an email to every admin user in the system
-		  ' Var applicantName As String = txtFullName.Text.Trim
-		  ' Var applicantEmail As String = txtEmail.Text.Trim
-		  ' 
-		  ' ' Get all admin emails and send notifications
-		  ' Var adminSQL As String = "SELECT email, full_name FROM users WHERE is_admin = 1 AND is_active = 1"
-		  ' Var adminRS As RowSet = Session.DB.SelectSQL(adminSQL)
-		  ' 
-		  ' While Not adminRS.AfterLastRow
-		  ' Var adminEmail As String = adminRS.Column("email").StringValue
-		  ' Var adminName As String = adminRS.Column("full_name").StringValue
-		  ' 
-		  ' ' Send notification (fires asynchronously, won't block the UI)
-		  ' ' Using Call to explicitly ignore the return value
-		  ' Call EmailHelper.SendAccessRequestNotification(adminEmail, adminName, applicantName, applicantEmail)
-		  ' 
-		  ' adminRS.MoveToNextRow
-		  ' Wend
-		  ' ' *** END NEW CODE ***
-		  ' 
-		  ' ' Show success message
-		  ' MessageBox("Your access request has been submitted successfully! You will receive an email once it's been reviewed.")
-		  ' 
-		  ' ' Clear the form or navigate away
-		  ' txtFullName.Text = ""
-		  ' txtEmail.Text = ""
-		  ' 
-		  ' Catch e As DatabaseException
-		  ' MessageBox("Error submitting request: " + e.Message)
-		  ' End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents

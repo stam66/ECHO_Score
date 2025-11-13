@@ -52,19 +52,6 @@ Inherits WebSession
 		  MainShell = New wp_MainShell
 		  Navigation = New WebNavigationManager(MainShell)
 		  MainShell.Show  ' Initial navigation will happen in MainShell.Shown event
-		  
-		  
-		  
-		  ' ' Initialize main shell and navigation
-		  ' MainShell = New wp_MainShell
-		  ' MainShell.Show
-		  ' Navigation = New WebNavigationManager(MainShell)
-		  ' 
-		  ' ' Navigate to login screen
-		  ' Var w As New wc_Login
-		  ' w.ContainerID = "Login"
-		  ' w.Position = wc_Base.PositionEnum.Center
-		  ' Navigation.NavigateTo(w)
 		End Sub
 	#tag EndEvent
 
@@ -197,56 +184,6 @@ Inherits WebSession
 		    System.DebugLog("Error reading file: " + e.Message)
 		    Return Nil
 		  End Try
-		  
-		  ' ' *******************************************************************************
-		  ' ' Method: ServeVideo
-		  ' '   Parameters: filename As String
-		  ' '   Return Type: WebFile
-		  ' ' *******************************************************************************
-		  ' Var videoFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
-		  ' System.DebugLog("Video folder path: " + videoFolder.NativePath)
-		  ' 
-		  ' If Not videoFolder.Exists Then
-		  ' System.DebugLog("Video folder does not exist")
-		  ' Return Nil
-		  ' End If
-		  ' 
-		  ' System.DebugLog("Video folder exists: YES")
-		  ' 
-		  ' Var videoFile As FolderItem = videoFolder.Child(filename)
-		  ' System.DebugLog("Looking for video: " + videoFile.NativePath)
-		  ' 
-		  ' If Not videoFile.Exists Then
-		  ' System.DebugLog("Video file does not exist")
-		  ' Return Nil
-		  ' End If
-		  ' 
-		  ' System.DebugLog("Video file exists: YES")
-		  ' System.DebugLog("Video file size: " + Str(videoFile.Length) + " bytes")
-		  ' 
-		  ' Try
-		  ' Var bs As BinaryStream = BinaryStream.Open(videoFile)
-		  ' Var fileSize As Int64 = videoFile.Length
-		  ' Var videoData As MemoryBlock = bs.Read(fileSize)
-		  ' bs.Close
-		  ' 
-		  ' ' Create WebFile and store it in Session to keep it alive
-		  ' CurrentVideoFile = New WebFile
-		  ' CurrentVideoFile.Data = videoData
-		  ' CurrentVideoFile.Filename = filename
-		  ' CurrentVideoFile.MIMEType = "video/mp4"
-		  ' CurrentVideoFile.ForceDownload = False
-		  ' 
-		  ' System.DebugLog("WebFile URL: " + CurrentVideoFile.URL)
-		  ' System.DebugLog("WebFile data size: " + Str(CurrentVideoFile.Data.Size) + " bytes")
-		  ' 
-		  ' Return CurrentVideoFile
-		  ' 
-		  ' Catch e As IOException
-		  ' System.DebugLog("Error reading video file: " + e.Message)
-		  ' Return Nil
-		  ' End Try
-		  
 		End Function
 	#tag EndMethod
 
