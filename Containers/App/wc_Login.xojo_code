@@ -410,7 +410,7 @@ Begin wc_base wc_Login
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtPassword
-      AllowAutoComplete=   False
+      AllowAutoComplete=   True
       AllowSpellChecking=   False
       Caption         =   ""
       ControlID       =   ""
@@ -477,7 +477,7 @@ Begin wc_base wc_Login
       _mPanelIndex    =   -1
    End
    Begin WebTextField txtUsername
-      AllowAutoComplete=   False
+      AllowAutoComplete=   True
       AllowSpellChecking=   False
       Caption         =   ""
       ControlID       =   ""
