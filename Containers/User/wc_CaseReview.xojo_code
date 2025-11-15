@@ -25,6 +25,76 @@ Begin wc_base wc_CaseReview
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
+   Begin WebRectangle Rectangle1
+      BorderColor     =   &c000000FF
+      BorderThickness =   2
+      ControlCount    =   0
+      ControlID       =   ""
+      CornerSize      =   5
+      CSSClasses      =   ""
+      Enabled         =   True
+      FillColor       =   &c10583E00
+      HasFillColor    =   False
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   ""
+      LayoutDirection =   "LayoutDirections.LeftToRight"
+      LayoutType      =   "LayoutTypes.Fixed"
+      Left            =   754
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   32
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   66
+      Visible         =   True
+      Width           =   344
+      _mDesignHeight  =   0
+      _mDesignWidth   =   0
+      _mPanelIndex    =   -1
+      Begin WebLabel lblAssessment
+         Bold            =   False
+         ControlID       =   ""
+         CSSClasses      =   ""
+         Enabled         =   True
+         FontName        =   ""
+         FontSize        =   0.0
+         Height          =   38
+         Index           =   -2147483648
+         Indicator       =   ""
+         Italic          =   False
+         Left            =   755
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockHorizontal  =   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         LockVertical    =   False
+         Multiline       =   False
+         PanelIndex      =   0
+         Parent          =   "Rectangle1"
+         Scope           =   0
+         TabIndex        =   0
+         TabStop         =   True
+         Text            =   "General Assessment"
+         TextAlignment   =   2
+         TextColor       =   &c000000FF
+         Tooltip         =   ""
+         Top             =   65
+         Underline       =   False
+         Visible         =   True
+         Width           =   342
+         _mPanelIndex    =   -1
+      End
+   End
    Begin WebLabel lblCaseTitle
       Bold            =   True
       ControlID       =   ""
@@ -63,7 +133,7 @@ Begin wc_base wc_CaseReview
       ControlID       =   ""
       CSSClasses      =   "video::-webkit-media-controls-panel {   background-color: transparent !important; }  video:focus {   outline: none; }"
       Enabled         =   True
-      Height          =   514
+      Height          =   572
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   20
@@ -79,10 +149,10 @@ Begin wc_base wc_CaseReview
       TabIndex        =   1
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   112
+      Top             =   129
       UseSandbox      =   False
       Visible         =   True
-      Width           =   686
+      Width           =   702
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkLVSizeDilated
@@ -94,7 +164,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -122,7 +192,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -150,7 +220,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -178,7 +248,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -206,7 +276,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -234,7 +304,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -262,7 +332,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -290,7 +360,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -318,7 +388,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -346,7 +416,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -374,7 +444,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -402,7 +472,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -430,7 +500,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -460,7 +530,7 @@ Begin wc_base wc_CaseReview
       Hint            =   "Conclusions"
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -636,40 +706,6 @@ Begin wc_base wc_CaseReview
       Width           =   115
       _mPanelIndex    =   -1
    End
-   Begin WebLabel lblAssessment
-      Bold            =   True
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   0.0
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   ""
-      Italic          =   False
-      Left            =   736
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   23
-      TabStop         =   True
-      Text            =   "ASSESSMENT"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   66
-      Underline       =   False
-      Visible         =   True
-      Width           =   342
-      _mPanelIndex    =   -1
-   End
    Begin WebLabel lblConclusions
       Bold            =   True
       ControlID       =   ""
@@ -681,7 +717,7 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -715,7 +751,7 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -749,7 +785,7 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   736
+      Left            =   754
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -817,7 +853,7 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   761
+      Left            =   406
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -831,7 +867,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   28
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   11
+      Top             =   66
       Visible         =   True
       Width           =   154
       _mPanelIndex    =   -1
@@ -847,7 +883,7 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   936
+      Left            =   568
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -861,53 +897,53 @@ Begin wc_base wc_CaseReview
       TabIndex        =   29
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   11
-      Visible         =   True
-      Width           =   154
-      _mPanelIndex    =   -1
-   End
-   Begin WebButton Button1
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Full Screen"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   406
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   30
-      TabStop         =   True
-      Tooltip         =   ""
       Top             =   66
       Visible         =   True
-      Width           =   129
+      Width           =   154
       _mPanelIndex    =   -1
    End
    Begin WebButton btnMCQAssessment
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "MCQs"
+      Caption         =   "Review MCQs"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
+      Indicator       =   3
+      Left            =   754
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   True
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   31
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Visible         =   True
+      Width           =   344
+      _mPanelIndex    =   -1
+   End
+   Begin WebLabel lblVideoPreview2
+      Bold            =   False
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      FontName        =   ""
+      FontSize        =   12.0
+      Height          =   38
+      Index           =   -2147483648
       Indicator       =   0
-      Left            =   628
+      Italic          =   False
+      Left            =   25
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -915,15 +951,19 @@ Begin wc_base wc_CaseReview
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   31
+      TabIndex        =   33
       TabStop         =   True
+      Text            =   "Full Screen"
+      TextAlignment   =   0
+      TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   11
+      Top             =   101
+      Underline       =   True
       Visible         =   True
-      Width           =   100
+      Width           =   110
       _mPanelIndex    =   -1
    End
 End
@@ -1215,6 +1255,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LoadAvailableCases()
+		  ' *******************************************************************************
+		  ' LoadAvailableCases Method
+		  ' Loads cases filtered by user's group membership for navigation
+		  ' FIXED: Now uses case_groups instead of video_purpose
+		  ' *******************************************************************************
 		  
 		  ' Get user's group
 		  Var userGroup As String = ""
@@ -1232,34 +1277,29 @@ End
 		    System.DebugLog("Error getting user group: " + e.Message)
 		  End Try
 		  
-		  ' Build SQL using EXISTS instead of DISTINCT
-		  Var sql As String = _
-		  "SELECT c.case_id, c.serial_number " + _
-		  "FROM cases c " + _
-		  "WHERE EXISTS ( " + _
-		  "  SELECT 1 FROM case_videos cv " + _
-		  "  WHERE cv.case_id = c.case_id AND ( " + _
-		  "    cv.video_purpose IS NULL OR cv.video_purpose = '' "
+		  ' Build SQL - filter by case_groups, not video_purpose
+		  Var sql As String
 		  
-		  If userGroup <> "" Then
-		    sql = sql + _
-		    "    OR FIND_IN_SET(?, cv.video_purpose) > 0 " + _
-		    "    OR cv.video_purpose LIKE ? "
+		  If userGroup = "" Then
+		    ' No group - show cases with no groups assigned
+		    sql = "SELECT c.case_id, c.serial_number " + _
+		    "FROM cases c " + _
+		    "WHERE (c.case_groups IS NULL OR c.case_groups = '') " + _
+		    "ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
+		  Else
+		    ' Has group - show cases where case_groups contains user's group
+		    sql = "SELECT c.case_id, c.serial_number " + _
+		    "FROM cases c " + _
+		    "WHERE (c.case_groups LIKE ? OR c.case_groups IS NULL OR c.case_groups = '') " + _
+		    "ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
 		  End If
-		  
-		  sql = sql + _
-		  "  ) " + _
-		  ") " + _
-		  "ORDER BY c.serial_number"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    
 		    If userGroup <> "" Then
 		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.Bind(0, userGroup)  ' exact group match in CSV
-		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.Bind(1, "%" + userGroup + "%")  ' optional fuzzy match
+		      ps.Bind(0, "%" + userGroup + "%")
 		    End If
 		    
 		    Var rs As RowSet = ps.SelectSQL
@@ -1282,6 +1322,7 @@ End
 		  Catch e As DatabaseException
 		    System.DebugLog("Error loading available cases: " + e.Message)
 		  End Try
+		  
 		End Sub
 	#tag EndMethod
 
@@ -2293,6 +2334,9 @@ End
 		  End If
 		  
 		  DisplayCurrentVideo
+		  UpdateVideoNavigation  ' ← ADD THIS LINE
+		  
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2312,6 +2356,8 @@ End
 		  End If
 		  
 		  DisplayCurrentVideo
+		  UpdateVideoNavigation  ' ← ADD THIS LINE
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2353,14 +2399,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Button1
-	#tag Event
-		Sub Pressed()
-		  ' Request fullscreen
-		  htmlVideoPlayer.ExecuteJavaScript("(function() { var v = document.getElementById('mainVideo'); if (v) { if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } else { if (v.requestFullscreen) { v.requestFullscreen(); } else if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); } else if (v.mozRequestFullScreen) { v.mozRequestFullScreen(); } else if (v.msRequestFullscreen) { v.msRequestFullscreen(); } } } })();")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events btnMCQAssessment
 	#tag Event
 		Sub Pressed()
@@ -2381,6 +2419,14 @@ End
 		  ' 
 		  ' ' Refresh MCQ status after dialog closes
 		  ' WebTimer.CallLater(500, AddressOf RefreshMCQStatus)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events lblVideoPreview2
+	#tag Event
+		Sub Pressed()
+		  ' Request fullscreen
+		  htmlVideoPlayer.ExecuteJavaScript("(function() { var v = document.getElementById('mainVideo'); if (v) { if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } else { if (v.requestFullscreen) { v.requestFullscreen(); } else if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); } else if (v.mozRequestFullScreen) { v.mozRequestFullScreen(); } else if (v.msRequestFullscreen) { v.msRequestFullscreen(); } } } })();")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
