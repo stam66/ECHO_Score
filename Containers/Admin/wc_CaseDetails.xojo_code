@@ -537,7 +537,7 @@ Begin wc_base wc_CaseDetails
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   0
+      Top             =   9
       Underline       =   False
       Visible         =   True
       Width           =   64
@@ -555,7 +555,7 @@ Begin wc_base wc_CaseDetails
       HasBorder       =   True
       HasHeader       =   False
       HeaderHeight    =   0
-      Height          =   100
+      Height          =   85
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
@@ -583,7 +583,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   46
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   24
+      Top             =   39
       Visible         =   True
       Width           =   240
       _mPanelIndex    =   -1
@@ -1055,7 +1055,7 @@ Begin wc_base wc_CaseDetails
       TabIndex        =   53
       TabStop         =   True
       Tooltip         =   "Manage group assignments"
-      Top             =   132
+      Top             =   130
       Visible         =   True
       Width           =   101
       _mPanelIndex    =   -1
@@ -1086,8 +1086,38 @@ Begin wc_base wc_CaseDetails
       TabStop         =   True
       Tooltip         =   ""
       Top             =   724
-      Visible         =   True
+      Visible         =   False
       Width           =   142
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnManageMCQ1
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Manage MCQs"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   51
+      Index           =   -2147483648
+      Indicator       =   3
+      Left            =   602
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      LockVertical    =   False
+      Outlined        =   True
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   55
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   658
+      Visible         =   True
+      Width           =   168
       _mPanelIndex    =   -1
    End
 End
@@ -2481,6 +2511,18 @@ End
 		  Var mcqDialog As New dlg_ManageMCQ
 		  mcqDialog.Initialize(CaseID)
 		  mcqDialog.Show
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnManageMCQ1
+	#tag Event
+		Sub Pressed()
+		  ' Open MCQ management dialog
+		  Var mcq As New wc_ManageMCQs
+		  mcq.Initialize(CaseID)
+		  mcq.Position = PositionEnum.TopLeft
+		  mcq.SectionTitle = "Manage MCQs for selected case"
+		  Session.Navigation.NavigateTo(mcq)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -57,7 +57,7 @@ Begin WebDialog dlg_ManageMCQOptions
       Top             =   10
       Underline       =   False
       Visible         =   True
-      Width           =   760
+      Width           =   720
       _mPanelIndex    =   -1
    End
    Begin WebListBox lstOptions
@@ -100,7 +100,7 @@ Begin WebDialog dlg_ManageMCQOptions
       TabIndex        =   1
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   50
+      Top             =   48
       Visible         =   True
       Width           =   720
       _mPanelIndex    =   -1
@@ -139,40 +139,6 @@ Begin WebDialog dlg_ManageMCQOptions
       Width           =   400
       _mPanelIndex    =   -1
    End
-   Begin WebLabel lblOptionText
-      Bold            =   False
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   0.0
-      Height          =   22
-      Index           =   -2147483648
-      Indicator       =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   3
-      TabStop         =   True
-      Text            =   "Option Text:"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   397
-      Underline       =   False
-      Visible         =   True
-      Width           =   140
-      _mPanelIndex    =   -1
-   End
    Begin WebTextArea txtOptionText
       AllowReturnKey  =   True
       AllowSpellChecking=   False
@@ -181,7 +147,7 @@ Begin WebDialog dlg_ManageMCQOptions
       CSSClasses      =   ""
       Enabled         =   True
       Height          =   60
-      Hint            =   ""
+      Hint            =   "Option Text"
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   20
@@ -201,9 +167,9 @@ Begin WebDialog dlg_ManageMCQOptions
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   422
+      Top             =   408
       Visible         =   True
-      Width           =   760
+      Width           =   720
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkIsCorrect
@@ -215,7 +181,7 @@ Begin WebDialog dlg_ManageMCQOptions
       Indeterminate   =   False
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   580
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -228,7 +194,7 @@ Begin WebDialog dlg_ManageMCQOptions
       TabIndex        =   5
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   387
+      Top             =   476
       Value           =   False
       Visible         =   True
       Width           =   213
@@ -245,7 +211,7 @@ Begin WebDialog dlg_ManageMCQOptions
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
+      Left            =   640
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -274,8 +240,8 @@ Begin WebDialog dlg_ManageMCQOptions
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   572
+      Indicator       =   4
+      Left            =   532
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -283,7 +249,7 @@ Begin WebDialog dlg_ManageMCQOptions
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   2
       TabIndex        =   7
@@ -354,18 +320,18 @@ Begin WebDialog dlg_ManageMCQOptions
       Width           =   45
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnClose
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Close"
+   Begin WebLabel Label1
+      Bold            =   False
       ControlID       =   ""
       CSSClasses      =   ""
-      Default         =   False
       Enabled         =   True
+      FontName        =   ""
+      FontSize        =   32.0
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   680
+      indicator       =   0
+      Italic          =   False
+      Left            =   759
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -373,15 +339,19 @@ Begin WebDialog dlg_ManageMCQOptions
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Multiline       =   False
       PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   11
       TabStop         =   True
+      Text            =   "ⓧ"
+      TextAlignment   =   2
+      TextColor       =   &cD6D6D600
       Tooltip         =   ""
-      Top             =   542
+      Top             =   4
+      Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   37
       _mPanelIndex    =   -1
    End
 End
@@ -600,7 +570,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SaveOption()
 		  ' Save the current option
-		  System.DebugLog("SaveOption called - QuestionID: " + Str(QuestionID))
+		  System.DebugLog("SaveOption called - SelectedQuestionID: " + Str(QuestionID))
 		  System.DebugLog("SaveOption - IsEditMode: " + Str(IsEditMode))
 		  
 		  Var optionText As String = txtOptionText.Text.Trim
@@ -773,7 +743,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnClose
+#tag Events Label1
 	#tag Event
 		Sub Pressed()
 		  ' Close the dialog

@@ -32,7 +32,7 @@ Begin WebDialog dlg_ManageMCQ
       CSSClasses      =   ""
       Enabled         =   True
       FontName        =   ""
-      FontSize        =   0.0
+      FontSize        =   18.0
       Height          =   30
       Index           =   -2147483648
       Indicator       =   ""
@@ -50,7 +50,7 @@ Begin WebDialog dlg_ManageMCQ
       Scope           =   2
       TabIndex        =   0
       TabStop         =   True
-      Text            =   "Manage MCQ questions"
+      Text            =   "Manage MCQ entries"
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
@@ -61,22 +61,23 @@ Begin WebDialog dlg_ManageMCQ
       _mPanelIndex    =   -1
    End
    Begin WebListBox lstQuestions
-      AllowRowReordering=   False
+      AllowRowReordering=   True
       ColumnCount     =   5
       ColumnWidths    =   ""
       ControlID       =   ""
       CSSClasses      =   ""
       DefaultRowHeight=   49
       Enabled         =   True
+      FrozenColumns   =   0
       GridLineStyle   =   3
       HasBorder       =   True
       HasHeader       =   True
       HeaderHeight    =   0
-      Height          =   300
+      Height          =   321
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
-      InitialValue    =   "#	Question Text	Type	Points	Options"
+      InitialValue    =   "#	Question Text	Type	Points	Options\n1	some text ehre	single	1	options?\n2	some text ehre	single	1	options?\n3	some text ehre	single	1	options?\n4	some text ehre	single	1	options?\n1	some text ehre	single	1	options?\n2	some text ehre	single	1	options?\n3	some text ehre	single	1	options?\n4	some text ehre	single	1	options?"
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
@@ -133,44 +134,10 @@ Begin WebDialog dlg_ManageMCQ
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   389
+      Top             =   405
       Underline       =   False
       Visible         =   True
       Width           =   400
-      _mPanelIndex    =   -1
-   End
-   Begin WebLabel lblQuestionText
-      Bold            =   False
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Enabled         =   True
-      FontName        =   ""
-      FontSize        =   0.0
-      Height          =   30
-      Index           =   -2147483648
-      Indicator       =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      LockVertical    =   False
-      Multiline       =   False
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   3
-      TabStop         =   True
-      Text            =   "Question Text:"
-      TextAlignment   =   0
-      TextColor       =   &c000000FF
-      Tooltip         =   ""
-      Top             =   414
-      Underline       =   False
-      Visible         =   True
-      Width           =   140
       _mPanelIndex    =   -1
    End
    Begin WebTextArea txtQuestionText
@@ -181,7 +148,7 @@ Begin WebDialog dlg_ManageMCQ
       CSSClasses      =   ""
       Enabled         =   True
       Height          =   80
-      Hint            =   ""
+      Hint            =   "Question Text"
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   20
@@ -201,9 +168,9 @@ Begin WebDialog dlg_ManageMCQ
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   452
+      Top             =   443
       Visible         =   True
-      Width           =   905
+      Width           =   860
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblQuestionType
@@ -217,7 +184,7 @@ Begin WebDialog dlg_ManageMCQ
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   424
+      Left            =   375
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -234,7 +201,7 @@ Begin WebDialog dlg_ManageMCQ
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   418
+      Top             =   407
       Underline       =   False
       Visible         =   True
       Width           =   116
@@ -244,13 +211,13 @@ Begin WebDialog dlg_ManageMCQ
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   28
+      Height          =   38
       Index           =   -2147483648
       Indicator       =   0
       InitialValue    =   "Single Choice\nMultiple Choice"
       LastAddedRowIndex=   0
       LastRowIndex    =   0
-      Left            =   550
+      Left            =   499
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -266,7 +233,7 @@ Begin WebDialog dlg_ManageMCQ
       TabIndex        =   6
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   415
+      Top             =   399
       Visible         =   True
       Width           =   203
       _mPanelIndex    =   -1
@@ -282,7 +249,7 @@ Begin WebDialog dlg_ManageMCQ
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   783
+      Left            =   734
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -299,7 +266,7 @@ Begin WebDialog dlg_ManageMCQ
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   418
+      Top             =   407
       Underline       =   False
       Visible         =   True
       Width           =   58
@@ -313,11 +280,11 @@ Begin WebDialog dlg_ManageMCQ
       CSSClasses      =   ""
       Enabled         =   True
       FieldType       =   0
-      Height          =   34
+      Height          =   38
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   845
+      Left            =   800
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -334,7 +301,7 @@ Begin WebDialog dlg_ManageMCQ
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   412
+      Top             =   399
       Visible         =   True
       Width           =   80
       _mPanelIndex    =   -1
@@ -350,13 +317,13 @@ Begin WebDialog dlg_ManageMCQ
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
-      LockBottom      =   False
+      Left            =   780
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
@@ -372,7 +339,7 @@ Begin WebDialog dlg_ManageMCQ
    Begin WebButton btnManageOptions
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Manage Options"
+      Caption         =   "Question Options"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -380,13 +347,13 @@ Begin WebDialog dlg_ManageMCQ
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   128
-      LockBottom      =   False
+      Left            =   20
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
@@ -396,7 +363,7 @@ Begin WebDialog dlg_ManageMCQ
       Tooltip         =   ""
       Top             =   562
       Visible         =   True
-      Width           =   154
+      Width           =   171
       _mPanelIndex    =   -1
    End
    Begin WebButton btnDelete
@@ -409,16 +376,16 @@ Begin WebDialog dlg_ManageMCQ
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   717
-      LockBottom      =   False
+      Indicator       =   4
+      Left            =   669
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
       LockVertical    =   False
-      Outlined        =   False
+      Outlined        =   True
       PanelIndex      =   0
       Scope           =   2
       TabIndex        =   11
@@ -489,18 +456,18 @@ Begin WebDialog dlg_ManageMCQ
       Width           =   45
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnClose
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Close"
+   Begin WebLabel Label1
+      Bold            =   False
       ControlID       =   ""
       CSSClasses      =   ""
-      Default         =   False
       Enabled         =   True
+      FontName        =   ""
+      FontSize        =   32.0
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   825
+      Indicator       =   ""
+      Italic          =   False
+      Left            =   904
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -508,15 +475,19 @@ Begin WebDialog dlg_ManageMCQ
       LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
-      Outlined        =   False
+      Multiline       =   False
       PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   15
       TabStop         =   True
+      Text            =   "ⓧ"
+      TextAlignment   =   2
+      TextColor       =   &cD6D6D600
       Tooltip         =   ""
-      Top             =   562
+      Top             =   1
+      Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   37
       _mPanelIndex    =   -1
    End
 End
@@ -914,7 +885,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnClose
+#tag Events Label1
 	#tag Event
 		Sub Pressed()
 		  ' Close the dialog

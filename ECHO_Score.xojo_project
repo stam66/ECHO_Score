@@ -51,6 +51,7 @@ WebContainer=wc_UserAdmin;Containers/Admin/wc_UserAdmin.xojo_code;&h0000000012F3
 WebContainer=wc_ProgressReview;Containers/Admin/wc_ProgressReview.xojo_code;&h000000003FBB1FFF;&h00000000320E0FFF;false
 WebContainer=wc_CaseList;Containers/Admin/wc_CaseList.xojo_code;&h000000005624AFFF;&h00000000320E0FFF;false
 WebContainer=wc_CaseDetails;Containers/Admin/wc_CaseDetails.xojo_code;&h000000003ADC97FF;&h00000000320E0FFF;false
+WebContainer=wc_ManageMCQs;Containers/Admin/wc_ManageMCQs.xojo_code;&h000000006A934FFF;&h00000000320E0FFF;false
 WebContainer=wc_EmailConfig;Containers/Admin/wc_EmailConfig.xojo_code;&h0000000012F1D7FF;&h00000000320E0FFF;false
 Folder=User;Containers/User;&h0000000024251FFF;&h000000007BAD2FFF;false
 WebContainer=wc_UserHome;Containers/User/wc_UserHome.xojo_code;&h000000003E8D37FF;&h0000000024251FFF;false
