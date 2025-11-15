@@ -324,7 +324,7 @@ Begin wc_base wc_RequestAccess
       CornerSize      =   0
       CSSClasses      =   ""
       Enabled         =   True
-      FillColor       =   &c005EB800
+      FillColor       =   &c03468B00
       HasFillColor    =   True
       Height          =   506
       Index           =   -2147483648
