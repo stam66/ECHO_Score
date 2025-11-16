@@ -1158,8 +1158,10 @@ End
 
 	#tag Event
 		Sub Shown()
-		  lstVideos.SelectedRowIndex = 0
-		  LoadVideoPreview(0)
+		  if lstVideos.RowCount > 0 then
+		    lstVideos.SelectedRowIndex = 0
+		    LoadVideoPreview(0)
+		  end if
 		End Sub
 	#tag EndEvent
 
