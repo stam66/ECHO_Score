@@ -33,7 +33,7 @@ Begin wc_base wc_ManageMCQs
       CSSClasses      =   ""
       DefaultRowHeight=   49
       Enabled         =   True
-      FrozenColumns   =   0
+      FrozenColumns   =   "0"
       GridLineStyle   =   3
       HasBorder       =   True
       HasHeader       =   True
@@ -81,7 +81,7 @@ Begin wc_base wc_ManageMCQs
       Height          =   63
       Hint            =   "Question Text"
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   1
       LockBottom      =   False
       LockedInPosition=   False
@@ -113,7 +113,7 @@ Begin wc_base wc_ManageMCQs
       FontSize        =   0.0
       Height          =   22
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   14
       LockBottom      =   False
@@ -178,7 +178,7 @@ Begin wc_base wc_ManageMCQs
       FontSize        =   0.0
       Height          =   22
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Italic          =   False
       Left            =   368
       LockBottom      =   False
@@ -214,7 +214,7 @@ Begin wc_base wc_ManageMCQs
       Height          =   38
       Hint            =   ""
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   432
       LockBottom      =   False
       LockedInPosition=   False
@@ -349,10 +349,10 @@ Begin wc_base wc_ManageMCQs
       ControlID       =   ""
       CSSClasses      =   ""
       Enabled         =   True
-      Height          =   34
+      Height          =   38
       Hint            =   "Option Text"
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
@@ -372,7 +372,7 @@ Begin wc_base wc_ManageMCQs
       Tooltip         =   ""
       Top             =   723
       Visible         =   True
-      Width           =   772
+      Width           =   638
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkIsCorrect
@@ -383,7 +383,7 @@ Begin wc_base wc_ManageMCQs
       Height          =   38
       Indeterminate   =   False
       Index           =   -2147483648
-      indicator       =   0
+      Indicator       =   0
       Left            =   13
       LockBottom      =   True
       LockedInPosition=   False
@@ -463,18 +463,18 @@ Begin wc_base wc_ManageMCQs
       Width           =   45
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnSave
+   Begin WebButton btnSaveOption
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Save"
+      Caption         =   "Save Option"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   1
-      Left            =   885
+      Indicator       =   3
+      Left            =   647
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -488,9 +488,9 @@ Begin wc_base wc_ManageMCQs
       TabIndex        =   16
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   782
+      Top             =   723
       Visible         =   True
-      Width           =   115
+      Width           =   145
       _mPanelIndex    =   -1
    End
    Begin WebButton btnDeleteQuestion
@@ -504,7 +504,7 @@ Begin wc_base wc_ManageMCQs
       Height          =   38
       Index           =   -2147483648
       Indicator       =   4
-      Left            =   781
+      Left            =   799
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -520,7 +520,7 @@ Begin wc_base wc_ManageMCQs
       Tooltip         =   ""
       Top             =   349
       Visible         =   True
-      Width           =   164
+      Width           =   145
       _mPanelIndex    =   -1
    End
    Begin WebButton btnDeleteOption
@@ -534,7 +534,7 @@ Begin wc_base wc_ManageMCQs
       Height          =   38
       Index           =   -2147483648
       Indicator       =   4
-      Left            =   780
+      Left            =   800
       LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -550,7 +550,7 @@ Begin wc_base wc_ManageMCQs
       Tooltip         =   ""
       Top             =   723
       Visible         =   True
-      Width           =   164
+      Width           =   145
       _mPanelIndex    =   -1
    End
    Begin WebLabel btnNewOption
@@ -619,6 +619,36 @@ Begin wc_base wc_ManageMCQs
       Underline       =   False
       Visible         =   True
       Width           =   45
+      _mPanelIndex    =   -1
+   End
+   Begin WebButton btnSave
+      AllowAutoDisable=   False
+      Cancel          =   False
+      Caption         =   "Save Question"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Default         =   False
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      Indicator       =   3
+      Left            =   646
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      LockVertical    =   False
+      Outlined        =   False
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   21
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   349
+      Visible         =   True
+      Width           =   145
       _mPanelIndex    =   -1
    End
 End
@@ -697,15 +727,24 @@ End
 		    ps.Bind(0, SelectedOptionID)
 		    ps.ExecuteSQL
 		    
+		    ' Save selection before reloading
+		    LastSelectedQuestionID = SelectedQuestionID
+		    
 		    LoadOptions()
 		    ClearEditor()
 		    
-		    Var d As New WebMessageDialog
-		    d.Title = "Success"
-		    d.Message = "Option deleted successfully."
-		    d.ActionButton.Caption = "OK"
-		    d.CancelButton.Visible = False
-		    d.Show
+		    ' Reload questions list to update option count
+		    LoadQuestions()
+		    
+		    ' Restore selection after reload
+		    If LastSelectedQuestionID > 0 Then
+		      For i As Integer = 0 To lstQuestions.RowCount - 1
+		        If lstQuestions.RowTagAt(i) = LastSelectedQuestionID Then
+		          lstQuestions.SelectedRowIndex = i
+		          Exit For i
+		        End If
+		      Next
+		    End If
 		    
 		  Catch e As DatabaseException
 		    Var d As New WebMessageDialog
@@ -1168,11 +1207,27 @@ End
 		      ps.ExecuteSQL
 		    End If
 		    
+		    ' Save selection before reloading
+		    LastSelectedQuestionID = SelectedQuestionID
+		    
 		    ' Reload options list and clear option editor
 		    LoadOptions()
 		    txtOptionText.Text = ""
 		    chkIsCorrect.Value = False
 		    SelectedOptionID = 0
+		    
+		    ' Reload questions list to update option count
+		    LoadQuestions()
+		    
+		    ' Restore selection after reload
+		    If LastSelectedQuestionID > 0 Then
+		      For i As Integer = 0 To lstQuestions.RowCount - 1
+		        If lstQuestions.RowTagAt(i) = LastSelectedQuestionID Then
+		          lstQuestions.SelectedRowIndex = i
+		          Exit For i
+		        End If
+		      Next
+		    End If
 		    
 		  Catch e As DatabaseException
 		    Var d As New WebMessageDialog
@@ -1277,9 +1332,61 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SaveQuestionWithSelection()
+		  ' Validate question text
+		  If txtQuestionText.Text.Trim = "" Then
+		    Var d As New WebMessageDialog
+		    d.Title = "Validation Error"
+		    d.Message = "Please enter question text."
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
+		    Return
+		  End If
+		  
+		  ' Save the current selection
+		  LastSelectedQuestionID = SelectedQuestionID
+		  
+		  Try
+		    SaveQuestion()
+		    
+		    ' Restore selection after reload
+		    If LastSelectedQuestionID > 0 Then
+		      For i As Integer = 0 To lstQuestions.RowCount - 1
+		        If lstQuestions.RowTagAt(i) = LastSelectedQuestionID Then
+		          lstQuestions.SelectedRowIndex = i
+		          Exit For i
+		        End If
+		      Next
+		    End If
+		    
+		    ' Var d As New WebMessageDialog
+		    ' d.Title = "Success"
+		    ' d.Message = "Question saved successfully."
+		    ' d.ActionButton.Caption = "OK"
+		    ' d.CancelButton.Visible = False
+		    ' d.Show
+		    
+		  Catch e As RuntimeException
+		    Var d As New WebMessageDialog
+		    d.Title = "Error"
+		    d.Message = "Error saving question: " + e.Message
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
+		  End Try
+		  
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private IsEditMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		LastSelectedQuestionID As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -1345,11 +1452,48 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events btnSave
+#tag Events btnSaveOption
 	#tag Event
 		Sub Pressed()
-		  ' Save the question
-		  SaveAll
+		  ' Save option only
+		  If SelectedQuestionID = 0 Then
+		    Var d As New WebMessageDialog
+		    d.Title = "No Question Selected"
+		    d.Message = "Please select a question before adding options."
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
+		    Return
+		  End If
+		  
+		  If txtOptionText.Text.Trim = "" Then
+		    Var d As New WebMessageDialog
+		    d.Title = "Validation Error"
+		    d.Message = "Please enter option text."
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
+		    Return
+		  End If
+		  
+		  Try
+		    SaveOption()
+		    
+		    ' Var d As New WebMessageDialog
+		    ' d.Title = "Success"
+		    ' d.Message = "Option saved successfully."
+		    ' d.ActionButton.Caption = "OK"
+		    ' d.CancelButton.Visible = False
+		    ' d.Show
+		    
+		  Catch e As RuntimeException
+		    Var d As New WebMessageDialog
+		    d.Title = "Error"
+		    d.Message = "Error saving option: " + e.Message
+		    d.ActionButton.Caption = "OK"
+		    d.CancelButton.Visible = False
+		    d.Show
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1452,6 +1596,15 @@ End
 		  
 		  ' Focus on question text
 		  txtQuestionText.SetFocus()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events btnSave
+	#tag Event
+		Sub Pressed()
+		  ' Save the question
+		  SaveQuestionWithSelection()
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1738,6 +1891,14 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MCQCaseID"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LastSelectedQuestionID"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""

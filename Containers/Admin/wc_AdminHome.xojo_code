@@ -24,7 +24,6 @@ Begin wc_base wc_AdminHome
    Width           =   698
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblWelcome
       Bold            =   True
