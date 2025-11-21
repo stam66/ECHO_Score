@@ -667,7 +667,7 @@ Begin wc_base wc_CaseReview
       Top             =   66
       Underline       =   False
       Visible         =   True
-      Width           =   342
+      Width           =   178
       _mPanelIndex    =   -1
    End
    Begin WebLabel lblConclusions
@@ -906,13 +906,13 @@ Begin wc_base wc_CaseReview
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
-      Indicator       =   0
-      Left            =   628
+      Indicator       =   3
+      Left            =   911
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
@@ -921,9 +921,9 @@ Begin wc_base wc_CaseReview
       TabIndex        =   31
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   11
+      Top             =   66
       Visible         =   True
-      Width           =   100
+      Width           =   163
       _mPanelIndex    =   -1
    End
 End
@@ -987,6 +987,79 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function CalculateMCQScore(userResponseID As Integer) As Integer
+		  ' Calculate MCQ score for a given user response
+		  ' Returns the points earned from MCQ questions
+		  
+		  Var earnedPoints As Integer = 0
+		  
+		  Try
+		    ' Get all questions for this case
+		    Var qSQL As String = "SELECT question_id, points FROM mcq_questions WHERE case_id = ?"
+		    Var qPS As MySQLPreparedStatement = Session.DB.Prepare(qSQL)
+		    qPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    qPS.Bind(0, CaseID)
+		    Var qRS As RowSet = qPS.SelectSQL
+		    
+		    While Not qRS.AfterLastRow
+		      Var questionID As Integer = qRS.Column("question_id").IntegerValue
+		      Var points As Integer = qRS.Column("points").IntegerValue
+		      
+		      ' Get user's answer
+		      Var aSQL As String = "SELECT selected_option_ids FROM user_mcq_responses " + _
+		      "WHERE user_response_id = ? AND question_id = ?"
+		      Var aPS As MySQLPreparedStatement = Session.DB.Prepare(aSQL)
+		      aPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      aPS.Bind(0, userResponseID)
+		      aPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		      aPS.Bind(1, questionID)
+		      Var aRS As RowSet = aPS.SelectSQL
+		      
+		      If aRS <> Nil And Not aRS.AfterLastRow Then
+		        Var userAnswer As String = aRS.Column("selected_option_ids").StringValue
+		        
+		        If userAnswer <> "" Then
+		          ' Check correctness
+		          If CheckMCQAnswerCorrectness(questionID, userAnswer) Then
+		            earnedPoints = earnedPoints + points
+		            
+		            ' Update is_correct and points_earned
+		            Var updateSQL As String = "UPDATE user_mcq_responses SET is_correct = 1, points_earned = ? " + _
+		            "WHERE user_response_id = ? AND question_id = ?"
+		            Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
+		            updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(0, points)
+		            updatePS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(1, userResponseID)
+		            updatePS.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(2, questionID)
+		            updatePS.ExecuteSQL
+		          Else
+		            ' Mark as incorrect
+		            Var updateSQL As String = "UPDATE user_mcq_responses SET is_correct = 0, points_earned = 0 " + _
+		            "WHERE user_response_id = ? AND question_id = ?"
+		            Var updatePS As MySQLPreparedStatement = Session.DB.Prepare(updateSQL)
+		            updatePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(0, userResponseID)
+		            updatePS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            updatePS.Bind(1, questionID)
+		            updatePS.ExecuteSQL
+		          End If
+		        End If
+		      End If
+		      
+		      qRS.MoveToNextRow
+		    Wend
+		    
+		  Catch e As DatabaseException
+		    System.DebugLog("Error calculating MCQ score: " + e.Message)
+		  End Try
+		  
+		  Return earnedPoints
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function CheckMCQAnswerCorrectness(questionID As Integer, userAnswer As String) As Boolean
@@ -1182,6 +1255,13 @@ End
 		    htmlVideoPlayer.LoadHTML(html)
 		  End If
 		  
+		  ' Update the video counter label
+		  If TotalVideos > 0 Then
+		    lblVideoCounter.Text = "Video " + Str(CurrentVideoIndex + 1) + " of " + Str(TotalVideos)
+		  Else
+		    lblVideoCounter.Text = "No videos"
+		  End If
+		  
 		  ' Update navigation button states
 		  UpdateCaseNavigation()
 		  
@@ -1292,6 +1372,17 @@ End
 		  ' *******************************************************************************
 		  ResetUI
 		  
+		  ' Show/hide MCQ button based on completion status
+		  If isReviewMode Then
+		    btnMCQAssessment.Visible = True
+		    btnMCQAssessment.Enabled = False ' Disable if already completed
+		    btnMCQAssessment.Caption = "View MCQ Answers"
+		  Else
+		    btnMCQAssessment.Visible = True
+		    btnMCQAssessment.Enabled = True
+		    btnMCQAssessment.Caption = "MCQ Assessment"
+		  End If
+		  
 		  Var sql As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
 		  
 		  Try
@@ -1321,11 +1412,20 @@ End
 		      End Try
 		      
 		      ' Only show case description AFTER user has submitted
+		      ' Use sequential case number (user's position + 1) instead of database serial
+		      Var displayCaseNumber As String = "Case " + Str(CurrentCasePosition + 1)
+		      
 		      If hasCompleted Then
-		        lblCaseTitle.Text = rs.Column("serial_number").StringValue + " - " + rs.Column("case_label").StringValue
+		        lblCaseTitle.Text = displayCaseNumber + " - " + rs.Column("case_label").StringValue
 		      Else
-		        lblCaseTitle.Text = rs.Column("serial_number").StringValue
+		        lblCaseTitle.Text = displayCaseNumber
 		      End If
+		      
+		      ' If hasCompleted Then
+		      ' lblCaseTitle.Text = rs.Column("serial_number").StringValue + " - " + rs.Column("case_label").StringValue
+		      ' Else
+		      ' lblCaseTitle.Text = rs.Column("serial_number").StringValue
+		      ' End If
 		    Else
 		      lblCaseTitle.Text = "Case Not Found"
 		    End If
@@ -1833,10 +1933,11 @@ End
 		    ps.Bind(p, isCompleted)
 		    p = p + 1
 		    
-		    ' REGRESSION FIX: Calculate and bind score
-		    Var calculatedScore As Integer = 0
+		    
+		    ' Calculate checkbox score (out of 13 points)
+		    Var checkboxScore As Integer = 0
 		    If isCompleted Then
-		      ' Get correct answers to calculate score
+		      ' Get correct answers to calculate checkbox score
 		      Try
 		        Var scoreSQL As String = "SELECT * FROM cases WHERE case_id = ?"
 		        Var scorePS As MySQLPreparedStatement = Session.DB.Prepare(scoreSQL)
@@ -1846,29 +1947,71 @@ End
 		        
 		        If scoreRS <> Nil And Not scoreRS.AfterLastRow Then
 		          ' Compare each answer - only count if correct answer exists
-		          If scoreRS.Column("lv_size_dilated").Value <> Nil And chkLVSizeDilated.Value = scoreRS.Column("lv_size_dilated").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("lv_function_impaired").Value <> Nil And chkLVFunctionImpaired.Value = scoreRS.Column("lv_function_impaired").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("rv_size_dilated").Value <> Nil And chkRVSizeDilated.Value = scoreRS.Column("rv_size_dilated").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("rv_function_impaired").Value <> Nil And chkRVFunctionImpaired.Value = scoreRS.Column("rv_function_impaired").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("aortic_stenosis_significant").Value <> Nil And chkAorticStenosis.Value = scoreRS.Column("aortic_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("aortic_regurgitation_significant").Value <> Nil And chkAorticRegurgitation.Value = scoreRS.Column("aortic_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("mitral_stenosis_significant").Value <> Nil And chkMitralStenosis.Value = scoreRS.Column("mitral_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("mitral_regurgitation_significant").Value <> Nil And chkMitralRegurgitation.Value = scoreRS.Column("mitral_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("tricuspid_stenosis_significant").Value <> Nil And chkTricuspidStenosis.Value = scoreRS.Column("tricuspid_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("tricuspid_regurgitation_significant").Value <> Nil And chkTricuspidRegurgitation.Value = scoreRS.Column("tricuspid_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("pericardial_effusion_significant").Value <> Nil And chkPericardialEffusion.Value = scoreRS.Column("pericardial_effusion_significant").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("ivc_high_ra_pressure").Value <> Nil And chkIVCHighPressure.Value = scoreRS.Column("ivc_high_ra_pressure").BooleanValue Then calculatedScore = calculatedScore + 1
-		          If scoreRS.Column("requires_full_echo").Value <> Nil And chkRequiresFullEcho.Value = scoreRS.Column("requires_full_echo").BooleanValue Then calculatedScore = calculatedScore + 1
+		          If scoreRS.Column("lv_size_dilated").Value <> Nil And chkLVSizeDilated.Value = scoreRS.Column("lv_size_dilated").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("lv_function_impaired").Value <> Nil And chkLVFunctionImpaired.Value = scoreRS.Column("lv_function_impaired").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("rv_size_dilated").Value <> Nil And chkRVSizeDilated.Value = scoreRS.Column("rv_size_dilated").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("rv_function_impaired").Value <> Nil And chkRVFunctionImpaired.Value = scoreRS.Column("rv_function_impaired").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("aortic_stenosis_significant").Value <> Nil And chkAorticStenosis.Value = scoreRS.Column("aortic_stenosis_significant").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("aortic_regurgitation_significant").Value <> Nil And chkAorticRegurgitation.Value = scoreRS.Column("aortic_regurgitation_significant").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("mitral_stenosis_significant").Value <> Nil And chkMitralStenosis.Value = scoreRS.Column("mitral_stenosis_significant").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("mitral_regurgitation_significant").Value <> Nil And chkMitralRegurgitation.Value = scoreRS.Column("mitral_regurgitation_significant").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("tricuspid_stenosis_significant").Value <> Nil And chkTricuspidStenosis.Value = scoreRS.Column("tricuspid_stenosis_significant").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("tricuspid_regurgitation_significant").Value <> Nil And chkTricuspidRegurgitation.Value = scoreRS.Column("tricuspid_regurgitation_significant").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("pericardial_effusion_significant").Value <> Nil And chkPericardialEffusion.Value = scoreRS.Column("pericardial_effusion_significant").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("ivc_high_ra_pressure").Value <> Nil And chkIVCHighPressure.Value = scoreRS.Column("ivc_high_ra_pressure").BooleanValue Then checkboxScore = checkboxScore + 1
+		          If scoreRS.Column("requires_full_echo").Value <> Nil And chkRequiresFullEcho.Value = scoreRS.Column("requires_full_echo").BooleanValue Then checkboxScore = checkboxScore + 1
 		        End If
 		      Catch e As DatabaseException
-		        System.DebugLog("Error calculating score: " + e.Message)
+		        System.DebugLog("Error calculating checkbox score: " + e.Message)
 		      End Try
 		    End If
 		    
-		    ' Bind score
+		    ' ' REGRESSION FIX: Calculate and bind score
+		    ' Var calculatedScore As Integer = 0
+		    ' If isCompleted Then
+		    ' ' Get correct answers to calculate score
+		    ' Try
+		    ' Var scoreSQL As String = "SELECT * FROM cases WHERE case_id = ?"
+		    ' Var scorePS As MySQLPreparedStatement = Session.DB.Prepare(scoreSQL)
+		    ' scorePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ' scorePS.Bind(0, CaseID)
+		    ' Var scoreRS As RowSet = scorePS.SelectSQL
+		    ' 
+		    ' If scoreRS <> Nil And Not scoreRS.AfterLastRow Then
+		    ' ' Compare each answer - only count if correct answer exists
+		    ' If scoreRS.Column("lv_size_dilated").Value <> Nil And chkLVSizeDilated.Value = scoreRS.Column("lv_size_dilated").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("lv_function_impaired").Value <> Nil And chkLVFunctionImpaired.Value = scoreRS.Column("lv_function_impaired").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("rv_size_dilated").Value <> Nil And chkRVSizeDilated.Value = scoreRS.Column("rv_size_dilated").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("rv_function_impaired").Value <> Nil And chkRVFunctionImpaired.Value = scoreRS.Column("rv_function_impaired").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("aortic_stenosis_significant").Value <> Nil And chkAorticStenosis.Value = scoreRS.Column("aortic_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("aortic_regurgitation_significant").Value <> Nil And chkAorticRegurgitation.Value = scoreRS.Column("aortic_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("mitral_stenosis_significant").Value <> Nil And chkMitralStenosis.Value = scoreRS.Column("mitral_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("mitral_regurgitation_significant").Value <> Nil And chkMitralRegurgitation.Value = scoreRS.Column("mitral_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("tricuspid_stenosis_significant").Value <> Nil And chkTricuspidStenosis.Value = scoreRS.Column("tricuspid_stenosis_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("tricuspid_regurgitation_significant").Value <> Nil And chkTricuspidRegurgitation.Value = scoreRS.Column("tricuspid_regurgitation_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("pericardial_effusion_significant").Value <> Nil And chkPericardialEffusion.Value = scoreRS.Column("pericardial_effusion_significant").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("ivc_high_ra_pressure").Value <> Nil And chkIVCHighPressure.Value = scoreRS.Column("ivc_high_ra_pressure").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' If scoreRS.Column("requires_full_echo").Value <> Nil And chkRequiresFullEcho.Value = scoreRS.Column("requires_full_echo").BooleanValue Then calculatedScore = calculatedScore + 1
+		    ' End If
+		    ' Catch e As DatabaseException
+		    ' System.DebugLog("Error calculating score: " + e.Message)
+		    ' End Try
+		    ' End If
+		    
+		    ' ' Bind score
+		    ' If isCompleted Then
+		    ' ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ' ps.Bind(p, calculatedScore)
+		    ' Else
+		    ' ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_NULL)
+		    ' ps.Bind(p, Nil)
+		    ' End If
+		    ' p = p + 1
+		    
+		    ' Bind checkbox score (we'll update with combined score after MCQ submission if needed)
 		    If isCompleted Then
 		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		      ps.Bind(p, calculatedScore)
+		      ps.Bind(p, checkboxScore)
 		    Else
 		      ps.BindType(p, MySQLPreparedStatement.MYSQL_TYPE_NULL)
 		      ps.Bind(p, Nil)
@@ -1899,33 +2042,84 @@ End
 		    
 		    ps.ExecuteSQL
 		    
+		    ' After saving checkboxes, process MCQ scores if this case has MCQs and is being completed
 		    If isCompleted Then
-		      ' Submit MCQ responses if they exist
-		      SubmitMCQResponses()
-		      
-		      MessageBox("Test submitted successfully!")
-		      ShowCorrectAnswers
-		      btnSave.Visible = False
-		      btnSubmit.Visible = False
-		      IsReviewMode = True
-		      
-		      ' Update case title without resetting UI (was calling LoadCase which calls ResetUI)
 		      Try
-		        Var titleSQL As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
-		        Var titlePS As MySQLPreparedStatement = Session.DB.Prepare(titleSQL)
-		        titlePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		        titlePS.Bind(0, CaseID)
-		        Var titleRS As RowSet = titlePS.SelectSQL
-		        If titleRS <> Nil And Not titleRS.AfterLastRow Then
-		          lblCaseTitle.Text = titleRS.Column("serial_number").StringValue + " - " + titleRS.Column("case_label").StringValue
+		        ' Check if this case has MCQ questions
+		        Var mcqCheckSQL As String = "SELECT COUNT(*) as mcq_count FROM mcq_questions WHERE case_id = ?"
+		        Var mcqCheckPS As MySQLPreparedStatement = Session.DB.Prepare(mcqCheckSQL)
+		        mcqCheckPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		        mcqCheckPS.Bind(0, CaseID)
+		        Var mcqCheckRS As RowSet = mcqCheckPS.SelectSQL
+		        
+		        If mcqCheckRS <> Nil And Not mcqCheckRS.AfterLastRow Then
+		          Var mcqCount As Integer = mcqCheckRS.Column("mcq_count").IntegerValue
+		          
+		          If mcqCount > 0 Then
+		            ' Get the response_id we just created/updated
+		            Var responseIDSQL As String = "SELECT response_id FROM user_responses WHERE user_id = ? AND case_id = ?"
+		            Var responseIDPS As MySQLPreparedStatement = Session.DB.Prepare(responseIDSQL)
+		            responseIDPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            responseIDPS.Bind(0, Session.CurrentUserID)
+		            responseIDPS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		            responseIDPS.Bind(1, CaseID)
+		            Var responseIDRS As RowSet = responseIDPS.SelectSQL
+		            
+		            If responseIDRS <> Nil And Not responseIDRS.AfterLastRow Then
+		              Var userResponseID As Integer = responseIDRS.Column("response_id").IntegerValue
+		              
+		              ' Calculate MCQ score and update the response record
+		              Var mcqScore As Integer = CalculateMCQScore(userResponseID)
+		              
+		              ' Combine checkbox score with MCQ score and update
+		              Var totalScore As Integer = checkboxScore + mcqScore
+		              
+		              Var updateScoreSQL As String = "UPDATE user_responses SET score = ?, mcq_score = ?, has_mcq_questions = 1 WHERE response_id = ?"
+		              Var updateScorePS As MySQLPreparedStatement = Session.DB.Prepare(updateScoreSQL)
+		              updateScorePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		              updateScorePS.Bind(0, totalScore)
+		              updateScorePS.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		              updateScorePS.Bind(1, mcqScore)
+		              updateScorePS.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		              updateScorePS.Bind(2, userResponseID)
+		              updateScorePS.ExecuteSQL
+		              
+		              System.DebugLog("Combined score updated: Checkbox=" + Str(checkboxScore) + ", MCQ=" + Str(mcqScore) + ", Total=" + Str(totalScore))
+		            End If
+		          End If
 		        End If
 		      Catch e As DatabaseException
-		        System.DebugLog("Error updating title: " + e.Message)
+		        System.DebugLog("Error processing MCQ scores: " + e.Message)
 		      End Try
-		    Else
-		      MessageBox("Progress saved!")
 		    End If
 		    
+		    ' If isCompleted Then
+		    ' ' Submit MCQ responses if they exist
+		    ' SubmitMCQResponses()
+		    ' 
+		    ' MessageBox("Test submitted successfully!")
+		    ' ShowCorrectAnswers
+		    ' btnSave.Visible = False
+		    ' btnSubmit.Visible = False
+		    ' IsReviewMode = True
+		    ' 
+		    ' ' Update case title without resetting UI (was calling LoadCase which calls ResetUI)
+		    ' Try
+		    ' Var titleSQL As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
+		    ' Var titlePS As MySQLPreparedStatement = Session.DB.Prepare(titleSQL)
+		    ' titlePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
+		    ' titlePS.Bind(0, CaseID)
+		    ' Var titleRS As RowSet = titlePS.SelectSQL
+		    ' If titleRS <> Nil And Not titleRS.AfterLastRow Then
+		    ' lblCaseTitle.Text = titleRS.Column("serial_number").StringValue + " - " + titleRS.Column("case_label").StringValue
+		    ' End If
+		    ' Catch e As DatabaseException
+		    ' System.DebugLog("Error updating title: " + e.Message)
+		    ' End Try
+		    ' Else
+		    ' MessageBox("Progress saved!")
+		    ' End If
+		    ' 
 		  Catch e As DatabaseException
 		    MessageBox("Error saving response: " + e.Message)
 		  End Try
@@ -2262,6 +2456,97 @@ End
 
 #tag EndWindowCode
 
+#tag Events chkLVSizeDilated
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkLVFunctionImpaired
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkRVSizeDilated
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkRVFunctionImpaired
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkAorticStenosis
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkAorticRegurgitation
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkMitralStenosis
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkMitralRegurgitation
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkTricuspidStenosis
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkTricuspidRegurgitation
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkPericardialEffusion
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkIVCHighPressure
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events chkRequiresFullEcho
+	#tag Event
+		Sub ValueChanged()
+		  UpdateSubmitButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events btnSave
 	#tag Event
 		Sub Pressed()

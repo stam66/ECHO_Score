@@ -24,7 +24,6 @@ Begin wc_base wc_UserHome
    Width           =   1072
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebLabel lblWelcome
       Bold            =   True
@@ -429,9 +428,12 @@ End
 		    
 		    Var rs As RowSet = ps.SelectSQL
 		    
+		    var CaseNumber as integer = 0
 		    While Not rs.AfterLastRow
 		      ' Column 0: Serial Number
-		      lstCases.AddRow(rs.Column("serial_number").StringValue)
+		      ' lstCases.AddRow(rs.Column("serial_number").StringValue)
+		      CaseNumber = CaseNumber + 1
+		      lstCases.AddRow("Case " + Str(CaseNumber))
 		      
 		      ' Column 1: Status
 		      If rs.Column("response_id").IntegerValue > 0 Then

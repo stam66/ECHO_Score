@@ -504,7 +504,7 @@ Begin wc_base wc_CaseDetails
       TabStop         =   True
       Tooltip         =   ""
       Top             =   484
-      UploadTimeout   =   0
+      UploadTimeout   =   300
       Visible         =   True
       Width           =   346
       _mPanelIndex    =   -1
@@ -1060,36 +1060,6 @@ Begin wc_base wc_CaseDetails
       Width           =   101
       _mPanelIndex    =   -1
    End
-   Begin WebButton btnManageMCQ
-      AllowAutoDisable=   False
-      Cancel          =   False
-      Caption         =   "Manage MCQs"
-      ControlID       =   ""
-      CSSClasses      =   ""
-      Default         =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      Indicator       =   0
-      Left            =   708
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockHorizontal  =   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      LockVertical    =   False
-      Outlined        =   False
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   54
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   724
-      Visible         =   False
-      Width           =   142
-      _mPanelIndex    =   -1
-   End
    Begin WebButton btnManageMCQ1
       AllowAutoDisable=   False
       Cancel          =   False
@@ -1475,26 +1445,52 @@ End
 		    Var rs As RowSet = ps.SelectSQL
 		    
 		    While Not rs.AfterLastRow
-		      ' Display the original filename (user-friendly name)
-		      lstVideos.AddRow(rs.Column("video_filename").StringValue)
-		      
-		      ' Store the video_id in RowTag for later reference
-		      lstVideos.RowTagAt(lstVideos.LastAddedRowIndex) = rs.Column("video_id").IntegerValue
-		      
-		      ' Optionally show file type indicator
-		      Var fileType As String = rs.Column("file_type").StringValue
-		      If fileType = "image" Then
-		        ' You could add a visual indicator that it's an image
-		        ' For example: lstVideos.CellValueAt(lstVideos.LastAddedRowIndex, 1) = "📷"
-		      End If
-		      
-		      rs.MoveToNextRow
+		      While Not rs.AfterLastRow
+		        ' Display the original filename (user-friendly name)
+		        lstVideos.AddRow(rs.Column("video_filename").StringValue)
+		        
+		        ' Store the video_id in RowTag for later reference
+		        Var lastRow As Integer = lstVideos.LastAddedRowIndex
+		        lstVideos.RowTagAt(lastRow) = rs.Column("video_id").IntegerValue
+		        
+		        ' Populate column 1 (View description)
+		        lstVideos.CellTextAt(lastRow, 1) = rs.Column("view_description").StringValue
+		        
+		        ' Populate column 2 (Order)
+		        lstVideos.CellTextAt(lastRow, 2) = Str(rs.Column("video_order").IntegerValue)
+		        
+		        ' Optionally show file type indicator
+		        Var fileType As String = rs.Column("file_type").StringValue
+		        If fileType = "image" Then
+		          ' You could add a visual indicator that it's an image
+		          ' For example: lstVideos.CellValueAt(lstVideos.LastAddedRowIndex, 1) = "📷"
+		        End If
+		        
+		        rs.MoveToNextRow
+		      Wend
 		    Wend
 		    
 		  Catch e As DatabaseException
 		    System.DebugLog("Error loading videos: " + e.Message)
 		  End Try
 		  
+		  ' Restore selection if we saved a video_id
+		  If LastSelectedVideoID > 0 Then
+		    For i As Integer = 0 To lstVideos.RowCount - 1
+		      If lstVideos.RowTagAt(i) = LastSelectedVideoID Then
+		        lstVideos.SelectedRowIndex = i
+		        LoadVideoPreview(i)
+		        LastSelectedVideoID = 0  ' Reset after restoring
+		        Exit For i
+		      End If
+		    Next
+		  Else
+		    ' No previous selection, just select first row if exists
+		    If lstVideos.RowCount > 0 Then
+		      lstVideos.SelectedRowIndex = 0
+		      LoadVideoPreview(0)
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1776,7 +1772,7 @@ End
 		      If column = 2 Then
 		        ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		        Var orderValue As Integer = Val(newValue)
-		        If orderValue < 0 Then orderValue = 0
+		        If orderValue < 1 Then orderValue = 1  ' 1-based ordering
 		        ps.Bind(0, orderValue)
 		      Else
 		        ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
@@ -1793,10 +1789,13 @@ End
 		      
 		      ' If order was changed, reload to re-sort
 		      If column = 2 Then
-		        System.DebugLog("Reloading videos to re-sort by order")
-		        LoadCaseVideos()
-		      End If
-		      
+		        If column = 2 Then
+		          System.DebugLog("Reloading videos to re-sort by order")
+		          ' Save the current video_id before reloading
+		          LastSelectedVideoID = videoID
+		          LoadCaseVideos()
+		        End If
+		      end if
 		    Catch e As DatabaseException
 		      MessageBox("Error updating video: " + e.Message)
 		      System.DebugLog("Database error: " + e.Message)
@@ -2111,14 +2110,42 @@ End
 #tag Events uplVideo
 	#tag Event
 		Sub FileAdded(filename As String, bytes As UInt64, mimeType As String)
+		  
 		  ' ******************************************************************
 		  ' uplVideo.FileAdded Event
 		  ' Enable upload button when file is selected
 		  ' ******************************************************************
-		  #Pragma Unused mimeType
 		  
 		  btnStartUpload.Enabled = True
-		  session.DisplayMessage("File selected: " + filename + " (" + Str(bytes) + " bytes)", self.DisplayedMessage)
+		  
+		  Var logMsg As String = "FILE ADDED - Name: " + filename + _
+		  ", Size: " + Str(bytes) + " bytes" + _
+		  ", MIME: " + mimeType
+		  
+		  session.DisplayMessage(logMsg, self.DisplayedMessage)
+		  
+		  ' Log file size in KB/MB for clarity
+		  Var sizeMB As Double = bytes / 1024.0 / 1024.0
+		  If sizeMB > 1 Then
+		    session.DisplayMessage("File size: " + Format(sizeMB, "#.##") + " MB", self.DisplayedMessage)
+		  End If
+		  
+		  ' Warn if file seems large (over 50MB)
+		  If bytes > 52428800 Then  ' 50MB
+		    session.DisplayMessage("WARNING: Large file may take time to upload", self.DisplayedMessage)
+		  End If
+		  
+		  
+		  
+		  
+		  ' ' ******************************************************************
+		  ' ' uplVideo.FileAdded Event
+		  ' ' Enable upload button when file is selected
+		  ' ' ******************************************************************
+		  ' #Pragma Unused mimeType
+		  ' 
+		  ' btnStartUpload.Enabled = True
+		  ' session.DisplayMessage("File selected: " + filename + " (" + Str(bytes) + " bytes)", self.DisplayedMessage)
 		  
 		End Sub
 	#tag EndEvent
@@ -2137,121 +2164,179 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub UploadError(error As RuntimeException)
-		  ' ******************************************************************
-		  ' uplVideo.UploadError Event
-		  ' ******************************************************************
+		  Self.ExecuteJavaScript("console.error('UploadError fired: " + error.Message.ReplaceAll("'", "\'") + "');")
+		  session.DisplayMessage("UPLOAD ERROR: " + error.Message, self.DisplayedMessage)
+		  
 		  MessageBox("Upload error: " + error.Message)
-		  btnStartUpload.Enabled = True  ' Re-enable for retry
+		  btnStartUpload.Enabled = True
+		  
+		  
+		  ' ' ******************************************************************
+		  ' ' uplVideo.UploadError Event
+		  ' ' ******************************************************************
+		  ' MessageBox("Upload error: " + error.Message)
+		  ' btnStartUpload.Enabled = True  ' Re-enable for retry
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub UploadFinished(files() As WebUploadedFile)
+		  Self.ExecuteJavaScript("console.log('=== UploadFinished FIRED ===');")
+		  
+		  Self.ExecuteJavaScript("console.log('Step 1: About to call session.DisplayMessage');")
+		  session.DisplayMessage("UploadFinished fired", self.DisplayedMessage)
+		  
+		  Self.ExecuteJavaScript("console.log('Step 2: Starting Try block');")
+		  
 		  Try
-		    If files.Count = 0 Then
-		      Var d As New WebMessageDialog
-		      d.Title = "Error"
-		      d.Message = "No files received"
-		      d.ActionButton.Caption = "OK"
-		      d.CancelButton.Visible = False
-		      d.Show
+		    Self.ExecuteJavaScript("console.log('Step 3: Inside Try - checking files');")
+		    
+		    If files = Nil Then
+		      Self.ExecuteJavaScript("console.error('Step 3a: files is NIL');")
+		      session.DisplayMessage("ERROR: files is NIL", self.DisplayedMessage)
 		      Return
 		    End If
 		    
+		    Self.ExecuteJavaScript("console.log('Step 4: files is not NIL, checking count');")
+		    
+		    If files.Count = 0 Then
+		      Self.ExecuteJavaScript("console.error('Step 4a: files.Count is 0');")
+		      session.DisplayMessage("ERROR: No files received", self.DisplayedMessage)
+		      Return
+		    End If
+		    
+		    Self.ExecuteJavaScript("console.log('Step 5: Files count = ' + " + Str(files.Count) + ");")
+		    session.DisplayMessage("Files count: " + Str(files.Count), self.DisplayedMessage)
+		    
+		    Self.ExecuteJavaScript("console.log('Step 6: Getting first file from array');")
 		    Var uploadedFile As WebUploadedFile = files(0)
 		    
-		    If uploadedFile = Nil Or uploadedFile.Data = Nil Then
-		      Var d As New WebMessageDialog
-		      d.Title = "Error"
-		      d.Message = "Invalid file"
-		      d.ActionButton.Caption = "OK"
-		      d.CancelButton.Visible = False
-		      d.Show
+		    Self.ExecuteJavaScript("console.log('Step 7: Checking if uploadedFile is Nil');")
+		    If uploadedFile = Nil Then
+		      Self.ExecuteJavaScript("console.error('Step 7a: uploadedFile is NIL');")
+		      session.DisplayMessage("ERROR: uploadedFile is Nil", self.DisplayedMessage)
 		      Return
 		    End If
 		    
-		    ' Determine file type from extension
-		    Var originalName As String = uploadedFile.Name.Lowercase
-		    Var fileType As String = "video" ' Default
+		    Self.ExecuteJavaScript("console.log('Step 8: uploadedFile is valid');")
+		    
+		    Self.ExecuteJavaScript("console.log('Step 9: Accessing uploadedFile.Name');")
+		    Var fileName As String = uploadedFile.Name
+		    Self.ExecuteJavaScript("console.log('Step 9a: File name = " + fileName.ReplaceAll("'", "\'") + "');")
+		    session.DisplayMessage("File name: " + fileName, self.DisplayedMessage)
+		    
+		    Self.ExecuteJavaScript("console.log('Step 10: About to access uploadedFile.Data');")
+		    
+		    ' CRITICAL: This is likely where it crashes
+		    Var fileData As MemoryBlock
+		    
+		    Try
+		      Self.ExecuteJavaScript("console.log('Step 10a: Inside Try for Data access');")
+		      fileData = uploadedFile.Data
+		      Self.ExecuteJavaScript("console.log('Step 10b: Data assigned to variable');")
+		      
+		      If fileData = Nil Then
+		        Self.ExecuteJavaScript("console.error('Step 10c: fileData is NIL after assignment');")
+		        session.DisplayMessage("ERROR: File data is Nil", self.DisplayedMessage)
+		        Return
+		      End If
+		      
+		      Self.ExecuteJavaScript("console.log('Step 10d: fileData is valid, size = ' + " + Str(fileData.Size) + ");")
+		      session.DisplayMessage("File data size: " + Str(fileData.Size) + " bytes", self.DisplayedMessage)
+		      
+		    Catch dataErr As RuntimeException
+		      Self.ExecuteJavaScript("console.error('Step 10e: EXCEPTION accessing Data: " + dataErr.Message.ReplaceAll("'", "\'") + "');")
+		      session.DisplayMessage("EXCEPTION accessing file data: " + dataErr.Message, self.DisplayedMessage)
+		      Return
+		    End Try
+		    
+		    Self.ExecuteJavaScript("console.log('Step 11: Past Data access, determining file type');")
+		    
+		    Var originalName As String = fileName.Lowercase
+		    Var fileType As String = "video"
 		    Var isImage As Boolean = False
 		    
 		    If originalName.EndsWith(".png") Or originalName.EndsWith(".jpg") Or originalName.EndsWith(".jpeg") Then
 		      fileType = "image"
 		      isImage = True
 		    ElseIf Not (originalName.EndsWith(".mp4") Or originalName.EndsWith(".mov") Or originalName.EndsWith(".avi")) Then
-		      Var d As New WebMessageDialog
-		      d.Title = "Invalid File Type"
-		      d.Message = "Please upload a video file (.mp4, .mov, .avi) or image file (.png, .jpg, .jpeg)"
-		      d.ActionButton.Caption = "OK"
-		      d.CancelButton.Visible = False
-		      d.Show
+		      Self.ExecuteJavaScript("console.error('Invalid file extension');")
 		      Return
 		    End If
 		    
-		    session.DisplayMessage("Processing file: " + uploadedFile.Name + ", Size: " + Str(uploadedFile.Data.Size) + " bytes", self.DisplayedMessage)
+		    Self.ExecuteJavaScript("console.log('Step 12: Getting UUID from database');")
 		    
-		    ' Get UUID from MySQL
 		    Var uuidSQL As String = "SELECT UUID() as uuid"
 		    Var uuidRS As RowSet = Session.DB.SelectSQL(uuidSQL)
 		    Var uuid As String = ""
+		    
 		    If uuidRS <> Nil And Not uuidRS.AfterLastRow Then
 		      uuid = uuidRS.Column("uuid").StringValue
+		      Self.ExecuteJavaScript("console.log('Step 12a: Got UUID: " + uuid + "');")
 		    Else
-		      Var d As New WebMessageDialog
-		      d.Title = "Error"
-		      d.Message = "Could not generate unique identifier"
-		      d.ActionButton.Caption = "OK"
-		      d.CancelButton.Visible = False
-		      d.Show
+		      Self.ExecuteJavaScript("console.error('Step 12b: Could not get UUID');")
 		      Return
 		    End If
 		    
-		    ' Extract original extension
-		    ' Extract original extension
+		    Self.ExecuteJavaScript("console.log('Step 13: Extracting extension');")
+		    
 		    Var extension As String = ""
-		    Var fieldCount As Integer = CountFields(uploadedFile.Name, ".")
+		    Var fieldCount As Integer = CountFields(fileName, ".")
 		    If fieldCount > 1 Then
-		      extension = "." + NthField(uploadedFile.Name, ".", fieldCount)
+		      extension = "." + NthField(fileName, ".", fieldCount)
 		    End If
 		    
-		    ' Create unique stored filename: UUID + extension
 		    Var storedFilename As String = uuid + extension
+		    Self.ExecuteJavaScript("console.log('Step 13a: Stored filename: " + storedFilename.ReplaceAll("'", "\'") + "');")
 		    
-		    ' Get or create the CaseVideos folder
+		    Self.ExecuteJavaScript("console.log('Step 14: Getting CaseVideos folder');")
+		    
 		    Var targetFolder As FolderItem = SpecialFolder.Documents.Child("CaseVideos")
 		    If Not targetFolder.Exists Then
 		      targetFolder.CreateFolder
+		      Self.ExecuteJavaScript("console.log('Step 14a: Created folder');")
 		    End If
 		    
-		    ' Create the target file with unique name
+		    Self.ExecuteJavaScript("console.log('Step 15: Creating target file');")
 		    Var targetFile As FolderItem = targetFolder.Child(storedFilename)
 		    
-		    ' Write file
-		    Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
-		    If outputStream = Nil Then
-		      Var d As New WebMessageDialog
-		      d.Title = "Error"
-		      d.Message = "Could not create output stream"
-		      d.ActionButton.Caption = "OK"
-		      d.CancelButton.Visible = False
-		      d.Show
+		    Self.ExecuteJavaScript("console.log('Step 16: Opening output stream');")
+		    
+		    Try
+		      Var outputStream As BinaryStream = BinaryStream.Create(targetFile, True)
+		      
+		      If outputStream = Nil Then
+		        Self.ExecuteJavaScript("console.error('Step 16a: outputStream is NIL');")
+		        Return
+		      End If
+		      
+		      Self.ExecuteJavaScript("console.log('Step 17: Writing file data');")
+		      outputStream.Write(fileData)
+		      Self.ExecuteJavaScript("console.log('Step 17a: Data written');")
+		      
+		      outputStream.Close
+		      Self.ExecuteJavaScript("console.log('Step 17b: Stream closed');")
+		      
+		    Catch writeErr As IOException
+		      Self.ExecuteJavaScript("console.error('Step 17c: IOException: " + writeErr.Message.ReplaceAll("'", "\'") + "');")
 		      Return
-		    End If
+		    End Try
 		    
-		    outputStream.Write(uploadedFile.Data)
-		    outputStream.Close
+		    Self.ExecuteJavaScript("console.log('Step 18: Getting video order');")
 		    
-		    ' Get next order number
-		    Var orderSQL As String = "SELECT COALESCE(MAX(video_order), -1) + 1 AS next_order FROM case_videos WHERE case_id = ?"
+		    ' Get next order number (1-based)
+		    Var orderSQL As String = "SELECT COALESCE(MAX(video_order), 0) + 1 AS next_order FROM case_videos WHERE case_id = ?"
 		    Var orderPS As MySQLPreparedStatement = Session.DB.Prepare(orderSQL)
 		    orderPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    orderPS.Bind(0, CaseID)
 		    Var orderRS As RowSet = orderPS.SelectSQL
 		    Var videoOrder As Integer = 0
+		    
 		    If orderRS <> Nil And Not orderRS.AfterLastRow Then
 		      videoOrder = orderRS.Column("next_order").IntegerValue
 		    End If
 		    
-		    ' Insert into database with BOTH original and stored filenames
+		    Self.ExecuteJavaScript("console.log('Step 19: Inserting into database');")
+		    
 		    Var sql As String = "INSERT INTO case_videos (case_id, video_filename, stored_filename, file_type, view_description, video_purpose, video_order) VALUES (?, ?, ?, ?, ?, ?, ?)"
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
@@ -2263,67 +2348,90 @@ End
 		    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    
 		    ps.Bind(0, CaseID)
-		    ps.Bind(1, uploadedFile.Name) ' Original name for display
-		    ps.Bind(2, storedFilename)     ' UUID name for storage
-		    ps.Bind(3, fileType)           ' "video" or "image"
+		    ps.Bind(1, fileName)
+		    ps.Bind(2, storedFilename)
+		    ps.Bind(3, fileType)
 		    ps.Bind(4, "")
 		    ps.Bind(5, "")
 		    ps.Bind(6, videoOrder)
 		    
 		    ps.ExecuteSQL
+		    Self.ExecuteJavaScript("console.log('Step 19a: Database insert complete');")
 		    
-		    session.DisplayMessage(If(isImage, "Image", "Video") + " uploaded successfully!", self.DisplayedMessage)
+		    Self.ExecuteJavaScript("console.log('Step 20: Calling LoadCaseVideos');")
 		    LoadCaseVideos
+		    Self.ExecuteJavaScript("console.log('Step 20a: LoadCaseVideos complete');")
 		    
+		    Self.ExecuteJavaScript("console.log('Step 21: Cleaning up');")
 		    uplVideo.RemoveAllFiles
 		    btnStartUpload.Enabled = False
+		    me.Hint = "Select video or image to upload"
 		    
-		  Catch e As IOException
-		    Var d As New WebMessageDialog
-		    d.Title = "Error"
-		    d.Message = "IOException: " + e.Message
-		    d.ActionButton.Caption = "OK"
-		    d.CancelButton.Visible = False
-		    d.Show
+		    Self.ExecuteJavaScript("console.log('Step 22: Setting list selection');")
+		    Var row As Integer = lstVideos.LastAddedRowIndex
+		    lstVideos.SelectedRowIndex = row
+		    
+		    Self.ExecuteJavaScript("console.log('Step 23: Loading preview');")
+		    LoadVideoPreview(row)
+		    
+		    Self.ExecuteJavaScript("console.log('=== UPLOAD COMPLETE SUCCESS ===');")
+		    session.DisplayMessage("Upload successful!", self.DisplayedMessage)
+		    
 		  Catch e As DatabaseException
-		    Var d As New WebMessageDialog
-		    d.Title = "Error"
-		    d.Message = "DatabaseException: " + e.Message
-		    d.ActionButton.Caption = "OK"
-		    d.CancelButton.Visible = False
-		    d.Show
+		    Self.ExecuteJavaScript("console.error('DatabaseException: " + e.Message.ReplaceAll("'", "\'") + "');")
+		  Catch e As RuntimeException
+		    Self.ExecuteJavaScript("console.error('RuntimeException: " + e.Message.ReplaceAll("'", "\'") + "');")
 		  End Try
-		  
-		  me.Hint = "Select video or image to upload"
-		  
-		  // set listbox to last added row and load record
-		  var row as integer = lstVideos.LastAddedRowIndex
-		  lstVideos.SelectedRowIndex = row
-		  LoadVideoPreview(row)
 		  
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub UploadStarted(fileCount As Integer)
-		  #Pragma Unused fileCount
+		  session.DisplayMessage("UPLOAD STARTED - Transferring " + Str(fileCount) + " file(s) to server...", self.DisplayedMessage)
 		  
-		  session.DisplayMessage("Upload started...", self.DisplayedMessage)
+		  ' Disable upload button during transfer
+		  btnStartUpload.Enabled = False
+		  
+		  
+		  ' #Pragma Unused fileCount
+		  ' 
+		  ' session.DisplayMessage("Upload started...", self.DisplayedMessage)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub UploadProgressed(percent As Integer)
-		  ' This fires during upload - be careful, can spam message boxes
-		  ' Only show at 25%, 50%, 75%, 100%
-		  If percent = 25 Or percent = 50 Or percent = 75 Or percent = 100 Then
-		    session.DisplayMessage("UPLOAD PROGRESS: " + Str(percent) + "%", self.DisplayedMessage)
+		  If percent Mod 10 = 0 Then
+		    session.DisplayMessage("Upload progress: " + Str(percent) + "%", self.DisplayedMessage)
+		    Self.ExecuteJavaScript("console.log('Upload progress: " + Str(percent) + "%');")
 		  End If
+		  
+		  If percent = 100 Then
+		    session.DisplayMessage("Upload transfer complete - Processing file...", self.DisplayedMessage)
+		    Self.ExecuteJavaScript("console.log('Upload at 100% - UploadFinished should fire next...');")
+		  End If
+		  
+		  
+		  ' ' This fires during upload - be careful, can spam message boxes
+		  ' ' Only show at 25%, 50%, 75%, 100%
+		  ' If percent = 25 Or percent = 50 Or percent = 75 Or percent = 100 Then
+		  ' session.DisplayMessage("UPLOAD PROGRESS: " + Str(percent) + "%", self.DisplayedMessage)
+		  ' End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub UploadAborted()
-		  ' The upload was cancelled (by user or system)
-		  session.DisplayMessage("The upload was cancelled by the browser or the system.", self.DisplayedMessage)
+		  ' ******************************************************************
+		  ' uplVideo.UploadAborted Event
+		  ' ******************************************************************
+		  Self.ExecuteJavaScript("console.error('UploadAborted fired');")
+		  session.DisplayMessage("UPLOAD ABORTED", self.DisplayedMessage)
+		  
 		  btnStartUpload.Enabled = True
+		  
+		  
+		  ' ' The upload was cancelled (by user or system)
+		  ' session.DisplayMessage("The upload was cancelled by the browser or the system.", self.DisplayedMessage)
+		  ' btnStartUpload.Enabled = True
 		  
 		End Sub
 	#tag EndEvent
@@ -2503,16 +2611,6 @@ End
 		  dlg.Show
 		  
 		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events btnManageMCQ
-	#tag Event
-		Sub Pressed()
-		  ' Open MCQ management dialog
-		  Var mcqDialog As New dlg_ManageMCQ
-		  mcqDialog.Initialize(CaseID)
-		  mcqDialog.Show
 		End Sub
 	#tag EndEvent
 #tag EndEvents

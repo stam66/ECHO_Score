@@ -24,6 +24,7 @@ Begin wc_base wc_Login
    Width           =   780
    _mDesignHeight  =   0
    _mDesignWidth   =   0
+   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle Rectangle2
       BorderColor     =   &c42424200
@@ -238,7 +239,7 @@ Begin wc_base wc_Login
       ControlID       =   ""
       CornerSize      =   0
       CSSClasses      =   ""
-      Enabled         =   False
+      Enabled         =   True
       FillColor       =   &c005EB800
       HasFillColor    =   True
       Height          =   506
