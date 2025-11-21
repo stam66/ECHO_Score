@@ -221,7 +221,15 @@ Inherits WebSession
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		LastCaseListFilterIndex As Integer = 0
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		LastCreatedCaseGroup As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		LastSelectedCaseID As Integer = 0
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

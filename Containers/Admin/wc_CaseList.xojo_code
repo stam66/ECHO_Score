@@ -24,7 +24,6 @@ Begin wc_base wc_CaseList
    Width           =   1044
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebListBox lstCases
       AllowRowReordering=   False
@@ -360,8 +359,26 @@ End
 		    LoadCases
 		  End If
 		  
+		  ' Restore filter selection
+		  If Session.LastCaseListFilterIndex >= 0 And Session.LastCaseListFilterIndex < popFilterGroup.RowCount Then
+		    popFilterGroup.SelectedRowIndex = Session.LastCaseListFilterIndex
+		  End If
+		  
 		  lstCases.Visible = False
 		  RestoreLastSelection
+		  
+		  ' ' Check if we need to refresh (e.g., after saving in case details)
+		  ' If Session.CaseListNeedsRefresh Then
+		  ' LoadGroupFilter
+		  ' LoadCases
+		  ' Session.CaseListNeedsRefresh = False
+		  ' Else
+		  ' ' Normal refresh
+		  ' LoadCases
+		  ' End If
+		  ' 
+		  ' lstCases.Visible = False
+		  ' RestoreLastSelection
 		End Sub
 	#tag EndEvent
 
@@ -584,21 +601,38 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RestoreLastSelection()
-		  If mSelectedCaseID <= 0 Then
+		  ' Use Session property instead of local property
+		  If Session.LastSelectedCaseID <= 0 Then
 		    lstCases.Visible = True
 		    Return
 		  End If
 		  
 		  ' Find the row with the matching case ID
 		  For i As Integer = 0 To lstCases.RowCount - 1
-		    If lstCases.RowTagAt(i) = mSelectedCaseID Then
-		      lstCases.SelectedRowIndex = i  // ← This happens AFTER delay
-		      mSelectedCaseID = 0  // Clear after restoring
+		    If lstCases.RowTagAt(i) = Session.LastSelectedCaseID Then
+		      lstCases.SelectedRowIndex = i
+		      ' Don't clear - keep it for next time we return
 		      Exit For i
 		    End If
 		  Next
 		  
 		  lstCases.Visible = True
+		  
+		  ' If mSelectedCaseID <= 0 Then
+		  ' lstCases.Visible = True
+		  ' Return
+		  ' End If
+		  ' 
+		  ' ' Find the row with the matching case ID
+		  ' For i As Integer = 0 To lstCases.RowCount - 1
+		  ' If lstCases.RowTagAt(i) = mSelectedCaseID Then
+		  ' lstCases.SelectedRowIndex = i  // ← This happens AFTER delay
+		  ' mSelectedCaseID = 0  // Clear after restoring
+		  ' Exit For i
+		  ' End If
+		  ' Next
+		  ' 
+		  ' lstCases.Visible = True
 		End Sub
 	#tag EndMethod
 
@@ -618,12 +652,29 @@ End
 		  ' ******************************************************************
 		  #Pragma Unused rows
 		  
-		  ' Store selected case ID - DO NOT call LoadCases here!
 		  If Me.SelectedRowIndex >= 0 Then
 		    mSelectedCaseID = Me.RowTagAt(Me.SelectedRowIndex)
+		    ' Save to Session as well
+		    Session.LastSelectedCaseID = mSelectedCaseID
 		  Else
 		    mSelectedCaseID = 0
+		    Session.LastSelectedCaseID = 0
 		  End If
+		  
+		  
+		  
+		  
+		  ' ' ******************************************************************
+		  ' ' lstCases.SelectionChanged Event
+		  ' ' ******************************************************************
+		  ' #Pragma Unused rows
+		  ' 
+		  ' ' Store selected case ID - DO NOT call LoadCases here!
+		  ' If Me.SelectedRowIndex >= 0 Then
+		  ' mSelectedCaseID = Me.RowTagAt(Me.SelectedRowIndex)
+		  ' Else
+		  ' mSelectedCaseID = 0
+		  ' End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -682,10 +733,20 @@ End
 #tag Events popFilterGroup
 	#tag Event
 		Sub SelectionChanged(item As WebMenuItem)
+		  ' ' ******************************************************************
+		  ' ' popFilterGroup.SelectionChanged Event
+		  ' ' ******************************************************************
+		  ' #Pragma Unused item
+		  ' LoadCases
+		  
 		  ' ******************************************************************
 		  ' popFilterGroup.SelectionChanged Event
 		  ' ******************************************************************
 		  #Pragma Unused item
+		  
+		  ' Save the filter selection to Session
+		  Session.LastCaseListFilterIndex = Me.SelectedRowIndex
+		  
 		  LoadCases
 		End Sub
 	#tag EndEvent
@@ -714,6 +775,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="SectionTitle"
 		Visible=false
