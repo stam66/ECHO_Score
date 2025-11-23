@@ -349,36 +349,35 @@ End
 
 	#tag Event
 		Sub Shown()
+		  ' *******************************************************************************
+		  ' wc_CaseList.Shown event
+		  ' *******************************************************************************
+		  
+		  ' Save the filter text BEFORE any reload (in case SelectionChanged overwrites the index)
+		  Var savedFilterText As String = Session.LastCaseListFilterText
+		  
 		  ' Check if we need to refresh (e.g., after saving in case details)
 		  If Session.CaseListNeedsRefresh Then
-		    LoadGroupFilter
-		    LoadCases
+		    LoadGroupFilter  ' This may trigger SelectionChanged and reset the session values
 		    Session.CaseListNeedsRefresh = False
-		  Else
-		    ' Normal refresh
-		    LoadCases
 		  End If
 		  
-		  ' Restore filter selection
-		  If Session.LastCaseListFilterIndex >= 0 And Session.LastCaseListFilterIndex < popFilterGroup.RowCount Then
-		    popFilterGroup.SelectedRowIndex = Session.LastCaseListFilterIndex
+		  ' Restore filter by TEXT (more robust than index after popup rebuild)
+		  If savedFilterText <> "" Then
+		    For i As Integer = 0 To popFilterGroup.RowCount - 1
+		      If popFilterGroup.RowTextAt(i) = savedFilterText Then
+		        popFilterGroup.SelectedRowIndex = i
+		        Exit For i
+		      End If
+		    Next
 		  End If
+		  
+		  ' Now load cases with the correct filter
+		  LoadCases
 		  
 		  lstCases.Visible = False
 		  RestoreLastSelection
 		  
-		  ' ' Check if we need to refresh (e.g., after saving in case details)
-		  ' If Session.CaseListNeedsRefresh Then
-		  ' LoadGroupFilter
-		  ' LoadCases
-		  ' Session.CaseListNeedsRefresh = False
-		  ' Else
-		  ' ' Normal refresh
-		  ' LoadCases
-		  ' End If
-		  ' 
-		  ' lstCases.Visible = False
-		  ' RestoreLastSelection
 		End Sub
 	#tag EndEvent
 
@@ -429,6 +428,8 @@ End
 		  ' ******************************************************************
 		  ' LoadCases Method - FIXED to use case_groups instead of video_purpose
 		  ' ******************************************************************
+		  ' Set flag to prevent SelectionChanged from clearing session data
+		  mLoadingCases = True
 		  
 		  ' Store currently selected case ID (if any)
 		  Var selectedCaseID As Integer = mSelectedCaseID
@@ -540,6 +541,9 @@ End
 		    MessageBox("Error loading cases: " + e.Message)
 		  End Try
 		  
+		  ' Clear flag - normal SelectionChanged behavior resumes
+		  mLoadingCases = False
+		  
 		End Sub
 	#tag EndMethod
 
@@ -617,25 +621,13 @@ End
 		  Next
 		  
 		  lstCases.Visible = True
-		  
-		  ' If mSelectedCaseID <= 0 Then
-		  ' lstCases.Visible = True
-		  ' Return
-		  ' End If
-		  ' 
-		  ' ' Find the row with the matching case ID
-		  ' For i As Integer = 0 To lstCases.RowCount - 1
-		  ' If lstCases.RowTagAt(i) = mSelectedCaseID Then
-		  ' lstCases.SelectedRowIndex = i  // ← This happens AFTER delay
-		  ' mSelectedCaseID = 0  // Clear after restoring
-		  ' Exit For i
-		  ' End If
-		  ' Next
-		  ' 
-		  ' lstCases.Visible = True
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mLoadingCases As Boolean = False
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSelectedCaseID As Integer = 0
@@ -652,6 +644,9 @@ End
 		  ' ******************************************************************
 		  #Pragma Unused rows
 		  
+		  ' Don't update session during LoadCases (prevents clearing on RemoveAllRows)
+		  If mLoadingCases Then Return
+		  
 		  If Me.SelectedRowIndex >= 0 Then
 		    mSelectedCaseID = Me.RowTagAt(Me.SelectedRowIndex)
 		    ' Save to Session as well
@@ -661,20 +656,6 @@ End
 		    Session.LastSelectedCaseID = 0
 		  End If
 		  
-		  
-		  
-		  
-		  ' ' ******************************************************************
-		  ' ' lstCases.SelectionChanged Event
-		  ' ' ******************************************************************
-		  ' #Pragma Unused rows
-		  ' 
-		  ' ' Store selected case ID - DO NOT call LoadCases here!
-		  ' If Me.SelectedRowIndex >= 0 Then
-		  ' mSelectedCaseID = Me.RowTagAt(Me.SelectedRowIndex)
-		  ' Else
-		  ' mSelectedCaseID = 0
-		  ' End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -733,19 +714,15 @@ End
 #tag Events popFilterGroup
 	#tag Event
 		Sub SelectionChanged(item As WebMenuItem)
-		  ' ' ******************************************************************
-		  ' ' popFilterGroup.SelectionChanged Event
-		  ' ' ******************************************************************
-		  ' #Pragma Unused item
-		  ' LoadCases
 		  
 		  ' ******************************************************************
 		  ' popFilterGroup.SelectionChanged Event
 		  ' ******************************************************************
 		  #Pragma Unused item
 		  
-		  ' Save the filter selection to Session
+		  ' Save both index AND text for robust restoration
 		  Session.LastCaseListFilterIndex = Me.SelectedRowIndex
+		  Session.LastCaseListFilterText = Me.RowTextAt(Me.SelectedRowIndex)
 		  
 		  LoadCases
 		End Sub
@@ -775,14 +752,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="Index"
-		Visible=true
-		Group="ID"
-		InitialValue="-2147483648"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="SectionTitle"
 		Visible=false

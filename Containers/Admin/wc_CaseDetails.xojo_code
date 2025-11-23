@@ -962,7 +962,7 @@ Begin wc_base wc_CaseDetails
       Width           =   526
       _mPanelIndex    =   -1
    End
-   Begin WebLabel lblVideoPreview2
+   Begin WebLabel lblVideoFullScreen
       Bold            =   False
       ControlID       =   ""
       CSSClasses      =   ""
@@ -1232,13 +1232,6 @@ End
 		    ' Reload the list
 		    LoadCaseVideos()
 		    
-		    ' Show success message
-		    Var successMsg As New WebMessageDialog
-		    successMsg.Title = "Success"
-		    successMsg.Message = "File deleted successfully."
-		    successMsg.ActionButton.Caption = "OK"
-		    successMsg.CancelButton.Visible = False
-		    successMsg.Show
 		    
 		  Catch e As DatabaseException
 		    Var errMsg As New WebMessageDialog
@@ -2135,18 +2128,6 @@ End
 		    session.DisplayMessage("WARNING: Large file may take time to upload", self.DisplayedMessage)
 		  End If
 		  
-		  
-		  
-		  
-		  ' ' ******************************************************************
-		  ' ' uplVideo.FileAdded Event
-		  ' ' Enable upload button when file is selected
-		  ' ' ******************************************************************
-		  ' #Pragma Unused mimeType
-		  ' 
-		  ' btnStartUpload.Enabled = True
-		  ' session.DisplayMessage("File selected: " + filename + " (" + Str(bytes) + " bytes)", self.DisplayedMessage)
-		  
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2164,6 +2145,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub UploadError(error As RuntimeException)
+		  ' ******************************************************************
+		  ' uplVideo.UploadError Event
+		  ' ******************************************************************
 		  Self.ExecuteJavaScript("console.error('UploadError fired: " + error.Message.ReplaceAll("'", "\'") + "');")
 		  session.DisplayMessage("UPLOAD ERROR: " + error.Message, self.DisplayedMessage)
 		  
@@ -2171,11 +2155,8 @@ End
 		  btnStartUpload.Enabled = True
 		  
 		  
-		  ' ' ******************************************************************
-		  ' ' uplVideo.UploadError Event
-		  ' ' ******************************************************************
-		  ' MessageBox("Upload error: " + error.Message)
-		  ' btnStartUpload.Enabled = True  ' Re-enable for retry
+		  
+		  
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2387,15 +2368,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub UploadStarted(fileCount As Integer)
+		  #Pragma Unused fileCount
+		  
 		  session.DisplayMessage("UPLOAD STARTED - Transferring " + Str(fileCount) + " file(s) to server...", self.DisplayedMessage)
 		  
 		  ' Disable upload button during transfer
 		  btnStartUpload.Enabled = False
 		  
 		  
-		  ' #Pragma Unused fileCount
-		  ' 
-		  ' session.DisplayMessage("Upload started...", self.DisplayedMessage)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2427,11 +2407,6 @@ End
 		  session.DisplayMessage("UPLOAD ABORTED", self.DisplayedMessage)
 		  
 		  btnStartUpload.Enabled = True
-		  
-		  
-		  ' ' The upload was cancelled (by user or system)
-		  ' session.DisplayMessage("The upload was cancelled by the browser or the system.", self.DisplayedMessage)
-		  ' btnStartUpload.Enabled = True
 		  
 		End Sub
 	#tag EndEvent
@@ -2575,7 +2550,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events lblVideoPreview2
+#tag Events lblVideoFullScreen
 	#tag Event
 		Sub Pressed()
 		  htmlVideoPreview.ExecuteJavaScript("(function() { var v = document.getElementById('mainVideo'); if (v) { if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } else { if (v.requestFullscreen) { v.requestFullscreen(); } else if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); } else if (v.mozRequestFullScreen) { v.mozRequestFullScreen(); } else if (v.msRequestFullscreen) { v.msRequestFullscreen(); } } } })();")

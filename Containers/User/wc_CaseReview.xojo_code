@@ -1411,21 +1411,19 @@ End
 		        System.DebugLog("Error checking completion status: " + e.Message)
 		      End Try
 		      
-		      ' Only show case description AFTER user has submitted
+		      
 		      ' Use sequential case number (user's position + 1) instead of database serial
 		      Var displayCaseNumber As String = "Case " + Str(CurrentCasePosition + 1)
 		      
-		      If hasCompleted Then
-		        lblCaseTitle.Text = displayCaseNumber + " - " + rs.Column("case_label").StringValue
+		      ' Always show clinical background if available
+		      Var caseLabel As String = rs.Column("case_label").StringValue.Trim
+		      If caseLabel <> "" Then
+		        lblCaseTitle.Text = displayCaseNumber + " - " + caseLabel
 		      Else
 		        lblCaseTitle.Text = displayCaseNumber
 		      End If
 		      
-		      ' If hasCompleted Then
-		      ' lblCaseTitle.Text = rs.Column("serial_number").StringValue + " - " + rs.Column("case_label").StringValue
-		      ' Else
-		      ' lblCaseTitle.Text = rs.Column("serial_number").StringValue
-		      ' End If
+		      
 		    Else
 		      lblCaseTitle.Text = "Case Not Found"
 		    End If

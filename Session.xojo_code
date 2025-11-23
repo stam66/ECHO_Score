@@ -8,6 +8,7 @@ Inherits WebSession
   AllowTabOrderWrap=True
   ColorMode=0
   SendEventsInBatches=False
+  LazyLoadDependencies=False
 #tag EndSession
 	#tag Event
 		Sub Opening()
@@ -225,6 +226,10 @@ Inherits WebSession
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		LastCaseListFilterText As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		LastCreatedCaseGroup As String
 	#tag EndProperty
 
@@ -242,6 +247,22 @@ Inherits WebSession
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Title"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LazyLoadDependencies"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -517,6 +538,22 @@ Inherits WebSession
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastCaseListFilterIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastSelectedCaseID"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
