@@ -101,7 +101,7 @@ Protected Module EmailHelper
 		    
 		    ' Create email message
 		    Var mail As New EmailMessage
-		    mail.FromAddress = fromEmail
+		    mail.FromAddress = If(fromName <> "", fromName + " <" + fromEmail + ">", fromEmail)
 		    mail.Subject = "ECHOScore - New Access Request"
 		    mail.AddRecipient(toEmail)
 		    
@@ -144,24 +144,29 @@ Protected Module EmailHelper
 		    mail.BodyPlainText = textBody
 		    
 		    ' Configure SMTP socket
+		    ' Note: SMTPSecureSocket always uses TLS. If use_tls=false is required,
+		    ' replace with SMTPSocket (plain) and update this block accordingly.
+		    If Not useTLS Then
+		      System.DebugLog("Warning: use_tls=false is set but SMTPSecureSocket always uses TLS. Update socket class if plain SMTP is needed.")
+		    End If
 		    Var socket As New SMTPSecureSocket
 		    socket.Address = smtpServer
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
-		    
+
 		    ' Send email
 		    socket.Messages.Add(mail)
 		    socket.SendMail
-		    
-		    ' Wait for send completion (max 30 seconds)
-		    Var timeout As Integer = 30
+
+		    ' Wait for send completion (max 30 seconds: 300 × 100ms)
+		    Var timeout As Integer = 300
 		    Var elapsed As Integer = 0
 		    While socket.Messages.Count > 0 And elapsed < timeout
 		      App.DoEvents(100)
 		      elapsed = elapsed + 1
 		    Wend
-		    
+
 		    If socket.Messages.Count = 0 Then
 		      System.DebugLog("Access request notification sent to: " + toEmail)
 		      Return True
@@ -210,7 +215,7 @@ Protected Module EmailHelper
 		    
 		    ' Create email message
 		    Var mail As New EmailMessage
-		    mail.FromAddress = fromEmail
+		    mail.FromAddress = If(fromName <> "", fromName + " <" + fromEmail + ">", fromEmail)
 		    mail.Subject = "ECHOScore - Password Reset Request"
 		    mail.AddRecipient(toEmail)
 		    
@@ -229,6 +234,11 @@ Protected Module EmailHelper
 		    mail.BodyPlainText = textBody
 		    
 		    ' Configure SMTP socket
+		    ' Note: SMTPSecureSocket always uses TLS. If use_tls=false is required,
+		    ' replace with SMTPSocket (plain) and update this block accordingly.
+		    If Not useTLS Then
+		      System.DebugLog("Warning: use_tls=false is set but SMTPSecureSocket always uses TLS. Update socket class if plain SMTP is needed.")
+		    End If
 		    System.DebugLog("Creating SMTP socket...")
 		    Var socket As New SMTPSecureSocket
 		    socket.Address = smtpServer
@@ -241,8 +251,8 @@ Protected Module EmailHelper
 		    socket.Messages.Add(mail)
 		    socket.SendMail
 		    
-		    ' Wait for send completion (max 30 seconds)
-		    Var timeout As Integer = 30
+		    ' Wait for send completion (max 30 seconds: 300 × 100ms)
+		    Var timeout As Integer = 300
 		    Var elapsed As Integer = 0
 		    While socket.Messages.Count > 0 And elapsed < timeout
 		      App.DoEvents(100)
@@ -299,7 +309,7 @@ Protected Module EmailHelper
 		    
 		    ' Create email message
 		    Var mail As New EmailMessage
-		    mail.FromAddress = fromEmail
+		    mail.FromAddress = If(fromName <> "", fromName + " <" + fromEmail + ">", fromEmail)
 		    mail.Subject = "Welcome to ECHOScore - Your Account is Ready"
 		    mail.AddRecipient(toEmail)
 		    
@@ -345,24 +355,29 @@ Protected Module EmailHelper
 		    mail.BodyPlainText = textBody
 		    
 		    ' Configure SMTP socket
+		    ' Note: SMTPSecureSocket always uses TLS. If use_tls=false is required,
+		    ' replace with SMTPSocket (plain) and update this block accordingly.
+		    If Not useTLS Then
+		      System.DebugLog("Warning: use_tls=false is set but SMTPSecureSocket always uses TLS. Update socket class if plain SMTP is needed.")
+		    End If
 		    Var socket As New SMTPSecureSocket
 		    socket.Address = smtpServer
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
-		    
+
 		    ' Send email
 		    socket.Messages.Add(mail)
 		    socket.SendMail
-		    
-		    ' Wait for send completion (max 30 seconds)
-		    Var timeout As Integer = 30
+
+		    ' Wait for send completion (max 30 seconds: 300 × 100ms)
+		    Var timeout As Integer = 300
 		    Var elapsed As Integer = 0
 		    While socket.Messages.Count > 0 And elapsed < timeout
 		      App.DoEvents(100)
 		      elapsed = elapsed + 1
 		    Wend
-		    
+
 		    If socket.Messages.Count = 0 Then
 		      System.DebugLog("Welcome email sent to: " + toEmail)
 		      Return True
