@@ -24,7 +24,6 @@ Begin wc_base wc_Login
    Width           =   780
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle Rectangle2
       BorderColor     =   &c42424200
@@ -52,7 +51,7 @@ Begin wc_base wc_Login
       PanelIndex      =   0
       Parent          =   "nil"
       Scope           =   0
-      TabIndex        =   2
+      TabIndex        =   4
       TabStop         =   False
       Tooltip         =   ""
       Top             =   0
@@ -84,7 +83,7 @@ Begin wc_base wc_Login
       Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   4
+      TabIndex        =   6
       TabStop         =   True
       Text            =   "Log into the application"
       TextAlignment   =   2
@@ -118,7 +117,7 @@ Begin wc_base wc_Login
       Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   5
+      TabIndex        =   7
       TabStop         =   True
       Text            =   "Username"
       TextAlignment   =   1
@@ -154,7 +153,7 @@ Begin wc_base wc_Login
       PanelIndex      =   0
       ReadOnly        =   False
       Scope           =   0
-      TabIndex        =   4
+      TabIndex        =   0
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
@@ -186,7 +185,7 @@ Begin wc_base wc_Login
       Multiline       =   True
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   8
+      TabIndex        =   9
       TabStop         =   True
       Text            =   ""
       TextAlignment   =   0
@@ -220,7 +219,7 @@ Begin wc_base wc_Login
       Multiline       =   False
       PanelIndex      =   0
       Scope           =   0
-      TabIndex        =   7
+      TabIndex        =   2
       TabStop         =   True
       Text            =   "Reset password"
       TextAlignment   =   3
@@ -257,7 +256,7 @@ Begin wc_base wc_Login
       LockVertical    =   False
       PanelIndex      =   0
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   5
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
@@ -430,7 +429,7 @@ Begin wc_base wc_Login
       PanelIndex      =   0
       Parent          =   "nil"
       Scope           =   0
-      TabIndex        =   6
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Password"
@@ -501,7 +500,7 @@ Begin wc_base wc_Login
       PanelIndex      =   0
       Parent          =   "nil"
       Scope           =   0
-      TabIndex        =   9
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""

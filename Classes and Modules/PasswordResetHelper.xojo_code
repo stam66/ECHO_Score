@@ -29,10 +29,10 @@ Protected Module PasswordResetHelper
 		  ' *******************************************************************************
 		  
 		  ' Housekeeping: remove expired tokens before creating a new one
-		  CleanupExpiredTokens
-
+		  call CleanupExpiredTokens
+		  
 		  Var result As New Dictionary
-
+		  
 		  Try
 		    ' Generate OTP and token
 		    Var otp As String = EmailHelper.GenerateOTP
