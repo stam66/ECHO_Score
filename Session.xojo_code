@@ -17,6 +17,12 @@ Inherits WebSession
 		  ' *******************************************************************************
 		  
 		  ' Initialize database connection
+		  ' *** SECURITY WARNING ***
+		  ' Credentials below are hardcoded. Before deploying to production:
+		  '   1. Change both passwords immediately (admin panel + MySQL).
+		  '   2. Ideally move credentials to a config file outside the project,
+		  '      e.g. ~/echoscore.conf  (key=value pairs), read with TextInputStream,
+		  '      then assign DB.UserName / DB.Password from those values.
 		  DB = New MySQLCommunityServer
 		  DB.Host = "127.0.0.1"
 		  DB.Port = 3306
@@ -25,8 +31,8 @@ Inherits WebSession
 		    DB.UserName = "admin"
 		    DB.Password = "reject66"
 		  else
-		    DB.UserName = "dbadmin" 
-		    DB.Password = "tDw3pbEcBEfec7fc" 
+		    DB.UserName = "dbadmin"
+		    DB.Password = "tDw3pbEcBEfec7fc"
 		  end If
 		  
 		  Try

@@ -28,8 +28,11 @@ Protected Module PasswordResetHelper
 		  '   Purpose: Creates a new password reset token with OTP
 		  ' *******************************************************************************
 		  
+		  ' Housekeeping: remove expired tokens before creating a new one
+		  CleanupExpiredTokens
+
 		  Var result As New Dictionary
-		  
+
 		  Try
 		    ' Generate OTP and token
 		    Var otp As String = EmailHelper.GenerateOTP
