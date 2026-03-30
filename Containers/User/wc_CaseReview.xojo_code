@@ -67,11 +67,11 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       LockVertical    =   False
       PanelIndex      =   0
@@ -1233,9 +1233,9 @@ End
 		    html = html + "<style>"
 		    html = html + "* { margin: 0; padding: 0; box-sizing: border-box; }"
 		    html = html + "html, body { height: 100%; width: 100%; overflow: hidden; background: transparent; }"
-		    html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; padding: 10px; }"
-		    html = html + ".video-container { width: 100%; max-width: 750px; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); position: relative; }"
-		    html = html + "video { width: 100%; height: auto; display: block; background: #000; cursor: pointer; }"
+		    html = html + ".video-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; height: 100%; width: 100%; padding: 10px; }"
+		    html = html + ".video-container { width: 100%; height: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); position: relative; }"
+		    html = html + "video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; cursor: pointer; }"
 		    html = html + ".nav-info { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; white-space: nowrap; z-index: 10; }"
 		    html = html + "</style></head><body>"
 		    html = html + "<div class='video-wrapper'>"
