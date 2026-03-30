@@ -1141,7 +1141,7 @@ End
 		  
 		  If txtPassword.Text.Trim = "" Then
 		    ' Update without changing password
-		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, is_admin = ?, is_active = ?, user_group = ? WHERE user_id = ?"
+		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, is_admin = ?, is_active = ?, user_group = NULLIF(?, '') WHERE user_id = ?"
 		    
 		    Try
 		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -1173,8 +1173,8 @@ End
 		    
 		  Else
 		    ' Update including password
-		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, password_hash = SHA2(?, 256), is_admin = ?, is_active = ?, user_group = ? WHERE user_id = ?"
-		    
+		    sql = "UPDATE users SET full_name = ?, email = ?, username = ?, password_hash = SHA2(?, 256), is_admin = ?, is_active = ?, user_group = NULLIF(?, '') WHERE user_id = ?"
+
 		    Try
 		      Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
 		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
@@ -1182,17 +1182,17 @@ End
 		      ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		      ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
+		      ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		      ps.BindType(7, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		      
+
 		      ps.Bind(0, txtName.Text.Trim)
 		      ps.Bind(1, txtEmail.Text.Trim)
 		      ps.Bind(2, txtUsername.Text.Trim)
 		      ps.Bind(3, txtPassword.Text.Trim)
 		      ps.Bind(4, chkIsAdmin.Value)
-		      ps.Bind(5, cmbUserGroup.Text.Trim)
-		      ps.Bind(6, chkIsActive.Value)
+		      ps.Bind(5, chkIsActive.Value)
+		      ps.Bind(6, cmbUserGroup.Text.Trim)
 		      ps.Bind(7, mSelectedUserID)
 		      
 		      ps.ExecuteSQL
