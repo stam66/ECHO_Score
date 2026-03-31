@@ -289,7 +289,7 @@ End
 		  End Try
 
 		  // Insert the new user
-		  var sql as String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, ?)"
+		  var sql as String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, NULL)"
 
 		  Try
 		    var ps as MySQLPreparedStatement = Session.DB.Prepare(sql)
@@ -299,7 +299,6 @@ End
 		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 
 		    ps.Bind(0, name)
 		    ps.Bind(1, email)
@@ -307,7 +306,7 @@ End
 		    ps.Bind(3, placeholderPassword)
 		    ps.Bind(4, False) // Not admin by default
 		    ps.Bind(5, True)  // Active by default
-		    ps.Bind(6, "")    // No group by default
+		    // user_group left NULL — admin can assign group later via wc_UserAdmin
 
 		    ps.ExecuteSQL
 
