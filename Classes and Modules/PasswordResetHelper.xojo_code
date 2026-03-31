@@ -49,7 +49,7 @@ Protected Module PasswordResetHelper
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(2, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_DATETIME)
+		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    
 		    ps.Bind(0, userID)

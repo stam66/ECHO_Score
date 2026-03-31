@@ -311,8 +311,16 @@ End
 
 		    ps.ExecuteSQL
 
-		    // Get the new user's ID
-		    var newUserID as Integer = Session.DB.LastInsertRowID
+		    // Get the new user's ID — use SELECT LAST_INSERT_ID() for reliability
+		    // with prepared statements (LastInsertRowID is unreliable after ps.ExecuteSQL in Xojo)
+		    var newUserID as Integer = 0
+		    Var idRS As RowSet = Session.DB.SelectSQL("SELECT LAST_INSERT_ID() AS last_id")
+		    If idRS <> Nil And Not idRS.AfterLastRow Then
+		      newUserID = idRS.Column("last_id").IntegerValue
+		    End If
+		    If newUserID = 0 Then
+		      return "Failed to retrieve new user ID after insert"
+		    End If
 
 		    // Generate OTP for account setup
 		    var tokenResult as Dictionary = PasswordResetHelper.CreatePasswordResetToken(newUserID, "")
