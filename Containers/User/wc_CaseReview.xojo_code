@@ -1281,15 +1281,15 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function HasAnsweredCheckboxes() As Boolean
-		  ' Check if any checkboxes have been changed from their default state
-		  Return chkLVSizeDilated.Value Or chkLVFunctionImpaired.Value Or _
-		  chkRVSizeDilated.Value Or chkRVFunctionImpaired.Value Or _
-		  chkAorticStenosis.Value Or chkAorticRegurgitation.Value Or _
-		  chkMitralStenosis.Value Or chkMitralRegurgitation.Value Or _
-		  chkTricuspidStenosis.Value Or chkTricuspidRegurgitation.Value Or _
-		  chkPericardialEffusion.Value Or chkIVCHighPressure.Value Or _
-		  chkRequiresFullEcho.Value Or txtConclusions.Text.Trim <> ""
-		  
+		  ' Returns True if any checkbox has been explicitly answered (not still in default indeterminate state)
+		  Return (Not chkLVSizeDilated.Indeterminate) Or (Not chkLVFunctionImpaired.Indeterminate) Or _
+		  (Not chkRVSizeDilated.Indeterminate) Or (Not chkRVFunctionImpaired.Indeterminate) Or _
+		  (Not chkAorticStenosis.Indeterminate) Or (Not chkAorticRegurgitation.Indeterminate) Or _
+		  (Not chkMitralStenosis.Indeterminate) Or (Not chkMitralRegurgitation.Indeterminate) Or _
+		  (Not chkTricuspidStenosis.Indeterminate) Or (Not chkTricuspidRegurgitation.Indeterminate) Or _
+		  (Not chkPericardialEffusion.Indeterminate) Or (Not chkIVCHighPressure.Indeterminate) Or _
+		  (Not chkRequiresFullEcho.Indeterminate) Or txtConclusions.Text.Trim <> ""
+
 		End Function
 	#tag EndMethod
 
@@ -2091,33 +2091,16 @@ End
 		      End Try
 		    End If
 		    
-		    ' If isCompleted Then
-		    ' ' Submit MCQ responses if they exist
-		    ' SubmitMCQResponses()
-		    ' 
-		    ' MessageBox("Test submitted successfully!")
-		    ' ShowCorrectAnswers
-		    ' btnSave.Visible = False
-		    ' btnSubmit.Visible = False
-		    ' IsReviewMode = True
-		    ' 
-		    ' ' Update case title without resetting UI (was calling LoadCase which calls ResetUI)
-		    ' Try
-		    ' Var titleSQL As String = "SELECT case_label, serial_number FROM cases WHERE case_id = ?"
-		    ' Var titlePS As MySQLPreparedStatement = Session.DB.Prepare(titleSQL)
-		    ' titlePS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
-		    ' titlePS.Bind(0, CaseID)
-		    ' Var titleRS As RowSet = titlePS.SelectSQL
-		    ' If titleRS <> Nil And Not titleRS.AfterLastRow Then
-		    ' lblCaseTitle.Text = titleRS.Column("serial_number").StringValue + " - " + titleRS.Column("case_label").StringValue
-		    ' End If
-		    ' Catch e As DatabaseException
-		    ' System.DebugLog("Error updating title: " + e.Message)
-		    ' End Try
-		    ' Else
-		    ' MessageBox("Progress saved!")
-		    ' End If
-		    ' 
+		    If isCompleted Then
+		      MessageBox("Test submitted successfully!")
+		      ShowCorrectAnswers
+		      btnSave.Visible = False
+		      btnSubmit.Visible = False
+		      IsReviewMode = True
+		    Else
+		      MessageBox("Progress saved!")
+		    End If
+
 		  Catch e As DatabaseException
 		    MessageBox("Error saving response: " + e.Message)
 		  End Try
