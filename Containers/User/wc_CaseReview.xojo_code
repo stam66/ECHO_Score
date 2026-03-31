@@ -5,7 +5,7 @@ Begin wc_base wc_CaseReview
    ControlID       =   ""
    CSSClasses      =   ""
    Enabled         =   True
-   Height          =   764
+   Height          =   806
    Indicator       =   0
    LayoutDirection =   0
    LayoutType      =   0
@@ -21,7 +21,7 @@ Begin wc_base wc_CaseReview
    TabIndex        =   0
    Top             =   0
    Visible         =   True
-   Width           =   1100
+   Width           =   1132
    _mDesignHeight  =   0
    _mDesignWidth   =   0
    _mPanelIndex    =   -1
@@ -53,25 +53,25 @@ Begin wc_base wc_CaseReview
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   20
+      Top             =   11
       Underline       =   False
       Visible         =   True
-      Width           =   490
+      Width           =   448
       _mPanelIndex    =   -1
    End
    Begin WebHTMLViewer htmlVideoPlayer
       ControlID       =   ""
       CSSClasses      =   "video::-webkit-media-controls-panel {   background-color: transparent !important; }  video:focus {   outline: none; }"
       Enabled         =   True
-      Height          =   514
+      Height          =   674
       Index           =   -2147483648
       Indicator       =   ""
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       LockVertical    =   False
       PanelIndex      =   0
@@ -82,7 +82,7 @@ Begin wc_base wc_CaseReview
       Top             =   112
       UseSandbox      =   False
       Visible         =   True
-      Width           =   686
+      Width           =   726
       _mPanelIndex    =   -1
    End
    Begin WebCheckbox chkLVSizeDilated
@@ -94,7 +94,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -107,7 +107,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   2
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   112
+      Top             =   158
       Value           =   False
       Visible         =   True
       Width           =   167
@@ -122,7 +122,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -135,7 +135,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   3
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   147
+      Top             =   193
       Value           =   False
       Visible         =   True
       Width           =   307
@@ -150,7 +150,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -163,7 +163,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   4
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   182
+      Top             =   228
       Value           =   False
       Visible         =   True
       Width           =   167
@@ -178,7 +178,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -191,7 +191,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   5
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   217
+      Top             =   263
       Value           =   False
       Visible         =   True
       Width           =   307
@@ -206,7 +206,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -219,7 +219,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   6
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   252
+      Top             =   298
       Value           =   False
       Visible         =   True
       Width           =   307
@@ -234,7 +234,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -247,7 +247,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   7
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   287
+      Top             =   333
       Value           =   False
       Visible         =   True
       Width           =   307
@@ -262,7 +262,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -275,7 +275,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   8
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   322
+      Top             =   368
       Value           =   False
       Visible         =   True
       Width           =   307
@@ -290,7 +290,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -303,7 +303,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   9
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   356
+      Top             =   402
       Value           =   False
       Visible         =   True
       Width           =   307
@@ -318,7 +318,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -331,7 +331,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   10
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   390
+      Top             =   436
       Value           =   False
       Visible         =   True
       Width           =   342
@@ -346,7 +346,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -359,7 +359,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   11
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   424
+      Top             =   470
       Value           =   False
       Visible         =   True
       Width           =   342
@@ -374,7 +374,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -387,7 +387,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   12
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   458
+      Top             =   504
       Value           =   False
       Visible         =   True
       Width           =   342
@@ -402,7 +402,7 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -415,7 +415,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   13
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   492
+      Top             =   538
       Value           =   False
       Visible         =   True
       Width           =   342
@@ -430,20 +430,20 @@ Begin wc_base wc_CaseReview
       Indeterminate   =   True
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
-      LockBottom      =   False
+      Left            =   768
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       PanelIndex      =   0
       Scope           =   0
       TabIndex        =   14
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   644
+      Top             =   690
       Value           =   False
       Visible         =   True
       Width           =   178
@@ -460,13 +460,13 @@ Begin wc_base wc_CaseReview
       Hint            =   "Conclusions"
       Index           =   -2147483648
       Indicator       =   ""
-      Left            =   736
-      LockBottom      =   False
+      Left            =   768
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       MaximumCharactersAllowed=   0
       PanelIndex      =   0
@@ -477,7 +477,7 @@ Begin wc_base wc_CaseReview
       Text            =   ""
       TextAlignment   =   0
       Tooltip         =   ""
-      Top             =   591
+      Top             =   637
       Visible         =   True
       Width           =   342
       _mPanelIndex    =   -1
@@ -493,13 +493,13 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   20
-      LockBottom      =   True
+      Left            =   457
+      LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
@@ -507,7 +507,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   16
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   726
+      Top             =   11
       Visible         =   True
       Width           =   105
       _mPanelIndex    =   -1
@@ -523,13 +523,13 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   134
-      LockBottom      =   True
+      Left            =   571
+      LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
       LockVertical    =   False
       Outlined        =   False
       PanelIndex      =   0
@@ -537,7 +537,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   17
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   726
+      Top             =   11
       Visible         =   True
       Width           =   104
       _mPanelIndex    =   -1
@@ -647,7 +647,7 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   736
+      Left            =   768
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -664,7 +664,7 @@ Begin wc_base wc_CaseReview
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   66
+      Top             =   112
       Underline       =   False
       Visible         =   True
       Width           =   178
@@ -681,13 +681,13 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   736
-      LockBottom      =   False
+      Left            =   768
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       Multiline       =   False
       PanelIndex      =   0
@@ -698,7 +698,7 @@ Begin wc_base wc_CaseReview
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   557
+      Top             =   603
       Underline       =   False
       Visible         =   True
       Width           =   342
@@ -715,13 +715,13 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   736
-      LockBottom      =   False
+      Left            =   768
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       Multiline       =   False
       PanelIndex      =   0
@@ -732,7 +732,7 @@ Begin wc_base wc_CaseReview
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   676
+      Top             =   722
       Underline       =   False
       Visible         =   False
       Width           =   166
@@ -749,13 +749,13 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   736
-      LockBottom      =   False
+      Left            =   768
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       Multiline       =   True
       PanelIndex      =   0
@@ -766,7 +766,7 @@ Begin wc_base wc_CaseReview
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   717
+      Top             =   763
       Underline       =   False
       Visible         =   False
       Width           =   362
@@ -783,13 +783,13 @@ Begin wc_base wc_CaseReview
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
-      Left            =   911
-      LockBottom      =   False
+      Left            =   943
+      LockBottom      =   True
       LockedInPosition=   False
       LockHorizontal  =   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       LockVertical    =   False
       Multiline       =   False
       PanelIndex      =   0
@@ -800,7 +800,7 @@ Begin wc_base wc_CaseReview
       TextAlignment   =   0
       TextColor       =   &c000000FF
       Tooltip         =   ""
-      Top             =   676
+      Top             =   722
       Underline       =   False
       Visible         =   False
       Width           =   189
@@ -817,7 +817,7 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   761
+      Left            =   796
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -847,7 +847,7 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   0
-      Left            =   936
+      Left            =   958
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -893,7 +893,7 @@ Begin wc_base wc_CaseReview
       Tooltip         =   ""
       Top             =   66
       Visible         =   True
-      Width           =   129
+      Width           =   114
       _mPanelIndex    =   -1
    End
    Begin WebButton btnMCQAssessment
@@ -907,7 +907,7 @@ Begin wc_base wc_CaseReview
       Height          =   38
       Index           =   -2147483648
       Indicator       =   3
-      Left            =   911
+      Left            =   943
       LockBottom      =   False
       LockedInPosition=   False
       LockHorizontal  =   False
@@ -921,7 +921,7 @@ Begin wc_base wc_CaseReview
       TabIndex        =   31
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   66
+      Top             =   112
       Visible         =   True
       Width           =   163
       _mPanelIndex    =   -1
