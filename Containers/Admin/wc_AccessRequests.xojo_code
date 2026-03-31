@@ -311,8 +311,12 @@ End
 
 		    ps.ExecuteSQL
 
-		    // Get the new user's ID
-		    var newUserID as Integer = Session.DB.LastInsertRowID
+		    // Get the new user's ID via MySQL function (MySQLCommunityServer has no LastInsertRowID)
+		    var lastIDRS as RowSet = Session.DB.SelectSQL("SELECT LAST_INSERT_ID() AS last_id")
+		    if lastIDRS = nil or lastIDRS.AfterLastRow then
+		      return "Error retrieving new user ID after insert"
+		    end if
+		    var newUserID as Integer = lastIDRS.Column("last_id").IntegerValue
 
 		    // Generate OTP for account setup
 		    var tokenResult as Dictionary = PasswordResetHelper.CreatePasswordResetToken(newUserID, "")
