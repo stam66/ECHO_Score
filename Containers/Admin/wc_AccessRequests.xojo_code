@@ -250,48 +250,47 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Function CreateUserFromRequest(name as String, email as String) As Boolean
+		Private Function CreateUserFromRequest(name as String, email as String) As String
 		  // Create a new user from an access request
 		  // Username format: First letter of first name (uppercase) + Last name (title case)
 		  // Example: "Stam Kapetanakis" → "SKapetanakis"
 		  // Duplicates: "SKapetanakis1", "SKapetanakis2", etc.
-		  // A temporary password will be generated and emailed
-		  
+		  // An OTP will be generated and emailed so the user can set their own password
+		  // Returns empty string on success, or an error message on failure
+
 		  // Parse the name to generate username
 		  var username as String = GenerateUsername(name)
-		  var tempPassword as String = EmailHelper.GenerateSecureToken.Left(12) // 12 char temp password
-		  
+		  var placeholderPassword as String = EmailHelper.GenerateSecureToken // random, never seen by user
+
 		  // Make sure username is unique
 		  var checkSQL as String = "SELECT user_id FROM users WHERE username = ?"
-		  var usernameExists as Boolean = False
 		  var counter as Integer = 1
 		  var finalUsername as String = username
-		  
+
 		  Try
 		    var checkPS as MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
 		    checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    
+
 		    // Keep trying until we find a unique username
 		    while true
 		      checkPS.Bind(0, finalUsername)
 		      var checkRS as RowSet = checkPS.SelectSQL
-		      
+
 		      if checkRS = nil or checkRS.AfterLastRow then
 		        exit // Username is unique
 		      end if
-		      
+
 		      finalUsername = username + Str(counter)
 		      counter = counter + 1
 		    wend
-		    
+
 		  Catch e as DatabaseException
-		    System.DebugLog("Error checking username uniqueness: " + e.Message)
-		    return False
+		    return "Error checking username uniqueness: " + e.Message
 		  End Try
-		  
+
 		  // Insert the new user
 		  var sql as String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, ?)"
-		  
+
 		  Try
 		    var ps as MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
@@ -301,26 +300,36 @@ End
 		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    
+
 		    ps.Bind(0, name)
 		    ps.Bind(1, email)
 		    ps.Bind(2, finalUsername)
-		    ps.Bind(3, tempPassword)
+		    ps.Bind(3, placeholderPassword)
 		    ps.Bind(4, False) // Not admin by default
 		    ps.Bind(5, True)  // Active by default
 		    ps.Bind(6, "")    // No group by default
-		    
+
 		    ps.ExecuteSQL
-		    
-		    // Send welcome email with credentials
-		    // Using Call to explicitly ignore the return value
-		    Call EmailHelper.SendWelcomeEmail(email, name, finalUsername, tempPassword)
-		    
-		    return True
-		    
+
+		    // Get the new user's ID
+		    var newUserID as Integer = Session.DB.LastInsertRowID
+
+		    // Generate OTP for account setup
+		    var tokenResult as Dictionary = PasswordResetHelper.CreatePasswordResetToken(newUserID, "")
+
+		    if not tokenResult.Value("success") then
+		      return "Error generating account setup token: " + tokenResult.Value("error").StringValue
+		    end if
+
+		    var otp as String = tokenResult.Value("otp").StringValue
+
+		    // Send new account email with OTP so user can set their own password
+		    Call EmailHelper.SendNewAccountEmail(email, name, finalUsername, otp)
+
+		    return "" // empty string = success
+
 		  Catch e as DatabaseException
-		    System.DebugLog("Error creating user: " + e.Message)
-		    return False
+		    return e.Message
 		  End Try
 		End Function
 	#tag EndMethod
@@ -522,10 +531,11 @@ End
 		  if status = 1 then
 		    // APPROVING - Create user if it doesn't exist
 		    if not UserExists(requestEmail) then
-		      if CreateUserFromRequest(requestName, requestEmail) then
+		      var createError as String = CreateUserFromRequest(requestName, requestEmail)
+		      if createError = "" then
 		        System.DebugLog("User created successfully for: " + requestEmail)
 		      else
-		        MessageBox("Failed to create user. Please try again.")
+		        MessageBox("Failed to create user: " + createError)
 		        return
 		      end if
 		    end if
