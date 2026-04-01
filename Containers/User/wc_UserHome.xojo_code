@@ -356,10 +356,6 @@ End
 		  Self.SectionTitle = "Welcome, " + Session.CurrentUserName
 		  
 		  UpdateNavigation // update shell page data
-		  
-		  
-		  lstCases.SetFocus
-		  lstCases.SelectedRowIndex = -1
 		End Sub
 	#tag EndEvent
 

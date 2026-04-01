@@ -456,6 +456,9 @@ End
 
 	#tag Event
 		Sub Shown()
+		  ' Allow the page to scroll vertically on small/zoomed screens
+		  ExecuteJavaScript("document.documentElement.style.overflowY='auto'; document.body.style.overflowY='auto';")
+
 		  ' Wait for page to be fully rendered before initial navigation
 		  If Self.ContentArea = Nil Then
 		    ' First time shown - navigate to login
