@@ -267,7 +267,7 @@ Begin WebPage wp_MainShell
          PanelIndex      =   0
          Parent          =   "Rectangle1"
          Scope           =   0
-         ScrollDirection =   1
+         ScrollDirection =   3
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
