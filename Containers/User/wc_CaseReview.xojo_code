@@ -1312,28 +1312,20 @@ End
 		    System.DebugLog("Error getting user group: " + e.Message)
 		  End Try
 		  
-		  ' Build SQL using EXISTS instead of DISTINCT
-		  ' If user belongs to a group, only show cases explicitly assigned to that group.
-		  ' If user has no group, show all cases (admin / ungrouped access).
+		  ' Filter by cases.case_groups (same field used by wc_UserHome.LoadCases).
+		  ' Group users see only cases explicitly assigned to their group.
+		  ' No-group users see all cases.
 		  Var sql As String
 		  If userGroup <> "" Then
 		    sql = _
 		    "SELECT c.case_id, c.serial_number " + _
 		    "FROM cases c " + _
-		    "WHERE EXISTS ( " + _
-		    "  SELECT 1 FROM case_videos cv " + _
-		    "  WHERE cv.case_id = c.case_id " + _
-		    "  AND FIND_IN_SET(?, cv.video_purpose) > 0 " + _
-		    ") " + _
+		    "WHERE FIND_IN_SET(?, c.case_groups) > 0 " + _
 		    "ORDER BY c.serial_number"
 		  Else
 		    sql = _
 		    "SELECT c.case_id, c.serial_number " + _
 		    "FROM cases c " + _
-		    "WHERE EXISTS ( " + _
-		    "  SELECT 1 FROM case_videos cv " + _
-		    "  WHERE cv.case_id = c.case_id " + _
-		    ") " + _
 		    "ORDER BY c.serial_number"
 		  End If
 
@@ -1342,7 +1334,7 @@ End
 
 		    If userGroup <> "" Then
 		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.Bind(0, userGroup)
+		      ps.Bind(0, userGroup.Trim)
 		    End If
 		    
 		    Var rs As RowSet = ps.SelectSQL
