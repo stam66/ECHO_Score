@@ -149,7 +149,6 @@ Protected Module EmailHelper
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
-		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
 
 		    ' Send email
 		    socket.Messages.Add(mail)
@@ -241,7 +240,6 @@ Protected Module EmailHelper
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
-		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
 
 		    ' Send email
 		    System.DebugLog("Adding message and sending...")
@@ -359,7 +357,6 @@ Protected Module EmailHelper
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
-		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
 
 		    ' Send email
 		    socket.Messages.Add(mail)
@@ -477,7 +474,6 @@ Protected Module EmailHelper
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
-		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
 
 		    ' Send email
 		    socket.Messages.Add(mail)
