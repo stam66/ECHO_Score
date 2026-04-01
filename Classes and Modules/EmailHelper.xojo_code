@@ -144,16 +144,12 @@ Protected Module EmailHelper
 		    mail.BodyPlainText = textBody
 		    
 		    ' Configure SMTP socket
-		    ' Note: SMTPSecureSocket always uses TLS. If use_tls=false is required,
-		    ' replace with SMTPSocket (plain) and update this block accordingly.
-		    If Not useTLS Then
-		      System.DebugLog("Warning: use_tls=false is set but SMTPSecureSocket always uses TLS. Update socket class if plain SMTP is needed.")
-		    End If
 		    Var socket As New SMTPSecureSocket
 		    socket.Address = smtpServer
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
+		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
 
 		    ' Send email
 		    socket.Messages.Add(mail)
@@ -245,7 +241,8 @@ Protected Module EmailHelper
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
-		    
+		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
+
 		    ' Send email
 		    System.DebugLog("Adding message and sending...")
 		    socket.Messages.Add(mail)
@@ -365,6 +362,7 @@ Protected Module EmailHelper
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
+		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
 
 		    ' Send email
 		    socket.Messages.Add(mail)
@@ -482,6 +480,7 @@ Protected Module EmailHelper
 		    socket.Port = smtpPort
 		    socket.Username = smtpUsername
 		    socket.Password = smtpPassword
+		    socket.CertificateVerification = SSLSocket.CertificateVerificationEnum.Disabled
 
 		    ' Send email
 		    socket.Messages.Add(mail)

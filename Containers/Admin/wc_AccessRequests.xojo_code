@@ -331,8 +331,12 @@ End
 		    var otp as String = tokenResult.Value("otp").StringValue
 		    
 		    // Send new account email with OTP so user can set their own password
-		    Call EmailHelper.SendNewAccountEmail(email, name, finalUsername, otp)
-		    
+		    If Not EmailHelper.SendNewAccountEmail(email, name, finalUsername, otp) Then
+		      System.DebugLog("WARNING: Failed to send OTP email to " + email + " - user created but email not sent")
+		      // Return a prefixed warning so the caller can show it without blocking approval
+		      return "WARNING:OTP email could not be sent to " + email + ". Check Admin > Email Config. The account was created (username: " + finalUsername + ")."
+		    End If
+
 		    return "" // empty string = success
 		    
 		  Catch e as DatabaseException
@@ -541,6 +545,9 @@ End
 		      var createError as String = CreateUserFromRequest(requestName, requestEmail)
 		      if createError = "" then
 		        System.DebugLog("User created successfully for: " + requestEmail)
+		      elseif createError.Left(8) = "WARNING:" then
+		        // User was created but email failed — allow approval to proceed, show warning after
+		        MessageBox(createError.Middle(8))
 		      else
 		        MessageBox("Failed to create user: " + createError)
 		        return
