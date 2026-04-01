@@ -20,8 +20,8 @@ Begin WebPage wp_MainShell
    LockRight       =   False
    LockTop         =   True
    LockVertical    =   False
-   MinimumHeight   =   400
-   MinimumWidth    =   600
+   MinimumHeight   =   750
+   MinimumWidth    =   1280
    PanelIndex      =   0
    ScaleFactor     =   0.0
    TabIndex        =   0
@@ -32,7 +32,6 @@ Begin WebPage wp_MainShell
    _ImplicitInstance=   False
    _mDesignHeight  =   0
    _mDesignWidth   =   0
-   _mName          =   ""
    _mPanelIndex    =   -1
    Begin WebRectangle Rectangle2
       BorderColor     =   &c000000FF
@@ -77,6 +76,7 @@ Begin WebPage wp_MainShell
          FontName        =   "Verdana"
          FontSize        =   28.0
          Height          =   41
+         HTMLElement     =   0
          Index           =   -2147483648
          Indicator       =   0
          Italic          =   False
@@ -113,6 +113,7 @@ Begin WebPage wp_MainShell
          FontName        =   ""
          FontSize        =   13.0
          Height          =   27
+         HTMLElement     =   0
          Index           =   -2147483648
          Indicator       =   ""
          Italic          =   False
@@ -149,6 +150,7 @@ Begin WebPage wp_MainShell
          FontName        =   ""
          FontSize        =   15.0
          Height          =   27
+         HTMLElement     =   0
          Index           =   -2147483648
          Indicator       =   ""
          Italic          =   False
@@ -346,6 +348,7 @@ Begin WebPage wp_MainShell
       FontName        =   ""
       FontSize        =   13.0
       Height          =   27
+      HTMLElement     =   0
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
@@ -381,6 +384,7 @@ Begin WebPage wp_MainShell
       FontName        =   ""
       FontSize        =   11.0
       Height          =   27
+      HTMLElement     =   0
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   True
@@ -458,7 +462,7 @@ End
 		Sub Shown()
 		  ' Allow the page to scroll vertically on small/zoomed screens
 		  ExecuteJavaScript("document.documentElement.style.overflowY='auto'; document.body.style.overflowY='auto';")
-
+		  
 		  ' Wait for page to be fully rendered before initial navigation
 		  If Self.ContentArea = Nil Then
 		    ' First time shown - navigate to login
