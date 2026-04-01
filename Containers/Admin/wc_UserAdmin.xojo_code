@@ -1250,7 +1250,7 @@ End
 		    Return
 		  End If
 		  
-		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, ?)"
+		  Var sql As String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, NULLIF(?, ''))"
 		  
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
