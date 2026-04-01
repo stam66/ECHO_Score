@@ -1313,33 +1313,36 @@ End
 		  End Try
 		  
 		  ' Build SQL using EXISTS instead of DISTINCT
-		  Var sql As String = _
-		  "SELECT c.case_id, c.serial_number " + _
-		  "FROM cases c " + _
-		  "WHERE EXISTS ( " + _
-		  "  SELECT 1 FROM case_videos cv " + _
-		  "  WHERE cv.case_id = c.case_id AND ( " + _
-		  "    cv.video_purpose IS NULL OR cv.video_purpose = '' "
-		  
+		  ' If user belongs to a group, only show cases explicitly assigned to that group.
+		  ' If user has no group, show all cases (admin / ungrouped access).
+		  Var sql As String
 		  If userGroup <> "" Then
-		    sql = sql + _
-		    "    OR FIND_IN_SET(?, cv.video_purpose) > 0 " + _
-		    "    OR cv.video_purpose LIKE ? "
+		    sql = _
+		    "SELECT c.case_id, c.serial_number " + _
+		    "FROM cases c " + _
+		    "WHERE EXISTS ( " + _
+		    "  SELECT 1 FROM case_videos cv " + _
+		    "  WHERE cv.case_id = c.case_id " + _
+		    "  AND FIND_IN_SET(?, cv.video_purpose) > 0 " + _
+		    ") " + _
+		    "ORDER BY c.serial_number"
+		  Else
+		    sql = _
+		    "SELECT c.case_id, c.serial_number " + _
+		    "FROM cases c " + _
+		    "WHERE EXISTS ( " + _
+		    "  SELECT 1 FROM case_videos cv " + _
+		    "  WHERE cv.case_id = c.case_id " + _
+		    ") " + _
+		    "ORDER BY c.serial_number"
 		  End If
-		  
-		  sql = sql + _
-		  "  ) " + _
-		  ") " + _
-		  "ORDER BY c.serial_number"
-		  
+
 		  Try
 		    Var ps As MySQLPreparedStatement = Session.DB.Prepare(sql)
-		    
+
 		    If userGroup <> "" Then
 		      ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.Bind(0, userGroup)  ' exact group match in CSV
-		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.Bind(1, "%" + userGroup + "%")  ' optional fuzzy match
+		      ps.Bind(0, userGroup)
 		    End If
 		    
 		    Var rs As RowSet = ps.SelectSQL

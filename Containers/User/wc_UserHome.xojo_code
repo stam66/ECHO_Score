@@ -408,11 +408,11 @@ End
 		    "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
 		    "ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
 		  Else
-		    ' Has group - show cases where case_groups contains user's group
+		    ' Has group - show only cases explicitly assigned to user's group
 		    sql = "SELECT c.case_id, c.serial_number, ur.is_completed, ur.response_id, ur.score, ur.completed_at " + _
 		    "FROM cases c " + _
 		    "LEFT JOIN user_responses ur ON c.case_id = ur.case_id AND ur.user_id = ? " + _
-		    "WHERE c.case_groups LIKE ? OR c.case_groups IS NULL OR c.case_groups = '' " + _
+		    "WHERE FIND_IN_SET(?, c.case_groups) > 0 " + _
 		    "ORDER BY CAST(SUBSTRING(c.serial_number, 6) AS UNSIGNED)"
 		  End If
 		  
@@ -423,7 +423,7 @@ End
 		    
 		    If userGroup.Trim <> "" Then
 		      ps.BindType(1, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		      ps.Bind(1, "%" + userGroup + "%")
+		      ps.Bind(1, userGroup.Trim)
 		    End If
 		    
 		    Var rs As RowSet = ps.SelectSQL
