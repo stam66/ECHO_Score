@@ -85,10 +85,10 @@ Protected Module EmailHelper
 		    Var rs As RowSet = db.SelectSQL(configSQL)
 		    
 		    If rs = Nil Or rs.AfterLastRow Then
-		      System.DebugLog("Email configuration not found")
+		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
 		      Return False
 		    End If
-		    
+
 		    Var smtpServer As String = rs.Column("smtp_server").StringValue
 		    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
 		    Var smtpUsername As String = rs.Column("smtp_username").StringValue
@@ -96,7 +96,7 @@ Protected Module EmailHelper
 		    Var fromEmail As String = rs.Column("from_email").StringValue
 		    Var fromName As String = rs.Column("from_name").StringValue
 		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
-		    
+
 		    System.DebugLog("Sending access request notification to: " + toEmail)
 		    
 		    ' Create email message
@@ -164,15 +164,15 @@ Protected Module EmailHelper
 		    Wend
 
 		    If socket.Messages.Count = 0 Then
-		      System.DebugLog("Access request notification sent to: " + toEmail)
+		      LastError = ""
 		      Return True
 		    Else
-		      System.DebugLog("Failed to send notification to: " + toEmail)
+		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
 		      Return False
 		    End If
-		    
+
 		  Catch e As RuntimeException
-		    System.DebugLog("Error sending notification email: " + e.Message)
+		    LastError = "Email send error: " + e.Message
 		    Return False
 		  End Try
 		End Function
@@ -195,10 +195,10 @@ Protected Module EmailHelper
 		    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
 		    
 		    If rs = Nil Or rs.AfterLastRow Then
-		      System.DebugLog("Email configuration not found")
+		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
 		      Return False
 		    End If
-		    
+
 		    Var smtpServer As String = rs.Column("smtp_server").StringValue
 		    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
 		    Var smtpUsername As String = rs.Column("smtp_username").StringValue
@@ -206,7 +206,7 @@ Protected Module EmailHelper
 		    Var fromEmail As String = rs.Column("from_email").StringValue
 		    Var fromName As String = rs.Column("from_name").StringValue
 		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
-		    
+
 		    System.DebugLog("SMTP Config - Server: " + smtpServer + ", Port: " + Str(smtpPort) + ", Username: " + smtpUsername + ", TLS: " + If(useTLS, "Yes", "No"))
 		    
 		    ' Create email message
@@ -257,18 +257,15 @@ Protected Module EmailHelper
 		    Wend
 		    
 		    If socket.Messages.Count = 0 Then
-		      System.DebugLog("Password reset email sent successfully to: " + toEmail)
+		      LastError = ""
 		      Return True
 		    Else
-		      System.DebugLog("Failed to send password reset email to: " + toEmail + " - Message still in queue")
+		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
 		      Return False
 		    End If
-		    
+
 		  Catch e As RuntimeException
-		    System.DebugLog("Error sending email: " + e.Message)
-		    If e.Stack.Count > 0 Then
-		      System.DebugLog("Stack trace: " + String.FromArray(e.Stack, EndOfLine))
-		    End If
+		    LastError = "Email send error: " + e.Message
 		    Return False
 		  End Try
 		End Function
@@ -290,10 +287,10 @@ Protected Module EmailHelper
 		    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
 		    
 		    If rs = Nil Or rs.AfterLastRow Then
-		      System.DebugLog("Email configuration not found")
+		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
 		      Return False
 		    End If
-		    
+
 		    Var smtpServer As String = rs.Column("smtp_server").StringValue
 		    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
 		    Var smtpUsername As String = rs.Column("smtp_username").StringValue
@@ -301,7 +298,7 @@ Protected Module EmailHelper
 		    Var fromEmail As String = rs.Column("from_email").StringValue
 		    Var fromName As String = rs.Column("from_name").StringValue
 		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
-		    
+
 		    System.DebugLog("Sending welcome email to: " + toEmail)
 		    
 		    ' Create email message
@@ -377,15 +374,15 @@ Protected Module EmailHelper
 		    Wend
 
 		    If socket.Messages.Count = 0 Then
-		      System.DebugLog("Welcome email sent to: " + toEmail)
+		      LastError = ""
 		      Return True
 		    Else
-		      System.DebugLog("Failed to send welcome email to: " + toEmail)
+		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
 		      Return False
 		    End If
-		    
+
 		  Catch e As RuntimeException
-		    System.DebugLog("Error sending welcome email: " + e.Message)
+		    LastError = "Email send error: " + e.Message
 		    Return False
 		  End Try
 		End Function
@@ -408,7 +405,7 @@ Protected Module EmailHelper
 		    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
 
 		    If rs = Nil Or rs.AfterLastRow Then
-		      System.DebugLog("Email configuration not found")
+		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
 		      Return False
 		    End If
 
@@ -495,19 +492,23 @@ Protected Module EmailHelper
 		    Wend
 
 		    If socket.Messages.Count = 0 Then
-		      System.DebugLog("New account email sent to: " + toEmail)
+		      LastError = ""
 		      Return True
 		    Else
-		      System.DebugLog("Failed to send new account email to: " + toEmail)
+		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
 		      Return False
 		    End If
 
 		  Catch e As RuntimeException
-		    System.DebugLog("Error sending new account email: " + e.Message)
+		    LastError = "Email send error: " + e.Message
 		    Return False
 		  End Try
 		End Function
 	#tag EndMethod
+
+	#tag Property, Flags = &h0
+		LastError As String
+	#tag EndProperty
 
 	#tag ViewBehavior
 		#tag ViewProperty

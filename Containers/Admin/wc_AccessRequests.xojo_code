@@ -332,9 +332,9 @@ End
 		    
 		    // Send new account email with OTP so user can set their own password
 		    If Not EmailHelper.SendNewAccountEmail(email, name, finalUsername, otp) Then
-		      System.DebugLog("WARNING: Failed to send OTP email to " + email + " - user created but email not sent")
+		      Var errDetail As String = If(EmailHelper.LastError <> "", " (" + EmailHelper.LastError + ")", "")
 		      // Return a prefixed warning so the caller can show it without blocking approval
-		      return "WARNING:OTP email could not be sent to " + email + ". Check Admin > Email Config. The account was created (username: " + finalUsername + ")."
+		      return "WARNING:OTP email could not be sent to " + email + errDetail + ". The account was created (username: " + finalUsername + "). Check Admin > Email Config."
 		    End If
 
 		    return "" // empty string = success

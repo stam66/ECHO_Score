@@ -724,7 +724,8 @@ End
 		  If EmailHelper.SendPasswordResetEmail(Session.CurrentUserEmail, Session.CurrentUserName, "123456", "https://test.com") Then
 		    ShowMessage("Test email sent successfully! Check your inbox.", True)
 		  Else
-		    ShowMessage("Failed to send test email. Please check your configuration.", False)
+		    Var errDetail As String = If(EmailHelper.LastError <> "", EndOfLine + EmailHelper.LastError, "")
+		    ShowMessage("Failed to send test email." + errDetail, False)
 		  End If
 		End Sub
 	#tag EndEvent

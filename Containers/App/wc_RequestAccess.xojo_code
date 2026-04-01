@@ -598,42 +598,44 @@ End
 		    System.DebugLog("SendAdminNotifications: Starting")
 		    
 		    If db = Nil Or Not db.IsConnected Then
-		      System.DebugLog("ERROR: Database not available for notifications")
+		      MessageBox("Your request was submitted, but admin notification emails could not be sent (no database connection). Please contact the admin team directly.")
 		      Return
 		    End If
-		    
+
 		    ' Get all active admins
 		    Var adminSQL As String = "SELECT email, full_name FROM users WHERE is_admin = 1 AND is_active = 1"
 		    Var adminRS As RowSet = db.SelectSQL(adminSQL)
-		    
+
 		    If adminRS = Nil Then
-		      System.DebugLog("ERROR: Failed to get admin list")
+		      MessageBox("Your request was submitted, but the admin list could not be retrieved. Please contact the admin team directly.")
 		      Return
 		    End If
-		    
+
 		    Var adminCount As Integer = 0
 		    Var successCount As Integer = 0
-		    
+
 		    While Not adminRS.AfterLastRow
 		      Var adminEmail As String = adminRS.Column("email").StringValue
 		      Var adminName As String = adminRS.Column("full_name").StringValue
-		      
-		      ' Send notification
+
 		      If EmailHelper.SendAccessRequestNotification(adminEmail, adminName, applicantName, applicantEmail, db) Then
 		        successCount = successCount + 1
 		      End If
-		      
+
 		      adminCount = adminCount + 1
 		      adminRS.MoveToNextRow
 		    Wend
-		    
-		    System.DebugLog("SendAdminNotifications: Sent " + Str(successCount) + " of " + Str(adminCount) + " notification(s)")
-		    
+
+		    If successCount = 0 And adminCount > 0 Then
+		      Var errDetail As String = If(EmailHelper.LastError <> "", EndOfLine + EndOfLine + "Detail: " + EmailHelper.LastError, "")
+		      MessageBox("Your request was submitted, but notification emails to the admin team could not be sent." + errDetail + EndOfLine + EndOfLine + "Please contact the admin team directly.")
+		    End If
+
 		  Catch e As DatabaseException
-		    System.DebugLog("DATABASE ERROR in SendAdminNotifications: " + e.Message)
-		    
+		    MessageBox("Your request was submitted, but there was a database error sending admin notifications: " + e.Message)
+
 		  Catch e As RuntimeException
-		    System.DebugLog("RUNTIME ERROR in SendAdminNotifications: " + e.Message)
+		    MessageBox("Your request was submitted, but there was an error sending admin notifications: " + e.Message)
 		  End Try
 		End Sub
 	#tag EndMethod
