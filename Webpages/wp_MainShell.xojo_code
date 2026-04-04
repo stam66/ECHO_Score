@@ -267,7 +267,7 @@ Begin WebPage wp_MainShell
          PanelIndex      =   0
          Parent          =   "Rectangle1"
          Scope           =   0
-         ScrollDirection =   3
+         ScrollDirection =   1
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
@@ -460,6 +460,9 @@ End
 
 	#tag Event
 		Sub Shown()
+		  ' Allow the page to scroll vertically on small/zoomed screens
+		  ExecuteJavaScript("document.documentElement.style.overflowY='auto'; document.body.style.overflowY='auto';")
+		  
 		  ' Wait for page to be fully rendered before initial navigation
 		  If Self.ContentArea = Nil Then
 		    ' First time shown - navigate to login
