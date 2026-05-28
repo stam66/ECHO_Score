@@ -257,40 +257,40 @@ End
 		  // Duplicates: "SKapetanakis1", "SKapetanakis2", etc.
 		  // An OTP will be generated and emailed so the user can set their own password
 		  // Returns empty string on success, or an error message on failure
-		  
+
 		  // Parse the name to generate username
 		  var username as String = GenerateUsername(name)
 		  var placeholderPassword as String = EmailHelper.GenerateSecureToken // random, never seen by user
-		  
+
 		  // Make sure username is unique
 		  var checkSQL as String = "SELECT user_id FROM users WHERE username = ?"
 		  var counter as Integer = 1
 		  var finalUsername as String = username
-		  
+
 		  Try
 		    var checkPS as MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
 		    checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-		    
+
 		    // Keep trying until we find a unique username
 		    while true
 		      checkPS.Bind(0, finalUsername)
 		      var checkRS as RowSet = checkPS.SelectSQL
-		      
+
 		      if checkRS = nil or checkRS.AfterLastRow then
 		        exit // Username is unique
 		      end if
-		      
+
 		      finalUsername = username + Str(counter)
 		      counter = counter + 1
 		    wend
-		    
+
 		  Catch e as DatabaseException
 		    return "Error checking username uniqueness: " + e.Message
 		  End Try
-		  
+
 		  // Insert the new user
-		  var sql as String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, NULL)"
-		  
+		  var sql as String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, ?)"
+
 		  Try
 		    var ps as MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
@@ -299,46 +299,39 @@ End
 		    ps.BindType(3, MySQLPreparedStatement.MYSQL_TYPE_STRING)
 		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
-		    
+		    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_STRING)
+
 		    ps.Bind(0, name)
 		    ps.Bind(1, email)
 		    ps.Bind(2, finalUsername)
 		    ps.Bind(3, placeholderPassword)
 		    ps.Bind(4, False) // Not admin by default
 		    ps.Bind(5, True)  // Active by default
-		    // user_group left NULL — admin can assign group later via wc_UserAdmin
-		    
+		    ps.Bind(6, "")    // No group by default
+
 		    ps.ExecuteSQL
-		    
-		    // Get the new user's ID — use SELECT LAST_INSERT_ID() for reliability
-		    // with prepared statements (LastInsertRowID is unreliable after ps.ExecuteSQL in Xojo)
-		    var newUserID as Integer = 0
-		    Var idRS As RowSet = Session.DB.SelectSQL("SELECT LAST_INSERT_ID() AS last_id")
-		    If idRS <> Nil And Not idRS.AfterLastRow Then
-		      newUserID = idRS.Column("last_id").IntegerValue
-		    End If
-		    If newUserID = 0 Then
-		      return "Failed to retrieve new user ID after insert"
-		    End If
-		    
+
+		    // Get the new user's ID via MySQL function (MySQLCommunityServer has no LastInsertRowID)
+		    var lastIDRS as RowSet = Session.DB.SelectSQL("SELECT LAST_INSERT_ID() AS last_id")
+		    if lastIDRS = nil or lastIDRS.AfterLastRow then
+		      return "Error retrieving new user ID after insert"
+		    end if
+		    var newUserID as Integer = lastIDRS.Column("last_id").IntegerValue
+
 		    // Generate OTP for account setup
 		    var tokenResult as Dictionary = PasswordResetHelper.CreatePasswordResetToken(newUserID, "")
-		    
+
 		    if not tokenResult.Value("success") then
 		      return "Error generating account setup token: " + tokenResult.Value("error").StringValue
 		    end if
-		    
+
 		    var otp as String = tokenResult.Value("otp").StringValue
-		    
+
 		    // Send new account email with OTP so user can set their own password
-		    If Not EmailHelper.SendNewAccountEmail(email, name, finalUsername, otp) Then
-		      Var errDetail As String = If(EmailHelper.LastError <> "", " (" + EmailHelper.LastError + ")", "")
-		      // Return a prefixed warning so the caller can show it without blocking approval
-		      return "WARNING:OTP email could not be sent to " + email + errDetail + ". The account was created (username: " + finalUsername + "). Check Admin > Email Config."
-		    End If
+		    Call EmailHelper.SendNewAccountEmail(email, name, finalUsername, otp)
 
 		    return "" // empty string = success
-		    
+
 		  Catch e as DatabaseException
 		    return e.Message
 		  End Try
@@ -545,9 +538,6 @@ End
 		      var createError as String = CreateUserFromRequest(requestName, requestEmail)
 		      if createError = "" then
 		        System.DebugLog("User created successfully for: " + requestEmail)
-		      elseif createError.Left(8) = "WARNING:" then
-		        // User was created but email failed — allow approval to proceed, show warning after
-		        MessageBox(createError.Middle(8))
 		      else
 		        MessageBox("Failed to create user: " + createError)
 		        return
