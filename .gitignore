@@ -11,3 +11,6 @@ Debug*/Debug*\ Libs
 *.obsolete*
 .DS_Store
 .claude/
+
+# Out-of-repo secrets (real values live on the server, never committed)
+secrets.env

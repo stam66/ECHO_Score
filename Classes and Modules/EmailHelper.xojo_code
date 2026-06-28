@@ -7,12 +7,12 @@ Protected Module EmailHelper
 		  '   Return Type: String
 		  '   Purpose: Generates a secure 6-digit OTP
 		  ' *******************************************************************************
-		  
+
 		  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(4)
-		  
+
 		  Var number As Integer = Abs(randomData.UInt8Value(0) * 16777216 + randomData.UInt8Value(1) * 65536 + randomData.UInt8Value(2) * 256 + randomData.UInt8Value(3))
 		  Var otp As String = Format(number Mod 1000000, "000000")
-		  
+
 		  Return otp
 		End Function
 	#tag EndMethod
@@ -26,7 +26,7 @@ Protected Module EmailHelper
 		  '   Scope: Private
 		  '   Purpose: Creates styled HTML email content
 		  ' *******************************************************************************
-		  
+
 		  Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
 		  html = html + "body{font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;}"
 		  html = html + ".container{background:#f9f9f9;border-radius:10px;padding:30px;}"
@@ -46,7 +46,7 @@ Protected Module EmailHelper
 		  html = html + "<p>Best regards,<br>The ECHOScore Team</p></div>"
 		  html = html + "<div class='footer'><p>This is an automated message. Please do not reply to this email.</p></div>"
 		  html = html + "</div></body></html>"
-		  
+
 		  Return html
 		End Function
 	#tag EndMethod
@@ -59,12 +59,12 @@ Protected Module EmailHelper
 		  '   Purpose: Generates a secure 64-character token
 		  ' *******************************************************************************
 		  Var randomData As MemoryBlock = Crypto.GenerateRandomBytes(32)
-		  
+
 		  Var token As String = ""
 		  For i As Integer = 0 To randomData.Size - 1
 		    token = token + randomData.UInt8Value(i).ToHex(2)
 		  Next
-		  
+
 		  Return token
 		End Function
 	#tag EndMethod
@@ -77,34 +77,13 @@ Protected Module EmailHelper
 		  '   Return Type: Boolean
 		  '   Purpose: Notifies admins when a new access request is submitted
 		  ' *******************************************************************************
-		  
-		  ' Load email configuration from database
-		  Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
-		  
+
+		  #Pragma Unused db
+		  Var subject As String = "ECHOScore - New Access Request"
+
 		  Try
-		    Var rs As RowSet = db.SelectSQL(configSQL)
-		    
-		    If rs = Nil Or rs.AfterLastRow Then
-		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
-		      Return False
-		    End If
-
-		    Var smtpServer As String = rs.Column("smtp_server").StringValue
-		    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
-		    Var smtpUsername As String = rs.Column("smtp_username").StringValue
-		    Var smtpPassword As String = rs.Column("smtp_password").StringValue
-		    Var fromEmail As String = rs.Column("from_email").StringValue
-		    Var fromName As String = rs.Column("from_name").StringValue
-		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
-
 		    System.DebugLog("Sending access request notification to: " + toEmail)
-		    
-		    ' Create email message
-		    Var mail As New EmailMessage
-		    mail.FromAddress = If(fromName <> "", fromName + " <" + fromEmail + ">", fromEmail)
-		    mail.Subject = "ECHOScore - New Access Request"
-		    mail.AddRecipient(toEmail)
-		    
+
 		    ' Generate HTML body
 		    Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
 		    html = html + "body{font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;}"
@@ -129,9 +108,7 @@ Protected Module EmailHelper
 		    html = html + "<p>Best regards,<br>The ECHOScore System</p></div>"
 		    html = html + "<div class='footer'><p>This is an automated notification. Please do not reply to this email.</p></div>"
 		    html = html + "</div></body></html>"
-		    
-		    mail.BodyHTML = html
-		    
+
 		    ' Generate plain text body
 		    Var textBody As String = "Hello " + toName + "," + EndOfLine + EndOfLine
 		    textBody = textBody + "A new user has requested access to ECHOScore:" + EndOfLine + EndOfLine
@@ -141,34 +118,8 @@ Protected Module EmailHelper
 		    textBody = textBody + "Please review this request in the admin panel." + EndOfLine + EndOfLine
 		    textBody = textBody + "Best regards," + EndOfLine
 		    textBody = textBody + "ECHOScore System"
-		    mail.BodyPlainText = textBody
-		    
-		    ' Configure SMTP socket
-		    Var socket As New SMTPSecureSocket
-		    socket.Address = smtpServer
-		    socket.Port = smtpPort
-		    socket.Username = smtpUsername
-		    socket.Password = smtpPassword
 
-		    ' Send email
-		    socket.Messages.Add(mail)
-		    socket.SendMail
-
-		    ' Wait for send completion (max 30 seconds: 300 × 100ms)
-		    Var timeout As Integer = 300
-		    Var elapsed As Integer = 0
-		    While socket.Messages.Count > 0 And elapsed < timeout
-		      App.DoEvents(100)
-		      elapsed = elapsed + 1
-		    Wend
-
-		    If socket.Messages.Count = 0 Then
-		      LastError = ""
-		      Return True
-		    Else
-		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
-		      Return False
-		    End If
+		    Return SendViaMailJet(toEmail, subject, html, textBody)
 
 		  Catch e As RuntimeException
 		    LastError = "Email send error: " + e.Message
@@ -184,40 +135,15 @@ Protected Module EmailHelper
 		  '   Parameters: toEmail As String, toName As String, otp As String, resetLink As String
 		  '   Return Type: Boolean
 		  ' *******************************************************************************
-		  
+
 		  #Pragma Unused resetLink
-		  
-		  ' Load email configuration from database
-		  Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
-		  
+
+		  Var subject As String = "ECHOScore - Password Reset Request"
+
 		  Try
-		    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
-		    
-		    If rs = Nil Or rs.AfterLastRow Then
-		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
-		      Return False
-		    End If
-
-		    Var smtpServer As String = rs.Column("smtp_server").StringValue
-		    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
-		    Var smtpUsername As String = rs.Column("smtp_username").StringValue
-		    Var smtpPassword As String = rs.Column("smtp_password").StringValue
-		    Var fromEmail As String = rs.Column("from_email").StringValue
-		    Var fromName As String = rs.Column("from_name").StringValue
-		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
-
-		    System.DebugLog("SMTP Config - Server: " + smtpServer + ", Port: " + Str(smtpPort) + ", Username: " + smtpUsername + ", TLS: " + If(useTLS, "Yes", "No"))
-		    
-		    ' Create email message
-		    Var mail As New EmailMessage
-		    mail.FromAddress = If(fromName <> "", fromName + " <" + fromEmail + ">", fromEmail)
-		    mail.Subject = "ECHOScore - Password Reset Request"
-		    mail.AddRecipient(toEmail)
-		    
 		    ' Generate HTML body
 		    Var htmlBody As String = GeneratePasswordResetEmailHTML(toName, otp)
-		    mail.BodyHTML = htmlBody
-		    
+
 		    ' Generate plain text body
 		    Var textBody As String = "Hello " + toName + "," + EndOfLine + EndOfLine
 		    textBody = textBody + "You have requested to reset your ECHOScore password." + EndOfLine + EndOfLine
@@ -226,41 +152,8 @@ Protected Module EmailHelper
 		    textBody = textBody + "If you didn't request this, please ignore this email." + EndOfLine + EndOfLine
 		    textBody = textBody + "Best regards," + EndOfLine
 		    textBody = textBody + "ECHOScore Team"
-		    mail.BodyPlainText = textBody
-		    
-		    ' Configure SMTP socket
-		    ' Note: SMTPSecureSocket always uses TLS. If use_tls=false is required,
-		    ' replace with SMTPSocket (plain) and update this block accordingly.
-		    If Not useTLS Then
-		      System.DebugLog("Warning: use_tls=false is set but SMTPSecureSocket always uses TLS. Update socket class if plain SMTP is needed.")
-		    End If
-		    System.DebugLog("Creating SMTP socket...")
-		    Var socket As New SMTPSecureSocket
-		    socket.Address = smtpServer
-		    socket.Port = smtpPort
-		    socket.Username = smtpUsername
-		    socket.Password = smtpPassword
 
-		    ' Send email
-		    System.DebugLog("Adding message and sending...")
-		    socket.Messages.Add(mail)
-		    socket.SendMail
-		    
-		    ' Wait for send completion (max 30 seconds: 300 × 100ms)
-		    Var timeout As Integer = 300
-		    Var elapsed As Integer = 0
-		    While socket.Messages.Count > 0 And elapsed < timeout
-		      App.DoEvents(100)
-		      elapsed = elapsed + 1
-		    Wend
-		    
-		    If socket.Messages.Count = 0 Then
-		      LastError = ""
-		      Return True
-		    Else
-		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
-		      Return False
-		    End If
+		    Return SendViaMailJet(toEmail, subject, htmlBody, textBody)
 
 		  Catch e As RuntimeException
 		    LastError = "Email send error: " + e.Message
@@ -277,34 +170,12 @@ Protected Module EmailHelper
 		  '   Return Type: Boolean
 		  '   Purpose: Sends welcome email with login credentials to new users
 		  ' *******************************************************************************
-		  
-		  ' Load email configuration from database
-		  Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
-		  
+
+		  Var subject As String = "Welcome to ECHOScore - Your Account is Ready"
+
 		  Try
-		    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
-		    
-		    If rs = Nil Or rs.AfterLastRow Then
-		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
-		      Return False
-		    End If
-
-		    Var smtpServer As String = rs.Column("smtp_server").StringValue
-		    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
-		    Var smtpUsername As String = rs.Column("smtp_username").StringValue
-		    Var smtpPassword As String = rs.Column("smtp_password").StringValue
-		    Var fromEmail As String = rs.Column("from_email").StringValue
-		    Var fromName As String = rs.Column("from_name").StringValue
-		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
-
 		    System.DebugLog("Sending welcome email to: " + toEmail)
-		    
-		    ' Create email message
-		    Var mail As New EmailMessage
-		    mail.FromAddress = If(fromName <> "", fromName + " <" + fromEmail + ">", fromEmail)
-		    mail.Subject = "Welcome to ECHOScore - Your Account is Ready"
-		    mail.AddRecipient(toEmail)
-		    
+
 		    ' Generate HTML body
 		    Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
 		    html = html + "body{font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;}"
@@ -332,9 +203,7 @@ Protected Module EmailHelper
 		    html = html + "<p>Best regards,<br>The ECHOScore Team</p></div>"
 		    html = html + "<div class='footer'><p>This is an automated message. Please do not reply to this email.</p></div>"
 		    html = html + "</div></body></html>"
-		    
-		    mail.BodyHTML = html
-		    
+
 		    ' Generate plain text body
 		    Var textBody As String = "Welcome to ECHOScore!" + EndOfLine + EndOfLine
 		    textBody = textBody + "Hello " + toName + "," + EndOfLine + EndOfLine
@@ -344,39 +213,8 @@ Protected Module EmailHelper
 		    textBody = textBody + "IMPORTANT: This is a temporary password. Please change it after your first login." + EndOfLine + EndOfLine
 		    textBody = textBody + "Best regards," + EndOfLine
 		    textBody = textBody + "ECHOScore Team"
-		    mail.BodyPlainText = textBody
-		    
-		    ' Configure SMTP socket
-		    ' Note: SMTPSecureSocket always uses TLS. If use_tls=false is required,
-		    ' replace with SMTPSocket (plain) and update this block accordingly.
-		    If Not useTLS Then
-		      System.DebugLog("Warning: use_tls=false is set but SMTPSecureSocket always uses TLS. Update socket class if plain SMTP is needed.")
-		    End If
-		    Var socket As New SMTPSecureSocket
-		    socket.Address = smtpServer
-		    socket.Port = smtpPort
-		    socket.Username = smtpUsername
-		    socket.Password = smtpPassword
 
-		    ' Send email
-		    socket.Messages.Add(mail)
-		    socket.SendMail
-
-		    ' Wait for send completion (max 30 seconds: 300 × 100ms)
-		    Var timeout As Integer = 300
-		    Var elapsed As Integer = 0
-		    While socket.Messages.Count > 0 And elapsed < timeout
-		      App.DoEvents(100)
-		      elapsed = elapsed + 1
-		    Wend
-
-		    If socket.Messages.Count = 0 Then
-		      LastError = ""
-		      Return True
-		    Else
-		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
-		      Return False
-		    End If
+		    Return SendViaMailJet(toEmail, subject, html, textBody)
 
 		  Catch e As RuntimeException
 		    LastError = "Email send error: " + e.Message
@@ -384,7 +222,6 @@ Protected Module EmailHelper
 		  End Try
 		End Function
 	#tag EndMethod
-
 
 	#tag Method, Flags = &h0
 		Function SendNewAccountEmail(toEmail As String, toName As String, username As String, otp As String) As Boolean
@@ -395,32 +232,10 @@ Protected Module EmailHelper
 		  '   Purpose: Sends welcome email with OTP so new user can set their own password
 		  ' *******************************************************************************
 
-		  ' Load email configuration from database
-		  Var configSQL As String = "SELECT * FROM email_config LIMIT 1"
+		  Var subject As String = "Welcome to ECHOScore - Set Your Password"
 
 		  Try
-		    Var rs As RowSet = Session.DB.SelectSQL(configSQL)
-
-		    If rs = Nil Or rs.AfterLastRow Then
-		      LastError = "Email configuration not found. Please configure SMTP settings in Admin > Email Config."
-		      Return False
-		    End If
-
-		    Var smtpServer As String = rs.Column("smtp_server").StringValue
-		    Var smtpPort As Integer = rs.Column("smtp_port").IntegerValue
-		    Var smtpUsername As String = rs.Column("smtp_username").StringValue
-		    Var smtpPassword As String = rs.Column("smtp_password").StringValue
-		    Var fromEmail As String = rs.Column("from_email").StringValue
-		    Var fromName As String = rs.Column("from_name").StringValue
-		    Var useTLS As Boolean = rs.Column("use_tls").BooleanValue
-
 		    System.DebugLog("Sending new account email to: " + toEmail)
-
-		    ' Create email message
-		    Var mail As New EmailMessage
-		    mail.FromAddress = If(fromName <> "", fromName + " <" + fromEmail + ">", fromEmail)
-		    mail.Subject = "Welcome to ECHOScore - Set Your Password"
-		    mail.AddRecipient(toEmail)
 
 		    ' Generate HTML body
 		    Var html As String = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>"
@@ -451,8 +266,6 @@ Protected Module EmailHelper
 		    html = html + "<div class='footer'><p>This is an automated message. Please do not reply to this email.</p></div>"
 		    html = html + "</div></body></html>"
 
-		    mail.BodyHTML = html
-
 		    ' Generate plain text body
 		    Var textBody As String = "Welcome to ECHOScore!" + EndOfLine + EndOfLine
 		    textBody = textBody + "Hello " + toName + "," + EndOfLine + EndOfLine
@@ -463,37 +276,8 @@ Protected Module EmailHelper
 		    textBody = textBody + "This OTP will expire in 30 minutes." + EndOfLine + EndOfLine
 		    textBody = textBody + "Best regards," + EndOfLine
 		    textBody = textBody + "ECHOScore Team"
-		    mail.BodyPlainText = textBody
 
-		    ' Configure SMTP socket
-		    If Not useTLS Then
-		      System.DebugLog("Warning: use_tls=false is set but SMTPSecureSocket always uses TLS. Update socket class if plain SMTP is needed.")
-		    End If
-		    Var socket As New SMTPSecureSocket
-		    socket.Address = smtpServer
-		    socket.Port = smtpPort
-		    socket.Username = smtpUsername
-		    socket.Password = smtpPassword
-
-		    ' Send email
-		    socket.Messages.Add(mail)
-		    socket.SendMail
-
-		    ' Wait for send completion (max 30 seconds: 300 × 100ms)
-		    Var timeout As Integer = 300
-		    Var elapsed As Integer = 0
-		    While socket.Messages.Count > 0 And elapsed < timeout
-		      App.DoEvents(100)
-		      elapsed = elapsed + 1
-		    Wend
-
-		    If socket.Messages.Count = 0 Then
-		      LastError = ""
-		      Return True
-		    Else
-		      LastError = "SMTP send timed out for " + toEmail + ". Check server address, port, and credentials in Admin > Email Config."
-		      Return False
-		    End If
+		    Return SendViaMailJet(toEmail, subject, html, textBody)
 
 		  Catch e As RuntimeException
 		    LastError = "Email send error: " + e.Message
@@ -502,9 +286,77 @@ Protected Module EmailHelper
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function SendViaMailJet(toEmail As String, subject As String, htmlBody As String, textBody As String) As Boolean
+		  // Sends one email through the MailJet v3.1 REST API.
+		  // API credentials come from the out-of-repo secrets file (see the Secrets
+		  // module and secrets.env.example). This replaced direct Gmail SMTP, which
+		  // was being rejected after the old echoscore.app@gmail.com account was flagged.
+		  Const kFromEmail As String = "noreply@echoscore.org.uk"
+		  Const kFromName As String = "ECHOScore"
+		  Const kReplyToEmail As String = "info@echoscore.org.uk"
+
+		  // Make sure credentials are loaded (idempotent; Session.Opening also loads them).
+		  If Secrets.MAILJET_API_KEY.IsEmpty Or Secrets.MAILJET_SECRET_KEY.IsEmpty Then
+		    Try
+		      Secrets.Load
+		    Catch err As RuntimeException
+		      System.DebugLog("Secrets.Load failed in SendViaMailJet: " + err.Message)
+		    End Try
+		  End If
+		  If Secrets.MAILJET_API_KEY.IsEmpty Or Secrets.MAILJET_SECRET_KEY.IsEmpty Then
+		    LastError = "MailJet credentials not configured. Add MAILJET_API_KEY and MAILJET_SECRET_KEY to the server's secrets.env (see secrets.env.example)."
+		    LastResponse = ""
+		    Return False
+		  End If
+
+		  // JSON-escape: backslash first, then double-quote, then newlines.
+		  Var jsSubject As String = subject.ReplaceAll("\", "\\").ReplaceAll("""", "\""")
+		  Var jsText As String = textBody.ReplaceAll("\", "\\").ReplaceAll("""", "\""").ReplaceAll(EndOfLine, "\n")
+		  Var jsHtml As String = htmlBody.ReplaceAll("\", "\\").ReplaceAll("""", "\""").ReplaceAll(EndOfLine, "\n")
+
+		  Var json As String = "{""Messages"":[{" _
+		  + """From"":{""Email"":""" + kFromEmail + """,""Name"":""" + kFromName + """}," _
+		  + """ReplyTo"":{""Email"":""" + kReplyToEmail + """}," _
+		  + """To"":[{""Email"":""" + toEmail + """}]," _
+		  + """Subject"":""" + jsSubject + """," _
+		  + """TextPart"":""" + jsText + """," _
+		  + """HTMLPart"":""" + jsHtml + """}]}"
+
+		  Try
+		    Var socket As New URLConnection
+		    Var creds As String = EncodeBase64(Secrets.MAILJET_API_KEY + ":" + Secrets.MAILJET_SECRET_KEY, 0)
+		    creds = creds.ReplaceAll(EndOfLine, "").ReplaceAll(Chr(13), "").ReplaceAll(Chr(10), "")
+		    socket.RequestHeader("Authorization") = "Basic " + creds
+		    socket.SetRequestContent(json, "application/json")
+
+		    Var response As String = socket.SendSync("POST", "https://api.mailjet.com/v3.1/send", 30)
+		    LastResponse = response
+
+		    If socket.HTTPStatusCode = 200 Then
+		      LastError = ""
+		      Return True
+		    Else
+		      LastError = "MailJet HTTP " + socket.HTTPStatusCode.ToString + ": " + response
+		      Return False
+		    End If
+		  Catch e As RuntimeException
+		    LastError = "Email send error: " + e.Message
+		    LastResponse = ""
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+
 	#tag Property, Flags = &h0
 		LastError As String
 	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		LastResponse As String
+	#tag EndProperty
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
@@ -546,6 +398,22 @@ Protected Module EmailHelper
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastError"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastResponse"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

@@ -182,7 +182,7 @@ Begin wc_base wc_AdminHome
    Begin WebButton btnEmailConfig
       AllowAutoDisable=   False
       Cancel          =   False
-      Caption         =   "Email configuration"
+      Caption         =   "Send test email"
       ControlID       =   ""
       CSSClasses      =   ""
       Default         =   False
@@ -314,12 +314,21 @@ End
 	#tag Event
 		Sub Pressed()
 		  ' *******************************************************************************
-		  ' btnEmailConfig.Pressed Event
+		  ' btnEmailConfig.Pressed Event — sends a MailJet test email to the signed-in
+		  ' admin so delivery can be verified. (The old SMTP config screen was removed
+		  ' when the app moved to MailJet; settings now live in secrets.env.)
 		  ' *******************************************************************************
-		  Var emailConfig As New wc_EmailConfig
-		  emailConfig.ContainerID = "EmailConfig"
-		  emailConfig.Position = wc_Base.PositionEnum.Center
-		  Session.Navigation.NavigateTo(emailConfig)
+		  If Session.CurrentUserEmail = "" Then
+		    MessageBox("No email address is set on your admin account, so a test can't be sent.")
+		    Return
+		  End If
+
+		  If EmailHelper.SendPasswordResetEmail(Session.CurrentUserEmail, Session.CurrentUserName, "123456", "") Then
+		    MessageBox("Test email sent to " + Session.CurrentUserEmail + " via MailJet. Check your inbox.")
+		  Else
+		    Var errDetail As String = If(EmailHelper.LastError <> "", EndOfLine + EndOfLine + EmailHelper.LastError, "")
+		    MessageBox("Failed to send test email." + errDetail)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -16,24 +16,25 @@ Inherits WebSession
 		  ' Session.opening event
 		  ' *******************************************************************************
 		  
-		  ' Initialize database connection
-		  ' *** SECURITY WARNING ***
-		  ' Credentials below are hardcoded. Before deploying to production:
-		  '   1. Change both passwords immediately (admin panel + MySQL).
-		  '   2. Ideally move credentials to a config file outside the project,
-		  '      e.g. ~/echoscore.conf  (key=value pairs), read with TextInputStream,
-		  '      then assign DB.UserName / DB.Password from those values.
+		  ' Load out-of-repo secrets (MailJet API keys) once per session. Wrapped so
+		  ' a missing secrets file never blocks startup — email will report a clear
+		  ' error until the file is in place. See secrets.env.example / the Secrets module.
+		  Try
+		    Secrets.Load
+		  Catch err As RuntimeException
+		    System.DebugLog("Secrets.Load failed: " + err.Message)
+		  End Try
+
+		  ' Initialize database connection. Credentials come from the out-of-repo
+		  ' secrets.env loaded above (DB_USERNAME / DB_PASSWORD on a regular server or
+		  ' local debug build; XOJO_DB_USERNAME / XOJO_DB_PASSWORD on Xojo Cloud).
+		  ' See secrets.env.example and the Secrets module.
 		  DB = New MySQLCommunityServer
 		  DB.Host = "127.0.0.1"
 		  DB.Port = 3306
 		  DB.DatabaseName = "echoscore"
-		  if DebugBuild then
-		    DB.UserName = "admin"
-		    DB.Password = "reject66"
-		  else
-		    DB.UserName = "dbadmin"
-		    DB.Password = "tDw3pbEcBEfec7fc"
-		  end If
+		  DB.UserName = Secrets.DB_USERNAME
+		  DB.Password = Secrets.DB_PASSWORD
 		  
 		  Try
 		    If Not DB.Connect Then

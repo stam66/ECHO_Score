@@ -414,11 +414,8 @@ COMMIT;
 
 
 -- Dump data of "email_config" -----------------------------
-BEGIN;
-
-INSERT INTO `email_config`(`config_id`,`smtp_server`,`smtp_port`,`smtp_username`,`smtp_password`,`from_email`,`from_name`,`use_tls`,`updated_at`) VALUES 
-( '1', 'smtp.gmail.com', '587', 'echoscore.app@gmail.com', 'kqfzidauezxfugda', 'echoscore.app@gmail.com', 'ECHO_score app', '1', '2025-10-14 10:11:32' );
-COMMIT;
+-- Intentionally empty. The app sends email via the MailJet API (see EmailHelper),
+-- not SMTP. MailJet credentials live in the out-of-repo secrets.env, never in the DB.
 -- ---------------------------------------------------------
 
 
