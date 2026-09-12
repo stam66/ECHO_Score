@@ -405,11 +405,9 @@ End
 
 	#tag Method, Flags = &h0
 		Function ValidatePassword(password As String) As Boolean
-		  System.DebugLog("Validating password: " + password)
-		  System.DebugLog("Password length: " + password.Length.ToString)
-		  
+		  ' NOTE: never log the password, its length, or its individual characters —
+		  ' System.DebugLog output is retained in the application log.
 		  If password.Length < 8 Then 
-		    System.DebugLog("Failed: Length < 8")
 		    Return False
 		  End If
 		  
@@ -417,26 +415,17 @@ End
 		  Var hasLower As Boolean = False
 		  Var hasNumber As Boolean = False
 		  
-		  For i As Integer = 0 To password.Length - 1  // Changed back to 0-based
-		    Var c As String = password.Middle(i, 1)
-		    Var charCode As Integer = Asc(c)
-		    System.DebugLog("Character " + i.ToString + ": '" + c + "' (code: " + charCode.ToString + ")")
+		  For i As Integer = 0 To password.Length - 1
+		    Var charCode As Integer = Asc(password.Middle(i, 1))
 		    
 		    If charCode >= 65 And charCode <= 90 Then  // A-Z
 		      hasUpper = True
-		      System.DebugLog("  Found uppercase")
 		    ElseIf charCode >= 97 And charCode <= 122 Then  // a-z
 		      hasLower = True
-		      System.DebugLog("  Found lowercase")
 		    ElseIf charCode >= 48 And charCode <= 57 Then  // 0-9
 		      hasNumber = True
-		      System.DebugLog("  Found number")
 		    End If
 		  Next
-		  
-		  System.DebugLog("hasUpper: " + hasUpper.ToString)
-		  System.DebugLog("hasLower: " + hasLower.ToString)
-		  System.DebugLog("hasNumber: " + hasNumber.ToString)
 		  
 		  Return hasUpper And hasLower And hasNumber
 		End Function
