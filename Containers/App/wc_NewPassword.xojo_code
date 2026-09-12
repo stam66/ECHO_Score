@@ -462,22 +462,28 @@ End
 		  ' *******************************************************************************
 		  ' btnSetPassword.Pressed Event
 		  ' *******************************************************************************
-		  If txtNewPassword.Text.Trim = "" Or txtConfirmPassword.Text.Trim = "" Then
+		  ' Normalise ONCE here, then validate and store the same value. wc_Login binds
+		  ' txtPassword.Text.Trim, and both wc_UserAdmin write paths trim too, so a
+		  ' password stored untrimmed could never be entered at login again.
+		  Var newPassword As String = txtNewPassword.Text.Trim
+		  Var confirmPassword As String = txtConfirmPassword.Text.Trim
+		  
+		  If newPassword = "" Or confirmPassword = "" Then
 		    ShowMessage("Please fill in both password fields", False)
 		    Return
 		  End If
 		  
-		  If txtNewPassword.Text <> txtConfirmPassword.Text Then
+		  If newPassword <> confirmPassword Then
 		    ShowMessage("Passwords do not match", False)
 		    Return
 		  End If
 		  
-		  If Not ValidatePassword(txtNewPassword.Text) Then
+		  If Not ValidatePassword(newPassword) Then
 		    ShowMessage("Password does not meet requirements", False)
 		    Return
 		  End If
 		  
-		  If PasswordResetHelper.ResetPassword(TokenID, UserID, txtNewPassword.Text) Then
+		  If PasswordResetHelper.ResetPassword(TokenID, UserID, newPassword) Then
 		    ShowMessage("Password reset successfully! Redirecting to login...", True)
 		    WebTimer.CallLater(2000, AddressOf NavigateToLogin)
 		    
