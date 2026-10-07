@@ -15,5 +15,5 @@ Debug*/Debug*\ Libs
 # Out-of-repo secrets (real values live on the server, never committed)
 secrets.env
 
-# Local DB dumps (contain user emails and password hashes)
-echo*_current.sql
+# Any SQL file: dumps contain user emails and password hashes, never commit them
+*.sql
