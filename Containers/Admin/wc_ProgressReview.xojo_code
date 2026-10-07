@@ -137,7 +137,7 @@ Begin wc_base wc_ProgressReview
       Hint            =   ""
       Index           =   -2147483648
       Indicator       =   0
-      InitialValue    =   "\nLast Month\nLast 3 Months\nLast 6 Months\nAll Time"
+      InitialValue    =   "Last Week\nLast Month\nLast 3 Months\nLast 6 Months\nAll Time"
       LastAddedRowIndex=   0
       LastRowIndex    =   0
       Left            =   592
@@ -160,6 +160,34 @@ Begin wc_base wc_ProgressReview
       Top             =   57
       Visible         =   True
       Width           =   201
+      _mPanelIndex    =   -1
+   End
+   Begin WebCheckbox chkShowInactive
+      Caption         =   "Show inactive users"
+      ControlID       =   ""
+      CSSClasses      =   ""
+      Enabled         =   True
+      Height          =   38
+      Indeterminate   =   False
+      Index           =   -2147483648
+      Indicator       =   ""
+      Left            =   821
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockHorizontal  =   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      LockVertical    =   False
+      PanelIndex      =   0
+      Scope           =   2
+      TabIndex        =   8
+      TabStop         =   True
+      Tooltip         =   "Deactivated students are hidden unless this is ticked"
+      Top             =   57
+      Value           =   False
+      Visible         =   True
+      Width           =   200
       _mPanelIndex    =   -1
    End
    Begin WebButton btnRefresh
@@ -194,8 +222,8 @@ Begin wc_base wc_ProgressReview
    End
    Begin WebListBox lstProgress
       AllowRowReordering=   False
-      ColumnCount     =   5
-      ColumnWidths    =   "35%, 20%, 15%, 15%, 15%"
+      ColumnCount     =   6
+      ColumnWidths    =   "30%, 18%, 13%, 13%, 13%, 13%"
       ControlID       =   ""
       CSSClasses      =   ""
       DefaultRowHeight=   49
@@ -208,7 +236,7 @@ Begin wc_base wc_ProgressReview
       HighlightSortedColumn=   True
       Index           =   -2147483648
       Indicator       =   0
-      InitialValue    =   "Name	Group	#Completed	Status	Score"
+      InitialValue    =   "Name	Group	#Completed	In Progress	Status	Score"
       LastAddedRowIndex=   0
       LastColumnIndex =   0
       LastRowIndex    =   0
@@ -292,7 +320,7 @@ End
 
 	#tag Event
 		Sub Shown()
-		  cmbTimeFilter.SelectedRowIndex = 1 
+		  cmbTimeFilter.SelectedRowIndex = 4  ' Default to All Time
 		  
 		End Sub
 	#tag EndEvent
@@ -384,7 +412,7 @@ End
 		  ' Returns empty string for "All Time"
 		  
 		  Var selectedIndex As Integer = cmbTimeFilter.SelectedRowIndex
-		  If selectedIndex < 0 Then selectedIndex = 1  ' Default to Last Month
+		  If selectedIndex < 0 Then Return ""  ' Nothing selected yet: All Time
 		  
 		  Var now As DateTime = DateTime.Now
 		  Var threshold As DateTime
@@ -401,7 +429,7 @@ End
 		  Case 4  ' All Time
 		    Return ""
 		  Else
-		    threshold = now.SubtractInterval(0, 1, 0)  ' Default to Last Month
+		    Return ""  ' Unknown index: All Time
 		  End Select
 		  
 		  ' Format as SQL datetime: YYYY-MM-DD HH:MM:SS
@@ -441,27 +469,39 @@ End
 		    selectedGroup = cmbGroupFilter.RowTextAt(cmbGroupFilter.SelectedRowIndex)
 		  End If
 		  
-		  ' Calculate date threshold based on time filter
+		  ' Date threshold from the time filter ("" means All Time)
 		  Var dateThreshold As String = GetDateThreshold()
+		  Var showInactive As Boolean = chkShowInactive.Value
 		  
-		  ' Build SQL query
+		  ' Per-response conditions. Completed cases are filtered on completed_at,
+		  ' in-progress cases on started_at.
+		  Var completedCond As String = "ur.is_completed = TRUE"
+		  Var inProgressCond As String = "ur.is_completed = FALSE"
+		  If dateThreshold <> "" Then
+		    completedCond = completedCond + " AND ur.completed_at >= '" + dateThreshold + "'"
+		    inProgressCond = inProgressCond + " AND ur.started_at >= '" + dateThreshold + "'"
+		  End If
+		  
+		  ' total_cases is the number of cases this user can actually see:
+		  ' every case when they have no group, otherwise only cases assigned to their group.
 		  Var sql As String = _
 		  "SELECT " + _
 		  "u.user_id, " + _
 		  "u.full_name, " + _
 		  "u.user_group, " + _
-		  "COUNT(DISTINCT ur.case_id) as cases_completed, " + _
-		  "(SELECT COUNT(*) FROM cases) as total_cases " + _
+		  "u.is_active, " + _
+		  "COUNT(DISTINCT CASE WHEN " + completedCond + " THEN ur.case_id END) AS cases_completed, " + _
+		  "COUNT(DISTINCT CASE WHEN " + inProgressCond + " THEN ur.case_id END) AS cases_in_progress, " + _
+		  "(SELECT COUNT(*) FROM cases c WHERE u.user_group IS NULL OR u.user_group = '' " + _
+		  "OR FIND_IN_SET(u.user_group, c.case_groups) > 0) AS total_cases " + _
 		  "FROM users u " + _
 		  "LEFT JOIN user_responses ur ON u.user_id = ur.user_id " + _
-		  "AND ur.is_completed = TRUE "
+		  "WHERE u.is_admin = FALSE "
 		  
-		  ' Add date filter if not "All Time"
-		  If dateThreshold <> "" Then
-		    sql = sql + "AND ur.completed_at >= '" + dateThreshold + "' "
+		  ' Inactive (deactivated) users are hidden unless requested
+		  If Not showInactive Then
+		    sql = sql + "AND u.is_active = TRUE "
 		  End If
-		  
-		  sql = sql + "WHERE u.is_admin = FALSE "
 		  
 		  ' Add group filter
 		  If selectedGroup <> "" Then
@@ -469,7 +509,7 @@ End
 		  End If
 		  
 		  sql = sql + _
-		  "GROUP BY u.user_id, u.full_name, u.user_group " + _
+		  "GROUP BY u.user_id, u.full_name, u.user_group, u.is_active " + _
 		  "ORDER BY u.full_name"
 		  
 		  Try
@@ -492,14 +532,18 @@ End
 		      Var userID As Integer = rs.Column("user_id").IntegerValue
 		      Var fullName As String = rs.Column("full_name").StringValue
 		      Var userGroup As String = rs.Column("user_group").StringValue
+		      Var isActive As Boolean = rs.Column("is_active").BooleanValue
 		      Var casesCompleted As Integer = rs.Column("cases_completed").IntegerValue
+		      Var casesInProgress As Integer = rs.Column("cases_in_progress").IntegerValue
 		      Var totalCases As Integer = rs.Column("total_cases").IntegerValue
 		      
 		      ' Calculate overall score for this user
 		      Var overallScore As Double = CalculateOverallScore(userID, dateThreshold)
 		      
-		      ' Add row to listbox
-		      lstProgress.AddRow(fullName)
+		      ' Column 0: Name (flag inactive users when they are shown)
+		      Var displayName As String = fullName
+		      If Not isActive Then displayName = fullName + " (inactive)"
+		      lstProgress.AddRow(displayName)
 		      Var rowIdx As Integer = lstProgress.LastAddedRowIndex
 		      
 		      ' Column 1: Group
@@ -509,32 +553,37 @@ End
 		      Var casesText As String = Str(casesCompleted) + " of " + Str(totalCases)
 		      lstProgress.CellValueAt(rowIdx, 2) = New WebListBoxStyleRenderer(centeredStyle, casesText)
 		      
-		      ' Column 3: Completion Status (centered)
+		      ' Column 3: Cases In Progress (centered)
+		      lstProgress.CellValueAt(rowIdx, 3) = New WebListBoxStyleRenderer(centeredStyle, Str(casesInProgress))
+		      
+		      ' Column 4: Completion Status (centered)
 		      Var percentage As Double = 0
 		      If totalCases > 0 Then
 		        percentage = (casesCompleted / totalCases) * 100
 		      End If
 		      
 		      Var statusText As String
-		      If casesCompleted = 0 Then
+		      If casesCompleted = 0 And casesInProgress = 0 Then
 		        statusText = "Not Started"
-		      ElseIf casesCompleted = totalCases Then
+		      ElseIf casesCompleted = 0 Then
+		        statusText = "In Progress"
+		      ElseIf totalCases > 0 And casesCompleted >= totalCases Then
 		        statusText = "100% Complete"
 		      Else
 		        statusText = Format(percentage, "0.0") + "% Complete"
 		      End If
-		      lstProgress.CellValueAt(rowIdx, 3) = New WebListBoxStyleRenderer(centeredStyle, statusText)
+		      lstProgress.CellValueAt(rowIdx, 4) = New WebListBoxStyleRenderer(centeredStyle, statusText)
 		      
-		      ' Column 4: Overall Score (centered)
+		      ' Column 5: Overall Score (centered)
 		      Var scoreText As String
 		      If casesCompleted > 0 Then
 		        scoreText = Format(overallScore, "0.0") + "%"
 		      Else
 		        scoreText = "N/A"
 		      End If
-		      lstProgress.CellValueAt(rowIdx, 4) = New WebListBoxStyleRenderer(centeredStyle, scoreText)
+		      lstProgress.CellValueAt(rowIdx, 5) = New WebListBoxStyleRenderer(centeredStyle, scoreText)
 		      
-		      ' Store user_id in row tag for potential detail view
+		      ' Store user_id in row tag for the detail dialog
 		      lstProgress.RowTagAt(rowIdx) = userID
 		      
 		      rs.MoveToNextRow
@@ -570,6 +619,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events chkShowInactive
+	#tag Event
+		Sub ValueChanged()
+		  LoadProgress
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events btnRefresh
 	#tag Event
 		Sub Pressed()
@@ -585,11 +641,13 @@ End
 		  
 		  If Me.SelectedRowIndex < 0 Then Return
 		  
-		  Var userID As Integer = Me.RowTagAt(Me.SelectedRowIndex)
-		  Var userName As String = Me.CellTextAt(Me.SelectedRowIndex, 0)
-		  
-		  ' Future enhancement: Navigate to detailed view for this user
-		  MessageBox("Detail view for " + userName + " (User ID: " + Str(userID) + ") - Coming soon!")
+		  ' Open the per-student detail dialog
+		  Var d As New dlg_UserProgress
+		  d.UserID = Me.RowTagAt(Me.SelectedRowIndex)
+		  If cmbGroupFilter.SelectedRowIndex > 0 Then
+		    d.GroupFilter = cmbGroupFilter.RowTextAt(cmbGroupFilter.SelectedRowIndex)
+		  End If
+		  d.Show
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -597,14 +655,15 @@ End
 	#tag Event
 		Sub Pressed()
 		  ' Export current list to CSV
-		  Var csv As String = "Student Name,Group,Cases Completed,Status,Overall Score" + EndOfLine
+		  Var csv As String = "Student Name,Group,Cases Completed,In Progress,Status,Overall Score" + EndOfLine
 		  
 		  For i As Integer = 0 To lstProgress.LastRowIndex
 		    csv = csv + lstProgress.CellTextAt(i, 0) + ","
 		    csv = csv + lstProgress.CellTextAt(i, 1) + ","
 		    csv = csv + lstProgress.CellTextAt(i, 2) + ","
 		    csv = csv + lstProgress.CellTextAt(i, 3) + ","
-		    csv = csv + lstProgress.CellTextAt(i, 4) + EndOfLine
+		    csv = csv + lstProgress.CellTextAt(i, 4) + ","
+		    csv = csv + lstProgress.CellTextAt(i, 5) + EndOfLine
 		  Next
 		  
 		  ' Generate filename with timestamp

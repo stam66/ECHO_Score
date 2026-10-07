@@ -2323,7 +2323,7 @@ End
 		    Wend
 		    
 		    ' Update user_responses with MCQ score and mark as completed
-		    Var finalSQL As String = "UPDATE user_responses SET mcq_score = ?, has_mcq_questions = 1, is_completed = 1 WHERE response_id = ?"
+		    Var finalSQL As String = "UPDATE user_responses SET mcq_score = ?, has_mcq_questions = 1, is_completed = 1, completed_at = IFNULL(completed_at, NOW()) WHERE response_id = ?"
 		    Var finalPS As MySQLPreparedStatement = Session.DB.Prepare(finalSQL)
 		    finalPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_LONG)
 		    finalPS.Bind(0, earnedPoints)

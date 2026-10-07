@@ -109,6 +109,7 @@ Begin wc_base wc_AccessRequests
       FontName        =   ""
       FontSize        =   0.0
       Height          =   38
+      HTMLElement     =   0
       Index           =   -2147483648
       Indicator       =   ""
       Italic          =   False
@@ -257,40 +258,40 @@ End
 		  // Duplicates: "SKapetanakis1", "SKapetanakis2", etc.
 		  // An OTP will be generated and emailed so the user can set their own password
 		  // Returns empty string on success, or an error message on failure
-
+		  
 		  // Parse the name to generate username
 		  var username as String = GenerateUsername(name)
 		  var placeholderPassword as String = EmailHelper.GenerateSecureToken // random, never seen by user
-
+		  
 		  // Make sure username is unique
 		  var checkSQL as String = "SELECT user_id FROM users WHERE username = ?"
 		  var counter as Integer = 1
 		  var finalUsername as String = username
-
+		  
 		  Try
 		    var checkPS as MySQLPreparedStatement = Session.DB.Prepare(checkSQL)
 		    checkPS.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-
+		    
 		    // Keep trying until we find a unique username
 		    while true
 		      checkPS.Bind(0, finalUsername)
 		      var checkRS as RowSet = checkPS.SelectSQL
-
+		      
 		      if checkRS = nil or checkRS.AfterLastRow then
 		        exit // Username is unique
 		      end if
-
+		      
 		      finalUsername = username + Str(counter)
 		      counter = counter + 1
 		    wend
-
+		    
 		  Catch e as DatabaseException
 		    return "Error checking username uniqueness: " + e.Message
 		  End Try
-
+		  
 		  // Insert the new user
-		  var sql as String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, ?)"
-
+		  var sql as String = "INSERT INTO users (full_name, email, username, password_hash, is_admin, is_active, user_group) VALUES (?, ?, ?, SHA2(?, 256), ?, ?, NULLIF(?, ''))"
+		  
 		  Try
 		    var ps as MySQLPreparedStatement = Session.DB.Prepare(sql)
 		    ps.BindType(0, MySQLPreparedStatement.MYSQL_TYPE_STRING)
@@ -300,38 +301,38 @@ End
 		    ps.BindType(4, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		    ps.BindType(5, MySQLPreparedStatement.MYSQL_TYPE_TINY)
 		    ps.BindType(6, MySQLPreparedStatement.MYSQL_TYPE_STRING)
-
+		    
 		    ps.Bind(0, name)
 		    ps.Bind(1, email)
 		    ps.Bind(2, finalUsername)
 		    ps.Bind(3, placeholderPassword)
 		    ps.Bind(4, False) // Not admin by default
 		    ps.Bind(5, True)  // Active by default
-		    ps.Bind(6, "")    // No group by default
-
+		    ps.Bind(6, "")    // No group by default (NULLIF turns "" into NULL so the FK to available_groups is satisfied)
+		    
 		    ps.ExecuteSQL
-
+		    
 		    // Get the new user's ID via MySQL function (MySQLCommunityServer has no LastInsertRowID)
 		    var lastIDRS as RowSet = Session.DB.SelectSQL("SELECT LAST_INSERT_ID() AS last_id")
 		    if lastIDRS = nil or lastIDRS.AfterLastRow then
 		      return "Error retrieving new user ID after insert"
 		    end if
 		    var newUserID as Integer = lastIDRS.Column("last_id").IntegerValue
-
+		    
 		    // Generate OTP for account setup
 		    var tokenResult as Dictionary = PasswordResetHelper.CreatePasswordResetToken(newUserID, "")
-
+		    
 		    if not tokenResult.Value("success") then
 		      return "Error generating account setup token: " + tokenResult.Value("error").StringValue
 		    end if
-
+		    
 		    var otp as String = tokenResult.Value("otp").StringValue
-
+		    
 		    // Send new account email with OTP so user can set their own password
 		    Call EmailHelper.SendNewAccountEmail(email, name, finalUsername, otp)
-
+		    
 		    return "" // empty string = success
-
+		    
 		  Catch e as DatabaseException
 		    return e.Message
 		  End Try

@@ -1,5 +1,5 @@
 #tag Class
-Protected Class App
+Protected Class ECHOscore
 Inherits WebApplication
 	#tag Constant, Name = kVersion, Type = String, Dynamic = False, Default = \"1.1", Scope = Public
 	#tag EndConstant
